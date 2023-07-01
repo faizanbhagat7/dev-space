@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{useState,useEffect} from 'react'
+import Main from './Main'
+import {supabase} from "./backend/supabaseConfig"
+import {SessionContextProvider,useSession} from "@supabase/auth-helpers-react"
+import {LoginContext} from "./context/LoginContext"
 
-function App() {
+
+
+const App = () => {
+  const Session = useSession()
+  const [user, setUser] = useState(null)
+  const [session, setSession] = useState(null)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+    <LoginContext.Provider value={{user,setUser,session,setSession}} >
+    <SessionContextProvider supabaseClient={supabase}>
+      <Main />
+    </SessionContextProvider>
+    </LoginContext.Provider>
+    </>
+  )
 }
 
-export default App;
+export default App
