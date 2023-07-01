@@ -20,9 +20,11 @@ const Register = () => {
             email: email,
             password: password
         }).then((data) => {
-            console.log("emailCreated",data)
             supabase.from('profiles').insert(
-                { id: data.data.user.id, name: username }
+                { id: data.data.user.id,
+                     name: username,
+                     avatar : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPZNFpkJSy6LmJ9T9pg7QXLlU-eLWyblScCc1qaDXORkI5fqoQ9-AigZxvBjWjM_J_eEE&usqp=CAU"                  
+                    }
             ).then((data) => {
                 navigate("/")
                 alert("User created successfully")

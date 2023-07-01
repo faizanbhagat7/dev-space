@@ -8,27 +8,13 @@ import {useSession} from '@supabase/auth-helpers-react'
 import { supabase } from './backend/supabaseConfig'
 
 const Main = () => {
-  const {user,setUser,session,setSession} = useContext(LoginContext) 
+  const {user,setUser} = useContext(LoginContext) 
   const Session = useSession()
 
-  useEffect(() => {
-    setSession(Session)
-    // if(!user){
-      fetchUserdata()
-    // }
-  }, [Session])
-
-  const fetchUserdata = async () => {
-
-  }
-
-
-
-
-  if(session){
+  if(Session){
     return <Homepage />
   }
-  // console.log(session)
+ 
   return (
     <>
     <Routes>
