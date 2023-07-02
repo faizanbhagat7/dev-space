@@ -1,6 +1,7 @@
 import React,{useState,useffect} from 'react'
 import {Link,useNavigate} from 'react-router-dom'
-import { supabase } from '../backend/supabaseConfig'
+import { supabase } from '../backend/supabaseConfig'    
+
 
 
 const Login = () => {
@@ -26,13 +27,13 @@ const Login = () => {
 
   return (
     <>
-        <div style={{ width: "100%", height: "100vh", display: 'flex', justifyContent: "center", alignItems: "center" }}>
-            <div style={{border:"2px solid green",padding:"20px"}}>
+        <div> 
+            <div>
                 <h1>Login</h1>
                 <form onSubmit={handleLogin}> 
-                    <label htmlFor="email">Email</label><br />
+                    <label >Email</label><br />
                     <input type="email" value={email} onChange={(event)=>{setEmail(event.target.value)}}/> <br /><br />
-                    <label htmlFor="password">Password</label> <br />
+                    <label>Password</label> <br />
                     <input type="password" value={password} onChange={(event)=>{setPassword(event.target.value)}}/> <br /><br />
                     <button type="submit">Login</button>
                 </form>
