@@ -4,7 +4,7 @@ import { supabase } from "../backend/supabaseConfig";
 import { LoginContext } from "../context/LoginContext";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useNavigate } from "react-router-dom";
-import "./Register.css";
+import "./form.css";
 
 const Register = () => {
   const { user, setUser, session, setSession } = useContext(LoginContext);
@@ -16,6 +16,15 @@ const Register = () => {
 
   const handleRegister = async (event) => {
     event.preventDefault();
+
+    if(!username || !email || !password){
+      alert("Please fill all the fields")
+    }
+    else{
+      if(!password.length < 6){
+        alert("Password should be atleast 6 characters long")
+      }
+      else{
     supabase.auth
       .signUp({
         email: email,
@@ -41,6 +50,8 @@ const Register = () => {
       .catch((error) => {
         alert(error);
       });
+    }
+  }
   };
 
   return (
