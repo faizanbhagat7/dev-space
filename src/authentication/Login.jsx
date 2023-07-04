@@ -2,6 +2,8 @@ import React, { useState, useffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../backend/supabaseConfig";
 import "./form.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,10 +14,24 @@ const Login = () => {
     event.preventDefault();
 
     if (!email || !password) {
-      alert("Please fill all the fields");
+      toast.error("All Fields Must Be Filled !", {
+        position: "top-center",
+        autoClose: 1500,
+        borderRadius: 20,
+        hideProgressBar: true,
+        closeOnClick: true,
+        closeButton: false
+     });
     } else {
-      if (!password.length < 6) {
-        alert("Password should be atleast 6 characters long");
+      if (password.length < 6) {
+        toast.error("Password must be at least 6 characters long !", {
+          position: "top-center",
+          autoClose: 1500,
+          borderRadius: 20,
+          hideProgressBar: true,
+          closeOnClick: true,
+          closeButton: false
+       });
       } else {
       }
       supabase.auth
@@ -25,10 +41,24 @@ const Login = () => {
         })
         .then((data) => {
           navigate("/");
-          alert("Logged in successfully");
+          toast.success("Logged In Successfully !", {
+            position: "top-center",
+            autoClose: 1500,
+            borderRadius: 20,
+            hideProgressBar: true,
+            closeOnClick: true,
+            closeButton: false
+          });
         })
         .catch((error) => {
-          alert(error);
+          toast.error(error?.message, {
+            position: "top-center",
+            autoClose: 1500,
+            borderRadius: 20,
+            hideProgressBar: true,
+            closeOnClick: true,
+            closeButton: false
+         });
         });
     }
   };
@@ -68,6 +98,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

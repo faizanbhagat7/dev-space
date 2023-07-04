@@ -14,6 +14,7 @@ const Main = () => {
   if(Session){
     return <Homepage />
   }
+  console.log(Session)
  
   return (
     <>

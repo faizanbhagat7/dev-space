@@ -5,6 +5,8 @@ import { LoginContext } from "../context/LoginContext";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useNavigate } from "react-router-dom";
 import "./form.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
   const { user, setUser, session, setSession } = useContext(LoginContext);
@@ -18,11 +20,26 @@ const Register = () => {
     event.preventDefault();
 
     if(!username || !email || !password){
-      alert("Please fill all the fields")
+     toast.error("All Fields Must Be Filled !", {
+        position: "top-center",
+        autoClose: 1500,
+        borderRadius: 20,
+        hideProgressBar: true,
+        closeOnClick: true,
+        closeButton: false
+     });
     }
+
     else{
-      if(!password.length < 6){
-        alert("Password should be atleast 6 characters long")
+      if(password.length < 6){
+        toast.error("Password must be at least 6 characters long !", {
+          position: "top-center",
+          autoClose: 1500,
+          borderRadius: 20,
+          hideProgressBar: true,
+          closeOnClick: true,
+          closeButton: false
+       });
       }
       else{
     supabase.auth
@@ -41,18 +58,41 @@ const Register = () => {
           })
           .then((data) => {
             navigate("/");
-            alert("User created successfully");
+            toast.success("Account Created Successfully !", {
+              position: "top-center",
+              autoClose: 1500,
+              borderRadius: 20,
+              hideProgressBar: true,
+              closeOnClick: true,
+              closeButton: false
+            });
           })
           .catch((error) => {
-            alert(error);
+            toast.error(error?.message, {
+              position: "top-center",
+              autoClose: 1500,
+              borderRadius: 20,
+              hideProgressBar: true,
+              closeOnClick: true,
+              closeButton: false
+            });
           });
       })
       .catch((error) => {
-        alert(error);
+        toast.error(error?.message, {
+          position: "top-center",
+          autoClose: 1500,
+          borderRadius: 20,
+          hideProgressBar: true,
+          closeOnClick: true,
+          closeButton: false
+        });
       });
     }
   }
   };
+
+const notify = () => toast("All fields must be empty!");
 
   return (
     <>
@@ -97,6 +137,7 @@ const Register = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };
