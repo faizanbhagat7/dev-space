@@ -5,8 +5,8 @@ import { LoginContext } from "../context/LoginContext";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useNavigate } from "react-router-dom";
 import "./form.css";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
   const { user, setUser, session, setSession } = useContext(LoginContext);
@@ -19,80 +19,70 @@ const Register = () => {
   const handleRegister = async (event) => {
     event.preventDefault();
 
-    if(!username || !email || !password){
-     toast.error("All Fields Must Be Filled !", {
+    if (!username || !email || !password) {
+      toast.error("All Fields Must Be Filled !", {
         position: "top-center",
         autoClose: 1500,
         borderRadius: 20,
         hideProgressBar: true,
         closeOnClick: true,
-        closeButton: false
-     });
-    }
-
-    else{
-      if(!password.length > 5){
-        toast.error("Password must be at least 6 characters long !", {
-          position: "top-center",
-          autoClose: 1500,
-          borderRadius: 20,
-          hideProgressBar: true,
-          closeOnClick: true,
-          closeButton: false
-       });
-      }
-      else{
-    supabase.auth
-      .signUp({
-        email: email,
-        password: password,
-      })
-      .then((data) => {
-        supabase
-          .from("profiles")
-          .insert({
-            id: data.data.user.id,
-            name: username,
-            avatar:
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPZNFpkJSy6LmJ9T9pg7QXLlU-eLWyblScCc1qaDXORkI5fqoQ9-AigZxvBjWjM_J_eEE&usqp=CAU",
-          })
-          .then((data) => {
-            navigate("/");
-            toast.success("Account Created Successfully !", {
-              position: "top-center",
-              autoClose: 1500,
-              borderRadius: 20,
-              hideProgressBar: true,
-              closeOnClick: true,
-              closeButton: false
-            });
-          })
-          .catch((error) => {
-            toast.error(error?.message, {
-              position: "top-center",
-              autoClose: 1500,
-              borderRadius: 20,
-              hideProgressBar: true,
-              closeOnClick: true,
-              closeButton: false
-            });
-          });
-      })
-      .catch((error) => {
-        toast.error(error?.message, {
-          position: "top-center",
-          autoClose: 1500,
-          borderRadius: 20,
-          hideProgressBar: true,
-          closeOnClick: true,
-          closeButton: false
-        });
+        closeButton: false,
       });
+      return;
+    } else if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long !", {
+        position: "top-center",
+        autoClose: 1500,
+        borderRadius: 20,
+        hideProgressBar: true,
+        closeOnClick: true,
+        closeButton: false,
+      });
+      return;
+    } else {
+      supabase.auth
+        .signUp({
+          email: email,
+          password: password,
+        })
+        .then((data) => {
+          supabase
+            .from("profiles")
+            .insert({
+              id: data.data.user.id,
+              name: username,
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPZNFpkJSy6LmJ9T9pg7QXLlU-eLWyblScCc1qaDXORkI5fqoQ9-AigZxvBjWjM_J_eEE&usqp=CAU",
+            })
+            .then((data) => {
+              navigate("/");
+              setUsername("");
+              setEmail("");
+              setPassword("");
+            })
+            .catch((error) => {
+              toast.error(error?.message, {
+                position: "top-center",
+                autoClose: 1500,
+                borderRadius: 20,
+                hideProgressBar: true,
+                closeOnClick: true,
+                closeButton: false,
+              });
+            });
+        })
+        .catch((error) => {
+          toast.error(error?.message, {
+            position: "top-center",
+            autoClose: 1500,
+            borderRadius: 20,
+            hideProgressBar: true,
+            closeOnClick: true,
+            closeButton: false,
+          });
+        });
     }
-  }
   };
-
-const notify = () => toast("All fields must be empty!");
 
   return (
     <>

@@ -11,7 +11,8 @@ const Main = () => {
   const {user,setUser} = useContext(LoginContext) 
   const Session = useSession()
 
-  if(Session){
+
+  if(Session!=null && Session.user!=null && Session.user.email!=null ){
     return <Homepage />
   }
   console.log(Session)
