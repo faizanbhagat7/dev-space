@@ -6,7 +6,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, Routes, Route } from "react-router-dom";
 import "./homepage.css";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/sidebar/Sidebar";
+import Userprofile from "./components/profile/Userprofile";
+
 
 const Homepage = () => {
   const Session = useSession();
@@ -54,11 +56,8 @@ const Homepage = () => {
         </div>
 
         <div className="content">
-          <h1>Home</h1>
-          <h2>Welcome {user.name}</h2>
-          <button onClick={handleLogout}>LogOut</button>
           <Routes>
-            <Route path="/profile" element={<h1>Profile</h1>} />
+            <Route path="/profile" element={<Userprofile />} />
             <Route path="/feed"  element={<h1>feed</h1>} />
             <Route path="/chat" element={<h1>chat</h1>} />
             <Route path="/resume" element={<h1>resume</h1>} />

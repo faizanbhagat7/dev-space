@@ -1,14 +1,15 @@
 import React, { useEffect, useState ,useContext} from "react";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
-import { LoginContext } from "../context/LoginContext";
+import { LoginContext } from "../../context/LoginContext";
 import AssistantRoundedIcon from "@mui/icons-material/AssistantRounded";
 import FeedRoundedIcon from "@mui/icons-material/FeedRounded";
 import ChatBubbleRoundedIcon from "@mui/icons-material/ChatBubbleRounded";
 import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
 import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookmarkRounded";
 import PostAddIcon from "@mui/icons-material/PostAdd";
-import { supabase } from "../backend/supabaseConfig";
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import { supabase } from "../../backend/supabaseConfig";
 import { ToastContainer, toast } from "react-toastify";
 
 const Sidebar = () => {
@@ -48,6 +49,10 @@ const Sidebar = () => {
       icon: image,
     },
     {
+      name:'search',
+      icon:<PersonSearchIcon />
+    },
+    {
       name: "add-post",
       icon: <PostAddIcon />,
     },
@@ -79,12 +84,12 @@ const Sidebar = () => {
             src={user?.avatar}
             alt=""
             border="0"
-            style={{ width: "60px", height: "60px", borderRadius: "50px" }}
+            style={{ width: "60px", height: "60px", borderRadius: "10px" }}
           ></img>
           </div>
           <div className="profile">
-          <p className="user-name"> {user?.name}</p>
-          <p className="user-desc">Software Engineer  </p>
+          <p className="sidebar-user-name"> {user?.name}</p>
+          <p className="sidebar-user-desc">Software Engineer  </p>
           </div>
          
         </div>
@@ -103,10 +108,14 @@ const Sidebar = () => {
                   backgroundColor:
                     activebutton === option.name ? "#e9e9e9" : "white",
                   color: activebutton === option.name ? "#0077b5" : "#000",
-                  borderLeft:
-                    activebutton === option.name ? "4px solid #0077b5" : "none",
+                  borderBottom:
+                    activebutton === option.name ? "2px solid #0077b5" : "none",
                   transform:
                     activebutton === option.name ? "scale(1.04)" : "none",
+                    transition: "all 0.2s ease-in-out",
+                  paddingBottom : activebutton === option.name ? "10px" : "0px",
+                  transition: "all 0.2s ease-in-out",
+                  boxShadow: activebutton === option.name ? "0px 0px 5px 0px #0077b5" : "none",
                 }}
               >
                 <div className="option-icon">{option.icon}</div>
