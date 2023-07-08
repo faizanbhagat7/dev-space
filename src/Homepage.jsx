@@ -62,6 +62,10 @@ const Homepage = () => {
             <Route path="/chat" element={<h1>chat</h1>} />
             <Route path="/resume" element={<h1>resume</h1>} />
             <Route path="/tests" element={<h1>tests</h1>} />
+            <Route path={`/achievements/:id`}
+             element={<h1>achievements</h1>} />
+             <Route path={`/feed/:id`}
+              element={<h1>feed</h1>} />
           </Routes>
         </div>
       </div>

@@ -10,7 +10,7 @@ import Editprofilemodal from "./Editprofilemodal"
 
 const Userprofile = () => {
   const { user, setUser } = useContext(LoginContext);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
 
   return (
