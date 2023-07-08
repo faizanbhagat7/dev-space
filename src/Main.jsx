@@ -15,7 +15,7 @@ const Main = () => {
   if(Session!=null && Session.user!=null && Session.user.email!=null ){
     return <Homepage />
   }
-  console.log(Session)
+  // console.log(Session)
  
   return (
     <>

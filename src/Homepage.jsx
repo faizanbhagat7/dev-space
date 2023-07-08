@@ -4,10 +4,14 @@ import { supabase } from "./backend/supabaseConfig";
 import { LoginContext } from "./context/LoginContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Link, Routes, Route } from "react-router-dom";
+import "./homepage.css";
+import Sidebar from "./components/Sidebar";
 
 const Homepage = () => {
   const Session = useSession();
   const { user, setUser } = useContext(LoginContext);
+
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -21,21 +25,7 @@ const Homepage = () => {
     if (!user || user.id !== Session.user.id) {
       fetchUserProfile(Session);
     }
-    greet()
   }, [Session]);
-
-  
-
-  const greet = () => {
-    toast.success(`Welcome ${user?.name}`, {
-      position: "top-center",
-      autoClose: 1500,
-      borderRadius: 20,
-      hideProgressBar: true,
-      closeOnClick: true,
-      closeButton: false,
-    });
-  };
 
   const fetchUserProfile = async (Session) => {
     const { data, error } = await supabase
@@ -58,18 +48,24 @@ const Homepage = () => {
   }
   return (
     <>
-      <h1>homepage</h1>
-      <button onClick={handleLogout}>LogOut</button>
-      <h1>{user.name}</h1>
-      &nbsp; &nbsp; &nbsp;{" "}
-      <img
-        src={user.avatar}
-        alt="avatar"
-        width={100}
-        height={100}
-        style={{ borderRadius: "20%", boxShadow: "0px 0px 10px black" }}
-      />
-      <ToastContainer />
+      <div className="main">
+        <div className="sidebar">
+          <Sidebar />
+        </div>
+
+        <div className="content">
+          <h1>Home</h1>
+          <h2>Welcome {user.name}</h2>
+          <button onClick={handleLogout}>LogOut</button>
+          <Routes>
+            <Route path="/profile" element={<h1>Profile</h1>} />
+            <Route path="/feed"  element={<h1>feed</h1>} />
+            <Route path="/chat" element={<h1>chat</h1>} />
+            <Route path="/resume" element={<h1>resume</h1>} />
+            <Route path="/tests" element={<h1>tests</h1>} />
+          </Routes>
+        </div>
+      </div>
     </>
   );
 };
