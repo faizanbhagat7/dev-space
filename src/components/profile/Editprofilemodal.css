@@ -103,10 +103,32 @@
 }
 
 
+
+.upload-input{
+    display: none;
+}
+
+.avatar-label p{
+    background-color: #0077b5;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 20%;
+}
+
+
 /* mobile responsiveness */
 @media screen and (max-width: 600px){
     .modal-content{
         width: 80%;
-        /* height: 50%; */
+        
+    }
+
+    .avatar-label p{
+        width: 60%;
     }
 }

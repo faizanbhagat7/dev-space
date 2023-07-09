@@ -89,7 +89,7 @@ const Sidebar = () => {
           </div>
           <div className="profile">
           <p className="sidebar-user-name"> {user?.name}</p>
-          <p className="sidebar-user-desc">Software Engineer  </p>
+          <p className="sidebar-user-desc">{user?.description}</p>
           </div>
          
         </div>

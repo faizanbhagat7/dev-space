@@ -12,7 +12,7 @@ import Userprofile from "./components/profile/Userprofile";
 
 const Homepage = () => {
   const Session = useSession();
-  const { user, setUser } = useContext(LoginContext);
+  const { user, setUser , fetchUserProfile} = useContext(LoginContext);
 
 
   const handleLogout = async () => {
@@ -29,17 +29,17 @@ const Homepage = () => {
     }
   }, [Session]);
 
-  const fetchUserProfile = async (Session) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select()
-      .eq("id", Session.user.id);
-    if (error) {
-      console.log(error);
-    } else {
-      setUser(data[0]);
-    }
-  };
+  // const fetchUserProfile = async (Session) => {
+  //   const { data, error } = await supabase
+  //     .from("profiles")
+  //     .select()
+  //     .eq("id", Session.user.id);
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     setUser(data[0]);
+  //   }
+  // };
 
   if (!user) {
     return (

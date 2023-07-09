@@ -6,12 +6,11 @@ import { LoginContext } from "../../context/LoginContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, Routes, Route } from "react-router-dom";
-import Editprofilemodal from "./Editprofilemodal"
+import Editprofilemodal from "./Editprofilemodal";
 
 const Userprofile = () => {
   const { user, setUser } = useContext(LoginContext);
   const [showModal, setShowModal] = useState(false);
-
 
   return (
     <>
@@ -25,7 +24,7 @@ const Userprofile = () => {
           <div className="profile-details">
             <div className="description">
               <div className="user-name">{user?.name}</div>
-              <div className="user-description">Software Engineer at Tesla</div>
+              <div className="user-description">{user?.description}</div>
             </div>
             <div className="profile-connections">
               <div className="followers">
@@ -41,36 +40,44 @@ const Userprofile = () => {
           </div>
         </div>
         <div className="edit-profile-section">
-          <button className="edit-profile-button"
-          onClick={() => setShowModal(true)}
-          >Edit Profile</button>
+          <button
+            className="edit-profile-button"
+            onClick={() => setShowModal(true)}
+          >
+            Edit Profile
+          </button>
         </div>
 
         <div className="profile-footer">
           <div className="skills">
             <div className="skills-header">Skills</div>
             <div className="skills-list">
-              No skills added yet. <br /> Add skills
+             {user?.skills ? user?.skills : "No skills added"}
             </div>
           </div>
           <div className="achievements">
             <Link
-              to={"/achievements/"+user?.id}
+              to={"/achievements/" + user?.id}
               style={{ textDecoration: "none", color: "black" }}
             >
               <p className="achievements-header"> Achievements</p>
-              <p className="achievements-count">5 Certifications achieved by {user?.name}</p>
+              <p className="achievements-count">
+                5 Certifications achieved by {user?.name}
+              </p>
             </Link>
           </div>
           <div className="feed">
-            <Link to={"/feed/"+user?.id} style={{ textDecoration: "none", color: "black" }}>
+            <Link
+              to={"/feed/" + user?.id}
+              style={{ textDecoration: "none", color: "black" }}
+            >
               <p className="feed-header">Feed</p>
               <p className="feed-count">3 posts by {user?.name}</p>
             </Link>
           </div>
         </div>
       </div>
-      {showModal ? <Editprofilemodal setShowModal={setShowModal}/> : null}
+      {showModal ? <Editprofilemodal setShowModal={setShowModal} /> : null}
     </>
   );
 };
