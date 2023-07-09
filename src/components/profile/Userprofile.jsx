@@ -5,12 +5,13 @@ import { useState, useEffect, useContext } from "react";
 import { LoginContext } from "../../context/LoginContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link, Routes, Route } from "react-router-dom";
+import { Link, Routes, Route ,useNavigate} from "react-router-dom";
 import Editprofilemodal from "./Editprofilemodal";
 
 const Userprofile = () => {
   const { user, setUser } = useContext(LoginContext);
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -47,6 +48,21 @@ const Userprofile = () => {
             Edit Profile
           </button>
         </div>
+
+      {/* logout button */}
+        {/* <div className="logout-section"> */}
+          <button
+            className="logout-button-mobile"
+            onClick={() => {
+              supabase.auth.signOut();
+              setUser(null);
+              navigate("/");
+            }}
+          >
+            Logout
+          </button>
+        {/* </div> */}
+
 
         <div className="profile-footer">
           <div className="skills">

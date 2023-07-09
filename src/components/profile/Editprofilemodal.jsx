@@ -9,13 +9,15 @@ import { Link, Routes, Route } from "react-router-dom";
 import { useSession } from "@supabase/auth-helpers-react";
 
 const EditProfileModal = ({ setShowModal }) => {
-  const { user , setUser , fetchUserProfile } = useContext(LoginContext);
+  const { user, setUser, fetchUserProfile } = useContext(LoginContext);
   const Session = useSession();
 
   const [userName, setUserName] = useState(user?.name);
   const [userDescription, setUserDescription] = useState(user?.description);
   const [userSkills, setUserSkills] = useState(user?.skills);
   const [uploadData, setUploadData] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [bucketUpload, setBucketUpload] = useState(false);
 
   const handleSubmit = async (e) => {
     if (userName === "") {
@@ -29,6 +31,9 @@ const EditProfileModal = ({ setShowModal }) => {
     e.preventDefault();
 
     if (uploadData) {
+      setUploading(true);
+      console.log(uploadData?.path);
+
       const url = `${process.env.REACT_APP_SUPABASE_URL}/storage/v1/object/public/avatars/${uploadData?.path}`;
       const { data, error } = await supabase
         .from("profiles")
@@ -42,10 +47,17 @@ const EditProfileModal = ({ setShowModal }) => {
 
       if (!error) {
         fetchUserProfile(Session);
-        toast.success("Profile updated successfully");
+        toast.success("Profile updated successfully", {
+          closeOnClick: true,
+          closeButton: false,
+        });
         setShowModal(false);
+        setUploading(false);
       } else {
-        toast.error("Error updating profile");
+        toast.error("Error updating profile", {
+          closeOnClick: true,
+          closeButton: false,
+        });
       }
     } else {
       const { data, error } = await supabase
@@ -58,29 +70,37 @@ const EditProfileModal = ({ setShowModal }) => {
         .eq("id", user?.id);
       if (!error) {
         fetchUserProfile(Session);
-        toast.success("Profile updated successfully");
+        toast.success("Profile updated successfully", {
+          closeOnClick: true,
+          closeButton: false,
+        });
         setShowModal(false);
+        setUploading(false);
       } else {
-        toast.error("Error updating profile");
+        toast.error("Error updating profile", {
+          closeOnClick: true,
+          closeButton: false,
+        });
       }
     }
   };
 
   const handleAvatar = async (e) => {
+    setBucketUpload(true);
     const file = e.target.files[0];
-    const filePath = `${user?.id}/${file?.name}`;
-
+    const filePath = `${user?.id}/${Date.now()}-${file?.name}`;
     const { data, error } = await supabase.storage
       .from("avatars")
       .upload(filePath, file);
 
     if (data) {
-      console.log(data);
+      setBucketUpload(false);
       setUploadData(data);
       return;
     }
 
     if (error) {
+      setBucketUpload(false);
       toast.error("Error uploading image");
       return;
     }
@@ -127,6 +147,31 @@ const EditProfileModal = ({ setShowModal }) => {
                 <p>Choose Image</p>
               </label>
             </form>
+            {bucketUpload ? (
+              <div className="uploading">
+                <p
+                  style={{
+                    color: '#000',
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    fontFamily: "sans-serif",
+                    marginTop: '10px',
+                    marginBottom:"0px"                    
+                  }}
+                >Processing Image ..</p>
+              </div>
+            ) : (
+              uploadData && <p
+                style={{
+                  color: "#000",
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  fontFamily: "sans-serif",
+                  marginTop: '10px',
+                  marginBottom:"0px"  
+                }}
+              >Image selected</p>
+            )}
           </div>
           <div className="modal-footer">
             <button
@@ -139,6 +184,10 @@ const EditProfileModal = ({ setShowModal }) => {
               className="save-button"
               type="submit"
               onClick={handleSubmit}
+              style={{
+                display: uploading ? "none" : "inline",
+                display: bucketUpload ? "none" : "inline",
+              }}
             >
               Save
             </button>

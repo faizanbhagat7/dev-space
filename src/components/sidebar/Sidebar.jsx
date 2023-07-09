@@ -1,5 +1,5 @@
 import React, { useEffect, useState ,useContext} from "react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import "./Sidebar.css";
 import { LoginContext } from "../../context/LoginContext";
 import AssistantRoundedIcon from "@mui/icons-material/AssistantRounded";
@@ -16,6 +16,8 @@ const Sidebar = () => {
 
   const { user,setUser } = useContext(LoginContext);
   const [activebutton, setActivebutton] = useState("feed");
+  const navigate = useNavigate();
+
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -25,6 +27,7 @@ const Sidebar = () => {
         closeButton: false, 
       });
       setUser(null);
+      navigate("/");
     }
   };
     
