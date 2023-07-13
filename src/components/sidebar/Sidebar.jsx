@@ -15,7 +15,7 @@ import { ToastContainer, toast } from "react-toastify";
 const Sidebar = () => {
 
   const { user,setUser } = useContext(LoginContext);
-  const [activebutton, setActivebutton] = useState("feed");
+  const [activebutton, setActivebutton] = useState(null);
   const navigate = useNavigate();
 
 
@@ -46,34 +46,42 @@ const Sidebar = () => {
     {
       name: "feed",
       icon: <AssistantRoundedIcon />,
+      url: "/feed",
     },
     {
       name: "profile",
       icon: image,
+      url: `/profile/${user?.id}`,
     },
     {
       name:'search',
-      icon:<PersonSearchIcon />
+      icon:<PersonSearchIcon />,
+      url:'/search'
     },
     {
-      name: "add-post",
+      name: "Add Post",
       icon: <PostAddIcon />,
+      url: "/add-post",
     },
     {
       name: "chat",
       icon: <ChatBubbleRoundedIcon />,
+      url: "/chat",      
     },
     {
-      name: "resume",
+      name: "Create Resume",
       icon: <FeedRoundedIcon />,
+      url: "/resume",
     },
     {
       name: "tests",
       icon: <QuizRoundedIcon />,
+      url: "/tests",
     },
     {
       name: "bookmarks",
       icon: <CollectionsBookmarkRoundedIcon />,
+      url: "/bookmarks",
     },
   ];
 
@@ -91,7 +99,9 @@ const Sidebar = () => {
           ></img>
           </div>
           <div className="profile">
-          <p className="sidebar-user-name"> {user?.name}</p>
+          <p className="sidebar-user-name"> 
+              {user?.name.substring(0, 13)}
+          </p>
           <p className="sidebar-user-desc">{user?.description}</p>
           </div>
          
@@ -101,7 +111,7 @@ const Sidebar = () => {
         <div className="sidebar-options-section">
           {sidebarOptions.map((option) => (
             <Link
-              to={option.name}
+              to={option.url}
               style={{ textDecoration: "none", color: "black" }}
               onClick={() => setActivebutton(option.name)}
             >

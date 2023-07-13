@@ -5,16 +5,23 @@ import { useState, useEffect, useContext } from "react";
 import { LoginContext } from "../../context/LoginContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link, Routes, Route } from "react-router-dom";
+import { Link, Routes, Route, useParams } from "react-router-dom";
 import { useSession } from "@supabase/auth-helpers-react";
 
-const EditProfileModal = ({ setShowModal }) => {
+const EditProfileModal = ({
+  setShowModal,
+  fetchDynamicUserProfile,
+  userProfile,
+}) => {
   const { user, setUser, fetchUserProfile } = useContext(LoginContext);
   const Session = useSession();
+  const { profileId } = useParams();
 
-  const [userName, setUserName] = useState(user?.name);
-  const [userDescription, setUserDescription] = useState(user?.description);
-  const [userSkills, setUserSkills] = useState(user?.skills);
+  const [userName, setUserName] = useState(userProfile?.name);
+  const [userDescription, setUserDescription] = useState(
+    userProfile?.description
+  );
+  const [userSkills, setUserSkills] = useState(userProfile?.skills);
   const [uploadData, setUploadData] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [bucketUpload, setBucketUpload] = useState(false);
@@ -32,7 +39,6 @@ const EditProfileModal = ({ setShowModal }) => {
 
     if (uploadData) {
       setUploading(true);
-      console.log(uploadData?.path);
 
       const url = `${process.env.REACT_APP_SUPABASE_URL}/storage/v1/object/public/avatars/${uploadData?.path}`;
       const { data, error } = await supabase
@@ -43,13 +49,17 @@ const EditProfileModal = ({ setShowModal }) => {
           skills: userSkills,
           avatar: url,
         })
-        .eq("id", user?.id);
+        .eq("id", userProfile?.id);
 
       if (!error) {
+        fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
         toast.success("Profile updated successfully", {
           closeOnClick: true,
           closeButton: false,
+          position: "top-center",
+          duration: 1000,
+          hideProgressBar: true,
         });
         setShowModal(false);
         setUploading(false);
@@ -57,6 +67,9 @@ const EditProfileModal = ({ setShowModal }) => {
         toast.error("Error updating profile", {
           closeOnClick: true,
           closeButton: false,
+          position: "top-center",
+          duration: 1000,
+          hideProgressBar: true,
         });
       }
     } else {
@@ -67,12 +80,16 @@ const EditProfileModal = ({ setShowModal }) => {
           description: userDescription,
           skills: userSkills,
         })
-        .eq("id", user?.id);
+        .eq("id", userProfile?.id);
       if (!error) {
+        fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
         toast.success("Profile updated successfully", {
           closeOnClick: true,
           closeButton: false,
+          position: "top-center",
+          hideProgressBar: true,
+          duration: 1000,
         });
         setShowModal(false);
         setUploading(false);
@@ -80,6 +97,9 @@ const EditProfileModal = ({ setShowModal }) => {
         toast.error("Error updating profile", {
           closeOnClick: true,
           closeButton: false,
+          position: "top-center",
+          duration: 1000,
+          hideProgressBar: true,
         });
       }
     }
@@ -88,7 +108,7 @@ const EditProfileModal = ({ setShowModal }) => {
   const handleAvatar = async (e) => {
     setBucketUpload(true);
     const file = e.target.files[0];
-    const filePath = `${user?.id}/${Date.now()}-${file?.name}`;
+    const filePath = `${userProfile?.id}/${Date.now()}-${file?.name}`;
     const { data, error } = await supabase.storage
       .from("avatars")
       .upload(filePath, file);
@@ -151,26 +171,32 @@ const EditProfileModal = ({ setShowModal }) => {
               <div className="uploading">
                 <p
                   style={{
-                    color: '#000',
+                    color: "#000",
                     fontSize: "1.2rem",
                     fontWeight: "bold",
                     fontFamily: "sans-serif",
-                    marginTop: '10px',
-                    marginBottom:"0px"                    
+                    marginTop: "10px",
+                    marginBottom: "0px",
                   }}
-                >Processing Image ..</p>
+                >
+                  Processing Image ..
+                </p>
               </div>
             ) : (
-              uploadData && <p
-                style={{
-                  color: "#000",
-                  fontSize: "1.2rem",
-                  fontWeight: "bold",
-                  fontFamily: "sans-serif",
-                  marginTop: '10px',
-                  marginBottom:"0px"  
-                }}
-              >Image selected</p>
+              uploadData && (
+                <p
+                  style={{
+                    color: "#000",
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    fontFamily: "sans-serif",
+                    marginTop: "10px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Image selected
+                </p>
+              )
             )}
           </div>
           <div className="modal-footer">

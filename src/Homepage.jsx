@@ -8,7 +8,8 @@ import { Link, Routes, Route } from "react-router-dom";
 import "./homepage.css";
 import Sidebar from "./components/sidebar/Sidebar";
 import Userprofile from "./components/profile/Userprofile";
-
+import Achievement from "./components/achievement/Achievement";
+import Users from "./components/search/Users";
 
 const Homepage = () => {
   const Session = useSession();
@@ -29,17 +30,6 @@ const Homepage = () => {
     }
   }, [Session]);
 
-  // const fetchUserProfile = async (Session) => {
-  //   const { data, error } = await supabase
-  //     .from("profiles")
-  //     .select()
-  //     .eq("id", Session.user.id);
-  //   if (error) {
-  //     console.log(error);
-  //   } else {
-  //     setUser(data[0]);
-  //   }
-  // };
 
   if (!user) {
     return (
@@ -57,14 +47,15 @@ const Homepage = () => {
 
         <div className="content">
           <Routes>
-            <Route path="/profile" element={<Userprofile />} />
+            <Route path={`/profile/:profileId`} element={<Userprofile />} />
+            <Route path="/search" element={<Users />} />
             <Route path="/feed"  element={<h1>feed</h1>} />
             <Route path="/chat" element={<h1>chat</h1>} />
             <Route path="/resume" element={<h1>resume</h1>} />
             <Route path="/tests" element={<h1>tests</h1>} />
-            <Route path={`/achievements/:id`}
-             element={<h1>achievements</h1>} />
-             <Route path={`/feed/:id`}
+            <Route path={`/achievements/:profileId`}
+             element={<Achievement />}/>
+             <Route path={`/feed/:profileId`}
               element={<h1>feed</h1>} />
           </Routes>
         </div>

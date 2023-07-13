@@ -5,13 +5,32 @@ import { useState, useEffect, useContext } from "react";
 import { LoginContext } from "../../context/LoginContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link, Routes, Route ,useNavigate} from "react-router-dom";
+import { Link, Routes, Route ,useNavigate, useParams} from "react-router-dom";
 import Editprofilemodal from "./Editprofilemodal";
 
 const Userprofile = () => {
   const { user, setUser } = useContext(LoginContext);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const {profileId} = useParams();
+  const [userProfile, setUserProfile] = useState(null);
+  
+  const fetchDynamicUserProfile = async (profileId) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select()
+      .eq("id", profileId)
+      .single();
+    if (error) {
+      toast.error("Error fetching user profile");
+      return;
+    }
+    setUserProfile(data);
+  };
+
+  useEffect(() => {
+    fetchDynamicUserProfile(profileId);
+  }, [profileId]);
 
   return (
     <>
@@ -19,13 +38,13 @@ const Userprofile = () => {
         <div className="profile-header">
           <div className="image-section">
             <div className="profile-image">
-              <img src={user?.avatar} alt="" />
+              <img src={userProfile?.avatar} alt="" />
             </div>
           </div>
           <div className="profile-details">
             <div className="description">
-              <div className="user-name">{user?.name}</div>
-              <div className="user-description">{user?.description}</div>
+              <div className="user-name">{userProfile?.name}</div>
+              <div className="user-description">{userProfile?.description}</div>
             </div>
             <div className="profile-connections">
               <div className="followers">
@@ -40,6 +59,9 @@ const Userprofile = () => {
             </div>
           </div>
         </div>
+      
+      {
+        user?.id === profileId && (
         <div className="edit-profile-section">
           <button
             className="edit-profile-button"
@@ -48,9 +70,12 @@ const Userprofile = () => {
             Edit Profile
           </button>
         </div>
+        )}
+     
+          
+          {
 
-      {/* logout button */}
-        {/* <div className="logout-section"> */}
+        user?.id === profileId && ( 
           <button
             className="logout-button-mobile"
             onClick={() => {
@@ -61,39 +86,40 @@ const Userprofile = () => {
           >
             Logout
           </button>
-        {/* </div> */}
+        )}
 
 
         <div className="profile-footer">
           <div className="skills">
             <div className="skills-header">Skills</div>
             <div className="skills-list">
-             {user?.skills ? user?.skills : "No skills added"}
+             {userProfile?.skills ? userProfile?.skills : "No skills added"}
             </div>
           </div>
           <div className="achievements">
             <Link
-              to={"/achievements/" + user?.id}
+              to={"/achievements/" + profileId}
               style={{ textDecoration: "none", color: "black" }}
             >
               <p className="achievements-header"> Achievements</p>
               <p className="achievements-count">
-                5 Certifications achieved by {user?.name}
+                5 Certifications achieved by {userProfile?.name}
               </p>
             </Link>
           </div>
           <div className="feed">
             <Link
-              to={"/feed/" + user?.id}
+              to={"/feed/" + profileId}
               style={{ textDecoration: "none", color: "black" }}
             >
               <p className="feed-header">Feed</p>
-              <p className="feed-count">3 posts by {user?.name}</p>
+              <p className="feed-count">3 posts by {userProfile?.name}</p>
             </Link>
           </div>
         </div>
       </div>
-      {showModal ? <Editprofilemodal setShowModal={setShowModal} /> : null}
+      {showModal ? <Editprofilemodal setShowModal={setShowModal} 
+      fetchDynamicUserProfile={fetchDynamicUserProfile} userProfile={userProfile}/> : null}
     </>
   );
 };
