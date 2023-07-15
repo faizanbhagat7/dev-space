@@ -123,10 +123,10 @@ const Sidebar = () => {
                   color: activebutton === option.name ? "#0077b5" : "#000",
                   borderBottom:
                     activebutton === option.name ? "2px solid #0077b5" : "none",
-                  transform:
-                    activebutton === option.name ? "scale(1.04)" : "none",
+                  // transform:
+                  //   activebutton === option.name ? "scale(1.0)" : "none",
                     transition: "all 0.2s ease-in-out",
-                  paddingBottom : activebutton === option.name ? "10px" : "0px",
+                  paddingBottom : "0px",
                   transition: "all 0.2s ease-in-out",
                   boxShadow: activebutton === option.name ? "0px 0px 5px 0px #0077b5" : "none",
                 }}

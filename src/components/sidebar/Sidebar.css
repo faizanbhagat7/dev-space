@@ -103,6 +103,7 @@
     transition: all 0.2s ease-in-out;
     text-transform: capitalize;
     justify-content: center;
+    padding-bottom: 0px;
   }
 
   .sidebar-profile-section{
@@ -121,12 +122,15 @@
     margin: 0px;
     padding: 0px;
     bottom:0;
-
+    position: fixed;
+    z-index: 100;
+    box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
   } 
 
   .sidebar-options {
     border:none;
     border-radius: 0px;   
+    padding-bottom: 0px;
   }
   
   

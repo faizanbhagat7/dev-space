@@ -14,6 +14,7 @@ const Userprofile = () => {
   const navigate = useNavigate();
   const {profileId} = useParams();
   const [userProfile, setUserProfile] = useState(null);
+  const [profileAchievementsCount, setProfileAchievementsCount] = useState('');
   
   const fetchDynamicUserProfile = async (profileId) => {
     const { data, error } = await supabase
@@ -26,11 +27,28 @@ const Userprofile = () => {
       return;
     }
     setUserProfile(data);
+    
   };
 
   useEffect(() => {
     fetchDynamicUserProfile(profileId);
+    profileAchievementsCountFunction(profileId);
   }, [profileId]);
+
+  const profileAchievementsCountFunction = async (profileId) => {
+    const { data, error } = await supabase
+      .from("achievements")
+      .select()
+      .eq("author", profileId);
+    if (!error) {
+      setProfileAchievementsCount(data.length);
+    }
+  };
+
+  if (!userProfile) {
+    return <h1>Loading...</h1>;
+  }
+
 
   return (
     <>
@@ -103,7 +121,9 @@ const Userprofile = () => {
             >
               <p className="achievements-header"> Achievements</p>
               <p className="achievements-count">
-                5 Certifications achieved by {userProfile?.name}
+                {profileAchievementsCount} 
+                {profileAchievementsCount === 1 ? " certification " : "  certifications "}
+                 achieved by {userProfile?.name}
               </p>
             </Link>
           </div>

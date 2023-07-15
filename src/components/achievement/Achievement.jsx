@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
+import React, { useContext, useState, useEffect } from "react";
 import { LoginContext } from "../../context/LoginContext";
 import { supabase } from "../../backend/supabaseConfig";
 import { Worker } from "@react-pdf-viewer/core";
@@ -7,16 +6,60 @@ import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import Addachievementmodal from "./Addachievementmodal";
 import { useParams } from "react-router-dom";
+import "./Achievement.css";
 
 const Achievement = () => {
   const { user } = useContext(LoginContext);
   const { profileId } = useParams();
   const [addAchievementModal, setAddAchievementModal] = useState(false);
-  console.log(profileId);
+  const [profileDetails, setProfileDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [profileCertificates, setProfileCertificates] = useState([]);
+  const [certificateCount, setCertificateCount] = useState("");
+
+  const fetchUsers = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select()
+      .eq("id", profileId)
+      .single();
+    if (data) {
+      setProfileDetails(data);
+      setLoading(false);
+    }
+  };
+
+  const fetchCertificates = async () => {
+    const { data, error } = await supabase
+      .from("achievements")
+      .select()
+      .eq("author", profileId);
+    if (data) {
+      setProfileCertificates(data);
+      setCertificateCount(data.length);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+    fetchCertificates();
+  }, []);
+
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
+
   return (
     <>
-      <div className="main">
-        <p className="title">Achievements for {user?.name}</p>
+      <div className="main-achievements">
+        <p className="page-title">
+          {certificateCount === 1
+            ? certificateCount + " Achievement "
+            : certificateCount + " Achievements "}
+            of
+          {profileId === user?.id ? " Yours" : " "+ profileDetails?.name}
+        </p>
 
         {/* add achievements button */}
         {user?.id === profileId && (
@@ -24,10 +67,26 @@ const Achievement = () => {
             className="add-achievement-button"
             onClick={() => setAddAchievementModal(true)}
           >
-            Add an achievement
+            + Add Achievement
           </div>
         )}
-        {addAchievementModal && <Addachievementmodal setAddAchievementModal={setAddAchievementModal} />}
+        {addAchievementModal && (
+          <Addachievementmodal
+            setAddAchievementModal={setAddAchievementModal}
+          />
+        )}
+
+        <div className="achievements-container">
+          {profileCertificates.map((certificate) => (
+            <div className="achievement-card">
+              <div className="card-description">
+                <div className="card-description">
+                  <p className="card-title">{certificate.description}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">

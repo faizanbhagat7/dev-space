@@ -40,7 +40,7 @@ const Addachievementmodal = ({setAddAchievementModal}) => {
       } else {
         //  insert into the database
         const uploadedUrl = `${process.env.REACT_APP_SUPABASE_URL}/storage/v1/object/public/achievements/${filePath}`;
-        console.log(uploadedUrl);
+
         const { data, error } = await supabase.from("achievements").insert(
           {
             author: user?.id,
@@ -103,7 +103,7 @@ const Addachievementmodal = ({setAddAchievementModal}) => {
              {
 
                      selectedFile && (
-                    <div className="selected-file">
+                    <div className="selected-file" style={{overflowX:"wrap"}}>
                         <p>{selectedFile.name}</p>
                     </div>
                 )

@@ -3,6 +3,10 @@
     height: 100vh;
     background-color: #f2f2f2;
     display: flex;
+    overflow-x: hidden;
+    padding:0px;
+    margin:0px;
+    overflow-y: hidden;
 }
 
 .sidebar{
@@ -15,6 +19,7 @@
     width: 80%;
     height: 100%;
     background-color: #f2f0e4;
+
 }
 
 /* mobile responsiveness */
@@ -23,6 +28,9 @@
         flex-direction: column-reverse;
         width: 100%;
         height: 90vh;
+        overflow-y: hidden;
+        padding:0px;
+        margin:0px;        
     }
     .sidebar{
         width: 100%;
@@ -34,6 +42,11 @@
     .content{
         width: 100%;
         padding:0px;
-        margin:0px;        
+        margin:0px;
+        overflow-y: scroll;  
+    }
+
+    ::-webkit-scrollbar {
+        width: 0px;  /* Remove scrollbar space */
     }
 }
