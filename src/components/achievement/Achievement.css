@@ -64,6 +64,26 @@
 
 }
 
+.delete-button{
+
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #0077b5;
+    margin-left: 20px;
+    border-radius: 10px;
+    background-color: #f2f0e4;
+}
+
+.delete-icon{
+    color: #d11a2a;
+    font-size: 1em;
+    padding: 0 5px; 
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 /* mobile responsiveness */
 @media screen and (max-width: 1000px){
   .main-achievements{

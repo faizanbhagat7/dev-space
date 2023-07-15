@@ -7,6 +7,9 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import Addachievementmodal from "./Addachievementmodal";
 import { useParams } from "react-router-dom";
 import "./Achievement.css";
+import { Link } from "react-router-dom";
+import { DeleteForeverOutlined } from "@mui/icons-material";
+import Deleteachievementmodal from "./Deleteachievementmodal";
 
 const Achievement = () => {
   const { user } = useContext(LoginContext);
@@ -16,6 +19,8 @@ const Achievement = () => {
   const [loading, setLoading] = useState(true);
   const [profileCertificates, setProfileCertificates] = useState([]);
   const [certificateCount, setCertificateCount] = useState("");
+  const [deletemodal, setDeletemodal] = useState(false);
+  const [deletecertificateid, setDeletecertificateid] = useState(null);
 
   const fetchUsers = async () => {
     const { data, error } = await supabase
@@ -36,7 +41,7 @@ const Achievement = () => {
       .eq("author", profileId);
     if (data) {
       setProfileCertificates(data);
-      setCertificateCount(data.length);
+      setCertificateCount(data?.length);
       setLoading(false);
     }
   };
@@ -57,8 +62,8 @@ const Achievement = () => {
           {certificateCount === 1
             ? certificateCount + " Achievement "
             : certificateCount + " Achievements "}
-            of
-          {profileId === user?.id ? " Yours" : " "+ profileDetails?.name}
+          of
+          {profileId === user?.id ? " Yours" : " " + profileDetails?.name}
         </p>
 
         {/* add achievements button */}
@@ -73,38 +78,44 @@ const Achievement = () => {
         {addAchievementModal && (
           <Addachievementmodal
             setAddAchievementModal={setAddAchievementModal}
+            fetchCertificates={fetchCertificates}
           />
         )}
 
         <div className="achievements-container">
           {profileCertificates.map((certificate) => (
             <div className="achievement-card">
-              <div className="card-description">
+              <Link
+                to={`/view-certificate/${certificate.id}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
                 <div className="card-description">
                   <p className="card-title">{certificate.description}</p>
                 </div>
-              </div>
+              </Link>
+              {user?.id === profileId && (
+                <div
+                  className="delete-button"
+                  onClick={() => {
+                    setDeletemodal(true);
+                    setDeletecertificateid(certificate.id);
+                  }}
+                >
+                  <DeleteForeverOutlined className="delete-icon" />
+                </div>
+              )}
             </div>
           ))}
+          {deletemodal && (
+            <Deleteachievementmodal
+              setDeletemodal={setDeletemodal}
+              fetchCertificates={fetchCertificates}
+              deletecertificateid={deletecertificateid}
+              setDeletecertificateid={setDeletecertificateid}
+            />
+          )}
         </div>
       </div>
-
-      {/* <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-      <h1>
-        Achievement Page
-        <input
-          type="file"
-          accept="application/pdf"
-          onChange={handleFileChange}
-        />
-      </h1>
-      
-      <div className="pdf">
-      <Viewer fileUrl={pdfUrl} />
-       </div> 
-
-      <Addachievementmodal />
-    </Worker> */}
     </>
   );
 };

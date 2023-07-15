@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Addachievementmodal = ({setAddAchievementModal}) => {
+const Addachievementmodal = ({setAddAchievementModal,fetchCertificates}) => {
   const { user } = useContext(LoginContext);
   const [uploading, setUploading] = useState(false);
   const [certificateDescription, setCertificateDescription] = useState("");
@@ -34,7 +34,14 @@ const Addachievementmodal = ({setAddAchievementModal}) => {
         .from("achievements")
         .upload(filePath, file);
       if (error) {
-        toast.error("Error uploading certificate");
+        toast.error("Error uploading certificate",{
+          position: "top-center",
+          autoClose: 1500,
+          borderRadius: 20,
+          hideProgressBar: true,
+          closeOnClick: true,
+          closeButton: false,
+        });
         setUploading(false);
         return;
       } else {
@@ -49,14 +56,30 @@ const Addachievementmodal = ({setAddAchievementModal}) => {
           },
         );
         if (error) {
-          toast.error("Error uploading certificate");
+          toast.error("Error uploading certificate",{
+            position: "top-center",
+            autoClose: 1500,
+            borderRadius: 20,
+            hideProgressBar: true,
+            closeOnClick: true,
+            closeButton: false,
+
+          });
             setUploading(false);
           return;
         } else {
-          toast.success("Certificate uploaded successfully");
+          toast.success("Certificate uploaded successfully",{
+            position: "top-center",
+            autoClose: 1500,
+            borderRadius: 20,
+            hideProgressBar: true,
+            closeOnClick: true,
+            closeButton: false,
+          });
             setUploading(false);
             setCertificateDescription("");
             setSelectedFile(null);
+            fetchCertificates();
             setAddAchievementModal(false);
           return;
         }

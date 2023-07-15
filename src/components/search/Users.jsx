@@ -5,7 +5,7 @@ import { LoginContext } from "../../context/LoginContext.js";
 import { useContext } from "react";
 
 const Users = () => {
-  const { user, session } = useContext(LoginContext);
+  const { user, session ,activebutton, setActivebutton} = useContext(LoginContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,6 +27,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
+    setActivebutton("search");
   }, []);
 
   return (

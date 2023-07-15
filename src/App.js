@@ -10,6 +10,7 @@ const App = () => {
   const Session = useSession()
   const [user, setUser] = useState(null)
   const [session, setSession] = useState(null)
+  const [activebutton, setActivebutton] = useState(null);
   const fetchUserProfile = async (Session) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -23,7 +24,7 @@ const App = () => {
   };
   return (
     <>
-    <LoginContext.Provider value={{user,setUser,session,setSession,fetchUserProfile}}>
+    <LoginContext.Provider value={{user,setUser,session,setSession,fetchUserProfile,activebutton, setActivebutton}}>
     <SessionContextProvider supabaseClient={supabase}>
       <Main />
     </SessionContextProvider>

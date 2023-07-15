@@ -8,13 +8,15 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link, Routes, Route ,useNavigate, useParams} from "react-router-dom";
 import Editprofilemodal from "./Editprofilemodal";
 
+
 const Userprofile = () => {
-  const { user, setUser } = useContext(LoginContext);
+  const { user, setUser ,activebutton, setActivebutton} = useContext(LoginContext);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const {profileId} = useParams();
   const [userProfile, setUserProfile] = useState(null);
   const [profileAchievementsCount, setProfileAchievementsCount] = useState('');
+
   
   const fetchDynamicUserProfile = async (profileId) => {
     const { data, error } = await supabase
@@ -31,8 +33,12 @@ const Userprofile = () => {
   };
 
   useEffect(() => {
+    if (profileId === user?.id) {
+      setActivebutton("profile");
+    }
     fetchDynamicUserProfile(profileId);
     profileAchievementsCountFunction(profileId);
+    
   }, [profileId]);
 
   const profileAchievementsCountFunction = async (profileId) => {

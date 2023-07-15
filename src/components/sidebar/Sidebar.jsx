@@ -14,8 +14,8 @@ import { ToastContainer, toast } from "react-toastify";
 
 const Sidebar = () => {
 
-  const { user,setUser } = useContext(LoginContext);
-  const [activebutton, setActivebutton] = useState(null);
+  const { user,setUser ,activebutton, setActivebutton} = useContext(LoginContext);
+  
   const navigate = useNavigate();
 
 
@@ -59,7 +59,7 @@ const Sidebar = () => {
       url:'/search'
     },
     {
-      name: "Add Post",
+      name: "add post",
       icon: <PostAddIcon />,
       url: "/add-post",
     },
@@ -69,7 +69,7 @@ const Sidebar = () => {
       url: "/chat",      
     },
     {
-      name: "Create Resume",
+      name: "create resume",
       icon: <FeedRoundedIcon />,
       url: "/resume",
     },
@@ -123,8 +123,6 @@ const Sidebar = () => {
                   color: activebutton === option.name ? "#0077b5" : "#000",
                   borderBottom:
                     activebutton === option.name ? "2px solid #0077b5" : "none",
-                  // transform:
-                  //   activebutton === option.name ? "scale(1.0)" : "none",
                     transition: "all 0.2s ease-in-out",
                   paddingBottom : "0px",
                   transition: "all 0.2s ease-in-out",
