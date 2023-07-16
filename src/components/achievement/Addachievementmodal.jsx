@@ -127,7 +127,13 @@ const Addachievementmodal = ({setAddAchievementModal,fetchCertificates}) => {
 
                      selectedFile && (
                     <div className="selected-file" style={{overflowX:"wrap"}}>
-                        <p>{selectedFile.name}</p>
+                        <p
+                        style={{
+                            overflowX:"wrap",
+                            textOverflow:"ellipsis",
+                            whiteSpace:"nowrap",
+                        }}
+                        >{selectedFile.name}</p>
                     </div>
                 )
             }
