@@ -70,12 +70,14 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
+                className="input-field"
               />
               <p className="input-label">Password</p>
               <input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                className="input-field"
               />
               <button type="submit" className="submit-button">
                 Login

@@ -101,18 +101,21 @@ const Register = () => {
                 type="text"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
+                className="input-field"
               />
               <p className="input-label">Email</p>
               <input
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
+                className="input-field"
               />
               <p className="input-label">Password</p>
               <input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                className="input-field"
               />
               <button type="submit" className="submit-button">
                 Create Account

@@ -45,7 +45,7 @@
     text-transform:capitalize;
 }
 
- input{
+.input-field{
     width: 100%;
     padding: 10px;
     border-radius: 7px;
@@ -60,7 +60,7 @@
 
 }
 
-input:focus{
+.input-field:focus{
     border: 2px solid #0077b5;
     transition: all 0.3s ease-out;
     transform:  scale(1.02);
@@ -124,7 +124,7 @@ input:focus{
 
 /* mobile responsive design */
 @media screen and (max-width: 768px) {
-    input {
+    .input-field{
         width: 90%;
     }
     .container{

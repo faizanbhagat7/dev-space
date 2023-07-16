@@ -54,7 +54,6 @@ const Userprofile = () => {
       newFollowingList = [...user?.following, profileId];
     }
 
-    console.log(newFollowingList);
     const { data, error } = await supabase
       .from("profiles")
       .update({
@@ -72,7 +71,7 @@ const Userprofile = () => {
       } else {
         newFollowersList = [...userProfile?.followers, user?.id];
       }
-      console.log(newFollowersList);
+
       const { data, error } = await supabase
         .from("profiles")
         .update({
@@ -84,15 +83,15 @@ const Userprofile = () => {
         // console.log(error);
         return;
       } else {
-        // console.log("followed");
         setIsfollowing(true);
-        toast.success(`Followed ${userProfile?.name}`,{
+        toast.success(`Followed ${userProfile?.name}`, {
           position: "top-center",
           autoClose: 1500,
           borderRadius: 20,
           hideProgressBar: true,
           closeOnClick: true,
         });
+        fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
       }
     }
@@ -105,8 +104,7 @@ const Userprofile = () => {
       .update({
         following: newList,
       })
-      .eq("id", user?.id)
-      
+      .eq("id", user?.id);
 
     if (error) {
       // console.log(error);
@@ -120,28 +118,25 @@ const Userprofile = () => {
         .update({
           followers: newList,
         })
-        .eq("id", profileId)
-        
+        .eq("id", profileId);
 
       if (error) {
-        console.log(error);
+        // console.log(error);
         return;
       } else {
-         // console.log("followed");
-         setIsfollowing(false);
-         toast.success(`Unfollowed ${userProfile?.name}`,{
+        setIsfollowing(false);
+        toast.success(`Unfollowed ${userProfile?.name}`, {
           position: "top-center",
           autoClose: 1500,
           borderRadius: 20,
           hideProgressBar: true,
           closeOnClick: true,
-        })
+        });
+        fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
       }
     }
   };
-
-  console.log(isfollowing);
 
   const handleFollows = async (profileId) => {
     if (isfollowing === true) {
@@ -190,14 +185,20 @@ const Userprofile = () => {
               <div className="user-description">{userProfile?.description}</div>
             </div>
             <div className="profile-connections">
+              <div className="post-count">
+                Feed <br /> 3
+              </div>
               <div className="followers">
-                followers <br /> 10
+                followers <br />{" "}
+                {userProfile?.followers !== null
+                  ? userProfile?.followers?.length
+                  : 0}
               </div>
               <div className="following">
-                following <br /> 8
-              </div>
-              <div className="post-count">
-                Feeds <br /> 3
+                following <br />{" "}
+                {userProfile?.following !== null
+                  ? userProfile?.following?.length
+                  : 0}
               </div>
             </div>
           </div>
