@@ -1,146 +1,240 @@
-.search-section{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    width: 95%;
-    height: 90vh;
-
+.search-section {
+  margin-top: 20px;
+  margin-bottom: 0px;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 100%;
+  height: 95vh;
 }
 
-.search-section-header{
-    /* margin-bottom: 20px; */
+
+
+.search-section-header p {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.search-section-header p{
-    margin: 0;
-    font-size: 25px;
-    font-weight: 600;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+.form {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid #0077b5;
+  width: min-content;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 2px 10px;
 }
 
-.form{
-    margin-top: 20px;
+.search-input {
+  font-size: 20px;
+  width: 600px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border: none;
+  outline: none;
+}
+
+.search-input:focus {
+  border: 1px solid #ccc;
+  border: none;
+  outline: none;
+}
+
+.search-icon-container {
+  background-color: transparent;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.user-card {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 0 5px #000;
+  cursor: pointer;
+  width: 700px;
+}
+
+.user-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 20%;
+  overflow: hidden;
+  margin-right: 20px;
+}
+
+.user-image > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20%;
+}
+
+.fetcheduser-name {
+  font-size: 2rem;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  color: #15202b;
+}
+
+.fetcheduser-description {
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  color: #657786;
+}
+
+.no-user-found {
+  font-size: 2rem;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  color: #15202b;
+  width: 100%;
+  height: 100vh;
+  text-align: center;
+  padding: auto;
+  margin: auto;
+  padding-top: 40px;
+}
+
+.recommendations {
+  margin-top: 20px;
+  border-radius: 5px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 95%;
+  height: 100vh;
+}
+
+.recommendations-header p {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.recommendations-body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  flex-wrap: wrap;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.recomended-user-card{
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    border: 1px solid #0077b5;
-    width: min-content;
-    background-color: #fff;
-    border-radius: 5px;
-    padding: 2px 10px;
-} 
-
-.search-input{
-    font-size: 20px;
-    width: 600px;
-    background-color: transparent;
-    border: 1px solid #ccc;
-    border:none;
-    outline: none;
-}
-
-.search-input:focus{
-    border: 1px solid #ccc;
-    border:none;
-    outline: none;
-}
-
-.search-icon-container{
-    background-color: transparent;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border:none;
-    outline: none;
-    cursor: pointer;
-}
-
-.user-card{
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top: 10px;
-    padding: 10px;
+    flex-direction: column;
+    margin: 10px;
     border-radius: 5px;
     background-color: #fff;
     box-shadow: 0 0 5px #000;
     cursor: pointer;
-    width: 700px;
+    width: 200px;
 }
 
-.user-image{
-    width: 100px;
-    height: 100px;
-    border-radius: 20%;
+.recomended-user-card:hover{
+    box-shadow: 0 0 10px #000;
+}
+
+recomended-user-image{
+    border-radius: 5px;
     overflow: hidden;
-    margin-right: 20px;
 }
 
-.user-image > img{
-    width:100%;
-    height: 100%;
+
+.recomended-user-image > img {
     object-fit: cover;
-    border-radius: 20%;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    width: 200px;
+    height: 200px;
 }
 
-.fetcheduser-name{
-    font-size: 2rem;
+.recomended-user-details{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.recomended-user-name{
+    font-size: 1.5rem;
     font-weight: 600;
     font-family: "Montserrat", sans-serif;
     font-weight: 600;
     color: #15202b;
 }
 
-.fetcheduser-description{
-    font-size: 1.5rem;
+.recomended-user-description{
+    font-size: 1.2rem;
     font-weight: 400;
     font-family: "Montserrat", sans-serif;
     font-weight: 400;
     color: #657786;
 }
 
-.no-user-found{
-    font-size: 2rem;
-    font-weight: 600;
-    font-family: "Montserrat", sans-serif;
-    font-weight: 600;
-    color: #15202b;
-    width: 100%;
-    height:100vh;
-    text-align: center;
-    padding: auto;
-    margin: auto;
-    padding-top: 40px;
-}
-
 /* mobile responsive */
-@media screen and (max-width: 768px){
-    .search-section{
-        width: 100%;
-        height: 100%;
-    }
+@media screen and (max-width: 768px) {
+  .search-section {
+    width: 100%;
+    height: 100vh;
+    
+  }
 
-    .search-input{
-        width: 280px;
-    }
+  .search-input {
+    width: 280px;
+  }
 
-    .user-card{
-        width: 320px;
-        overflow-x: hidden;
-        overflow-y: hidden;
-    }
+  .recomended-user-card {
+    width: 140px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
 
-    .fetcheduser-name{
-        font-size: 1.5rem;
-    }
-    .fetcheduser-description{
-        font-size: 1.2rem;
-    }
-    .user-image{
-        width: 80px;
-        height: 80px;
-        margin-right: 15px;
-    }
+  .fetcheduser-name {
+    font-size: 1.5rem;
+  }
+  .fetcheduser-description {
+    font-size: 1.2rem;
+  }
+  .recomended-user-image img{
+    width: 140px;
+    height: 140px;
+  }
+
+  .recomended-user-image {
+    width: 140px;
+    height: 140px;
+  }
+
+  .recommendations-body {
+    width: 100%;
+    margin-bottom: 0px ;
+    padding: 0px;
+    
+  }
+    
+
 }

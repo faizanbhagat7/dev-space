@@ -21,7 +21,7 @@ import { useParams } from "react-router-dom";
 
 const Homepage = () => {
   const Session = useSession();
-  const { user, setUser, fetchUserProfile, activebutton, setActivebutton } =
+  const { user, setUser, fetchUserProfile, activebutton, setActivebutton  , recommendedUsers, fetchRecommendedUsers} =
     useContext(LoginContext);
   const { profileId, certificateId } = useParams();
 
