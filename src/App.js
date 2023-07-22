@@ -74,8 +74,6 @@ const App = () => {
       setRecommendedUsers([...recommendedUsers, ...data]);
     }
 
-    
-
 
   };
 

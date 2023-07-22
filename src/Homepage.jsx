@@ -18,11 +18,19 @@ import Test from "./components/test/Test";
 import Bookmark from "./components/bookmark/Bookmark";
 import Certificateviewer from "./components/achievement/Certificateviewer";
 import { useParams } from "react-router-dom";
+import TestPage from "./components/test/TestPage";
 
 const Homepage = () => {
   const Session = useSession();
-  const { user, setUser, fetchUserProfile, activebutton, setActivebutton  , recommendedUsers, fetchRecommendedUsers} =
-    useContext(LoginContext);
+  const {
+    user,
+    setUser,
+    fetchUserProfile,
+    activebutton,
+    setActivebutton,
+    recommendedUsers,
+    fetchRecommendedUsers,
+  } = useContext(LoginContext);
   const { profileId, certificateId } = useParams();
 
   const handleLogout = async () => {
@@ -73,6 +81,9 @@ const Homepage = () => {
               path={`view-certificate/:certificateId`}
               element={<Certificateviewer />}
             />
+            <Route path={`/tests/:difficultyLevel`} element={<TestPage />} />
+
+            <Route path="*" element={<h1>404 Not Found</h1>} />
           </Routes>
         </div>
       </div>

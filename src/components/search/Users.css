@@ -203,6 +203,10 @@ recomended-user-image{
     
   }
 
+  .user-card{
+    width: 320px;
+  }
+
   .search-input {
     width: 280px;
   }
@@ -235,6 +239,7 @@ recomended-user-image{
     padding: 0px;
     
   }
+  
     
 
 }

@@ -1,0 +1,115 @@
+.testpage-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    width: 100%;
+    height: 100vh;
+}
+
+.testpage-body{
+    background-color: #fff;
+    box-shadow: 0px 0px 10px black;
+    border-radius: 10px;
+    padding: 20px;
+
+}
+
+.testpage-title{
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.test-rules{
+    padding: 10px;
+}
+
+.test-rules > p{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-transform: capitalize;
+}
+
+.test-rules > ul{
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: capitalize;
+}
+
+.test-rules > ul > li{
+    margin-left: 20px;
+}
+
+.testpage-button-start{
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    cursor: pointer;
+    background-color: limegreen;
+    color: #fff;
+    width:150px;
+    margin:10px;
+    text-align: center;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: capitalize;
+
+}
+
+.testpage-button-change{
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    cursor: pointer;
+    background-color: #d11a2a;
+    color: #fff;
+     width:180px;
+    margin:10px;
+    text-align: center;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: capitalize;
+    }
+
+.testpage-button-start:hover{
+    transform: scale(1.1);
+    transition: 0.3s all ease-in-out;
+}
+
+.testpage-button-change:hover{
+    transform: scale(1.1);
+    transition: 0.3s all ease-in-out;
+}
+
+/* mobile resposiveness */
+@media screen and (max-width: 768px){
+  
+    .testpage-container{
+        width: 90%;
+        height: 80vh;
+        margin-left: 20px;
+    }
+    .testpage-title{
+        font-size: 20px;
+    }
+ 
+    .test-rules > p{
+        font-size: 15px;
+    }
+    .test-rules > ul{
+        font-size: 15px;
+    }
+    .test-rules > ul > li{
+        margin-left: 10px;
+    }
+}

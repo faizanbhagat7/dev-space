@@ -4,7 +4,7 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    background:url('./bg.jpg');
+    background:url('https://cdn.dribbble.com/users/1626229/screenshots/15505372/media/780519905cfaa655f83a5ef0497c67e5.jpg?resize=768x576&vertical=center');
 }
 
 
@@ -131,6 +131,7 @@
         width: 90%;
     }    
     .main-body{
-        align-items: flex-start;
+        align-items: center;
+
     }
 }
