@@ -51,8 +51,9 @@ const TestPage = () => {
                 You can unlock the next question only if you answer the current
                 question
               </li>
-              <li>Once you answer a question you cannot go back to it</li>
-              <li>Once you select an answer, it cannot be changed</li>
+              <li>Once you select an answer, it cannot be changed,
+                so choose carefully
+              </li>
             </ul>
           </div>
 

@@ -24,12 +24,89 @@
     box-shadow: 0px 0px 10px 0px black;
 }
 
+.testmodal-result{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.testmodal-result h1{
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-transform: capitalize;
+    color: limegreen;
+
+}
+
+.completed-statement{
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-transform: capitalize;
+    color: limegreen;
+    margin: 10px;
+}
+
+.testmodal-result p{
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-transform: capitalize;
+}
+
+.btn-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+
+
+.testmodal-result-button{
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-transform: capitalize;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #1e90ff;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    width: 80px;
+    justify-self: center;
+    box-shadow: 0px 0px 5px 0px black;
+}
+
+.testmodal-result-button:hover{
+   transform: scale(1.03);
+   transition: all 0.3s ease-in-out;
+}
+
+
+
 /* mobile responsiveness */
 @media screen and (max-width: 768px) {
     .testmodal-body{
         width: 100%;
         height: 100vh;
         overflow-y: scroll;
+    }
+
+    .testmodal-result{
+        width: 95%;
+        height: 90vh;
+        
     }
 
 }

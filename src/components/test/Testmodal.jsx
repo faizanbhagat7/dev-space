@@ -23,9 +23,31 @@ const Testmodal = ({ setTestmodal, questions }) => {
                 :
                 (
                     <div className="testmodal-result">
-                        <p>Result</p>
-                        <p>{score}/10</p>
-                        <div className="testmodal-result-button" onClick={()=>(setTestmodal(false))}>Close</div>
+                        <div>
+                        <h1>Congratulations!!</h1>
+                        <p className='completed-statement'>
+                            You have successfully completed the test
+                        </p>
+                        <p>You scored {score} out of 10</p>
+                        <p
+                        style={{
+                            color:"#0077b5"
+                        }}
+                        >{score > 8 && "You Rocked it !"}</p>
+                        <p
+                         style={{
+                            color:"#15202b"
+                        }}
+                        >{score < 8 && score > 5 && "Fantastic! ,You can do better !"}</p>
+                        <p
+                         style={{
+                            color:"#ad0c0c"
+                        }}
+                        >{score < 5 && "You need to work hard on your skills !"}</p>
+                        <div className='btn-container'>
+                        <div className="testmodal-result-button" onClick={()=>(setTestmodal(false))}>Return</div>
+                        </div>
+                    </div>
                     </div>
 
                 )

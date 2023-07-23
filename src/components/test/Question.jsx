@@ -19,7 +19,7 @@ const Question = ({
   const correctAnswerKey = Object.keys(question?.correct_answers).find(
     (key) => question?.correct_answers[key] === "true"
   );
-  const correctAnswer = correctAnswerKey.replace("_correct", "");
+  const correctAnswer = correctAnswerKey?.replace("_correct", "");
 
   const correctAnswerText = options[correctAnswer];
 
