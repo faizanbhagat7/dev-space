@@ -1,36 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Testpage.css";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Testmodal from "./Testmodal";
+import { LoginContext } from "../../context/LoginContext";
+
 
 const TestPage = () => {
   const { difficultyLevel } = useParams();
   const navigate = useNavigate();
+  const {  setActivebutton } = useContext(LoginContext);
   const [questions, setQuestions] = useState([]);
+  const [testmodal, setTestmodal] = useState(false);
 
-    const changeDifficulty = () => {
-        navigate("/tests");
+  const changeDifficulty = () => {
+    navigate("/tests");
+  };
+
+  const fetchQuestions = async () => {
+    try {
+      const { data } = await axios.get(
+        `https://quizapi.io/api/v1/questions?apiKey=R9Oh5HpQNXaiy9wIG30Ki3wmOFXKunL4VMBPlNpE&limit=10&catagory=all&difficulty=${difficultyLevel}`
+      );
+      setQuestions(data);
+    } catch (error) {
+      navigate("/tests");
     }
+  };
 
-    const fetchQuestions = async () => {
-      
-        try{
-        const { data } = await axios.get(
-          `https://quizapi.io/api/v1/questions?apiKey=R9Oh5HpQNXaiy9wIG30Ki3wmOFXKunL4VMBPlNpE&limit=10&catagory=all&difficulty=${difficultyLevel}`
-        );
-        setQuestions(data);
-    }
-        catch(error){
-            navigate("/tests");
-        }
-      };
+  useEffect(() => {
+    setActivebutton("tests");
+    fetchQuestions();
+  }, [difficultyLevel]);
 
-    useEffect(() => {
-        fetchQuestions();
-    }, [difficultyLevel]);
 
-    console.log(questions);
-      
 
   return (
     <>
@@ -54,11 +57,19 @@ const TestPage = () => {
           </div>
 
           <div className="testpage-buttons">
-            <div className="testpage-button-start">Start Test</div>
-            <div className="testpage-button-change" onClick={changeDifficulty}>Change difficulty</div>
+            <div className="testpage-button-start"
+              onClick={()=>(setTestmodal(true))}
+            >Start Test</div>
+            <div className="testpage-button-change" onClick={changeDifficulty}>
+              Change difficulty
+            </div>
           </div>
         </div>
       </div>
+
+      {/* test modal */}
+      {testmodal && questions.length !== 0 && <Testmodal setTestmodal={setTestmodal} questions={questions}/>}
+      
     </>
   );
 };
