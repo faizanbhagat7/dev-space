@@ -7,29 +7,49 @@ import "./Users.css";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 
 const Users = () => {
-  const { user, session, activebutton, setActivebutton , recommendedUsers, fetchRecommendedUsers} =
+  const { user, session, activebutton, setActivebutton } =
     useContext(LoginContext);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [previuosSearch, setPreviousSearch] = useState("");
+  const [recommendedUsers, setRecommendedUsers] = useState([]);
 
-  const fetchUsers = async () => {
+
+  const fetchRecommendedUsers = async () => {
+    let userList = [];
     const { data, error } = await supabase
       .from("profiles")
       .select()
-      .neq("id", user.id);
-
+      .neq("id", user.id)
+      .filter("skills", "ilike", `%${user.skills}%`)
+      .filter("description", "ilike", `%${user.description}%`)
+      .order("id", { ascending: true })
+      .limit(5);
     if (data) {
-      setUsers(data);
-      setLoading(false);
+      userList = [...userList, ...data];
     }
-    if (error) {
-      console.log(error);
+    if (recommendedUsers.length < 5) {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .neq("id", user.id)
+        .order("id", { descending: true })
+        .limit(5);
+      if (data) {
+        userList = [...userList, ...data];
+      }
     }
-  };
+    // remove recomended users that are already followed
+    userList.map((Luser) => {
+      if (user.following.includes(Luser.id)) {
+        userList = userList.filter((user) => user.id !== Luser.id);
+      }
+    });
 
+    setRecommendedUsers(userList);
+  };
 
   const handleSubmit = async (e) => {
     setPreviousSearch(searchTerm);
@@ -46,13 +66,12 @@ const Users = () => {
     setIsSearching(false);
   };
 
-  console.log(recommendedUsers);
-
   useEffect(() => {
     setActivebutton("search");
-    if (recommendedUsers.length === 0) {
-      fetchRecommendedUsers();
-    }
+    // if (recommendedUsers.length === 0) {
+    fetchRecommendedUsers();
+    // removeFollowingFromRecomendations();
+    // }
   }, []);
 
   return (
@@ -113,13 +132,12 @@ const Users = () => {
 
           {searchTerm.length === 0 && users === null && (
             <div className="recommendations">
-              {
-                  recommendedUsers.length !== 0 && (
-              <div className="recommendations-header">
-                <p>Recommended for you</p>
-              </div>
-                  )}
-              
+              {recommendedUsers.length !== 0 && (
+                <div className="recommendations-header">
+                  <p>Recommended for you</p>
+                </div>
+              )}
+
               <div className="recommendations-body">
                 {recommendedUsers?.map((recommendedUser) => (
                   <Link
@@ -128,8 +146,7 @@ const Users = () => {
                   >
                     <div className="recomended-user-card">
                       <div className="recomended-user-image">
-                        <img src={recommendedUser.avatar} alt=""
-                        />
+                        <img src={recommendedUser.avatar} alt="" />
                       </div>
                       <div className="recomended-user-details">
                         <div className="recomended-user-name">

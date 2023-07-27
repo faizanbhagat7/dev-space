@@ -25,57 +25,7 @@ const App = () => {
     }
   };
 
-  const fetchRecommendedUsers = async () => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select()
-      .neq("id", user?.id)
-      .filter("skills", "in", user?.skills)
-      .order("id", { ascending: true })
-      .limit(6);
-
-    if (data) {
-      setRecommendedUsers(data);
-    }
-
-    if (recommendedUsers.length < 6) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select()
-        .textSearch("skills", user?.skills, { type: "plain" })
-        .neq("id", user?.id)
-        .order("id", { ascending: true })
-        .limit(6);
-        
-      setRecommendedUsers([...recommendedUsers,...data]);
-    }
-
-    if (recommendedUsers.length < 6) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select()
-        .textSearch("description", user?.skills, { type: "plain" })
-        .neq("id", user?.id)
-        .order("id", { ascending: true })
-        .limit(6);
-      
-        
-      setRecommendedUsers([...recommendedUsers,...data]);
-    }
-
-    if (recommendedUsers.length < 6) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select()
-        .neq("id", user?.id)
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      setRecommendedUsers([...recommendedUsers, ...data]);
-    }
-
-
-  };
+  
 
   return (
     <>
@@ -87,9 +37,7 @@ const App = () => {
           setSession,
           fetchUserProfile,
           activebutton,
-          setActivebutton,
-          recommendedUsers,
-          fetchRecommendedUsers,
+          setActivebutton
         }}
       >
         <SessionContextProvider supabaseClient={supabase}>
