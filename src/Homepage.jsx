@@ -19,6 +19,7 @@ import Bookmark from "./components/bookmark/Bookmark";
 import Certificateviewer from "./components/achievement/Certificateviewer";
 import { useParams } from "react-router-dom";
 import TestPage from "./components/test/TestPage";
+import FollowersPage from "./components/profile/FollowersPage";
 
 const Homepage = () => {
   const Session = useSession();
@@ -83,7 +84,11 @@ const Homepage = () => {
             />
             <Route path={`/tests/:difficultyLevel`} element={<TestPage />} />
 
-            <Route path="*" element={<h1>404 Not Found</h1>} />
+            <Route path={`/profile/:profileId/followers`}
+            element={<FollowersPage />} />
+
+            <Route path="*" element={<h1>404 not found</h1>} />
+            
           </Routes>
         </div>
       </div>

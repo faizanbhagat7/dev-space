@@ -188,12 +188,21 @@ const Userprofile = () => {
               <div className="post-count">
                 Feed <br /> 3
               </div>
-              <div className="followers">
-                followers <br />{" "}
-                {userProfile?.followers !== null
-                  ? userProfile?.followers?.length
-                  : 0}
-              </div>
+              <Link
+              to={"followers"}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  cursor: "pointer",
+                }}
+              >
+                <div className="followers">
+                  followers <br />{" "}
+                  {userProfile?.followers !== null
+                    ? userProfile?.followers?.length
+                    : 0}
+                </div>
+              </Link>
               <div className="following">
                 following <br />{" "}
                 {userProfile?.following !== null
