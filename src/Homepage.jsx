@@ -20,6 +20,7 @@ import Certificateviewer from "./components/achievement/Certificateviewer";
 import { useParams } from "react-router-dom";
 import TestPage from "./components/test/TestPage";
 import FollowersPage from "./components/profile/FollowersPage";
+import FollowingPage from "./components/profile/FollowingPage";
 
 const Homepage = () => {
   const Session = useSession();
@@ -86,6 +87,8 @@ const Homepage = () => {
 
             <Route path={`/profile/:profileId/followers`}
             element={<FollowersPage />} />
+
+            <Route path={`/profile/:profileId/following`} element={<FollowingPage />} />
 
             <Route path="*" element={<h1>404 not found</h1>} />
             

@@ -203,12 +203,22 @@ const Userprofile = () => {
                     : 0}
                 </div>
               </Link>
+
+              <Link
+              to={"following"}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  cursor: "pointer",
+                }}
+              >
               <div className="following">
                 following <br />{" "}
                 {userProfile?.following !== null
                   ? userProfile?.following?.length
                   : 0}
               </div>
+              </Link>
             </div>
           </div>
         </div>

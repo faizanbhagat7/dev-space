@@ -4,17 +4,17 @@ import { LoginContext } from "../../context/LoginContext";
 import { supabase } from "../../backend/supabaseConfig";
 import { Link, useParams } from "react-router-dom";
 
-const FollowersPage = () => {
+const FollowingPage = () => {
   const { profileId } = useParams();
-  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchFollowerProfiles = async () => {
     setLoading(true);
-    // fetch followers id
+    // fetch following id
     const { data, error } = await supabase
       .from("profiles")
-      .select("followers")
+      .select("following")
       .eq("id", profileId);
 
     if (error) {
@@ -22,8 +22,8 @@ const FollowersPage = () => {
       setLoading(false);
       return;
     }
-    // fetch followers profile
-    let idList = data[0]?.followers;
+    // fetch following profile
+    let idList = data[0]?.following;
     console.log(idList);
 
     if (idList === null || idList === []) {
@@ -34,7 +34,7 @@ const FollowersPage = () => {
         .from("profiles")
         .select()
         .in("id", idList);
-      setFollowers(data);
+      setFollowing(data);
       setLoading(false);
       if (error) {
         console.log(error);
@@ -51,17 +51,17 @@ const FollowersPage = () => {
   return (
     <>
       <div className="follow-container">
-       <h1> Followers </h1>
-        {followers?.length === 0 && loading === false && (
-          <h1>No followers yet</h1>
-        ) }
+       <h1> Following </h1>
+        {following?.length === 0 && loading === false && (
+          <h1>Following no one yet</h1>
+        )}
 
-          {
+        {
             loading && <h1>Loading...</h1>
-          }
+        }
 
-        {followers.length > 0 &&
-          followers?.map((fetcheduser) => (
+        {following.length > 0 &&
+          following?.map((fetcheduser) => (
             <Link
               to={`/profile/${fetcheduser.id}`}
               style={{ textDecoration: "none", color: "black" }}
@@ -81,4 +81,4 @@ const FollowersPage = () => {
   );
 };
 
-export default FollowersPage;
+export default FollowingPage;
