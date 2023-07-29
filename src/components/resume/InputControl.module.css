@@ -1,0 +1,213 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  label {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  
+  input {
+    border: 1px solid #cccccc;
+    outline: none;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+  }
+  
+  input:hover {
+    border: 1px solid #adadad;
+  }
+  
+  input:focus {
+    border: 1px solid #239ce2;
+  }
+
+  /* mobile responsive  */
+    @media screen and (max-width: 600px) {
+        .container {
+        min-width: 100%;
+        min-height: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        }
+        
+        label {
+        font-weight: 500;
+        font-size: 1rem;
+        }
+        
+        input {
+        border: 1px solid #cccccc;
+        outline: none;
+        padding: 10px 12px;
+        font-size: 1rem;
+        border-radius: 5px;
+        }
+        
+        input:hover {
+        border: 1px solid #adadad;
+        }
+        
+        input:focus {
+        border: 1px solid #239ce2;
+        }
+        
+        .body {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        }
+        
+        .body .section {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        }
+        
+        .body .section .content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 0;
+        }
+        
+        .body .section .content .item {
+        border-bottom: 1px dotted lightgray;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding-bottom: 10px;
+        }
+        
+        .body .section .content .item:last-child {
+        border-bottom: none;
+        }
+        
+        .body .content .title {
+        font-weight: 500;
+        font-size: 1rem;
+        line-height: 1.3rem;
+        }
+        
+        .body .content .subTitle {
+        font-weight: bold;
+        color: var(--color);
+        font-size: 1rem;
+        }
+        
+        .body .content .overview {
+        font-size: 0.875rem;
+        }
+        
+        .body .content .link {
+        display: flex;
+        gap: 5px;
+        letter-spacing: 1px;
+        cursor: pointer;
+        }
+        
+        .body .chip {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        padding: 4px 8px;
+        background-color: #808080;
+        border-radius
+        : 20px;
+        cursor: default;
+        }
+
+        .body .chip p {
+        font-weight: 500;
+        line-height: 1.25rem;
+        color: #fff;
+        }
+        .body .chip svg {
+        color: #fff;
+        height: 18px;
+        width: 18px;
+        cursor: pointer;
+        }
+
+        .body .chips .active {
+        background-color: #239ce2;
+        }
+
+        .body button {
+        width: fit-content;
+        padding: 8px 16px;
+        border-radius: 5px;
+        background-color: #239ce2;  
+        color: #fff;
+        outline: none;
+        border: none;
+        font-weight: 500;
+        font-size: 1rem;
+        letter-spacing: 1px;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        cursor: pointer;
+        transition: 200ms;
+        }
+
+        .body button:active {
+        transform: translateY(2px);
+        }
+
+        .body .date {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        font-size: 0.875rem;
+        }
+
+        .body .date svg {
+        height: 14px;
+        width: 14px;
+        color: var(--color);
+        }
+
+        .body .date p {
+        font-size: 0.875rem;
+        }
+
+        .body .date .dateInput {
+        border: 1px solid #cccccc;
+        outline: none;
+        padding: 10px 12px;
+        font-size: 0.875rem;
+        border-radius: 5px;
+        }
+
+        .body .date .dateInput:hover {
+        border: 1px solid #adadad;
+        }
+
+        .body .date .dateInput:focus {
+        border: 1px solid #239ce2;
+        }
+
+        .body .date .dateInput::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        }
+
+        .body .date .dateInput::-webkit-inner-spin-button {
+        filter: invert(1);
+        }
+
+        .body .date .dateInput::-webkit-clear-button {
+        filter: invert(1);
+        }
+
+        .body .date .dateInput::-webkit-calendar-picker-indicator:hover {
+        filter: invert(0.5);
+        }
+
+        
+    }

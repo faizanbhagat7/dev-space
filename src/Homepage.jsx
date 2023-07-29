@@ -13,7 +13,7 @@ import Users from "./components/search/Users";
 import Feed from "./components/feed/Feed";
 import Addpost from "./components/addpost/Addpost";
 import Chat from "./components/chat/Chat";
-import Resume from "./components/resume/Resume";
+import Resumebody from "./components/resume/Resumebody";
 import Test from "./components/test/Test";
 import Bookmark from "./components/bookmark/Bookmark";
 import Certificateviewer from "./components/achievement/Certificateviewer";
@@ -71,7 +71,7 @@ const Homepage = () => {
             <Route path="/add-post" element={<Addpost />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/resume" element={<Resume />} />
+            <Route path="/resume" element={<Resumebody />} />
             <Route path="/tests" element={<Test />} />
             <Route path="/bookmarks" element={<Bookmark />} />
             <Route
