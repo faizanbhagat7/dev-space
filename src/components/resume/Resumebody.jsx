@@ -13,7 +13,7 @@ const Resumebody = () => {
       <div className="resume-container-main" style={
         {
           width: "100%",
-          height: "100vh",
+          height:"100vh",
           overflow:'scroll',
           margin: "0 ",
         }
