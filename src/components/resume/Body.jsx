@@ -1,14 +1,13 @@
 import React, { useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { ArrowDown } from "react-feather";
-
 import Editor from "./Editor";
 import Resume from "./Resume";
 
 import styles from "./Body.module.css";
 
 function Body() {
-  const colors = ["#15202b", "#d11a2a", "#0bc5ea", "green", "purple", "orange"];
+  const colors = ["#243c54", "#d11a2a", "#3ce3b4", "#009193", "#771624", "#ab3717","#106f22"];
   const sections = {
     basicInfo: "Basic Info",
     workExp: "Work Experience",
@@ -16,7 +15,6 @@ function Body() {
     education: "Education",
     achievement: "Achievements",
     summary: "Summary",
-    
   };
   const resumeRef = useRef();
 
@@ -52,12 +50,12 @@ function Body() {
       sectionTitle: sections.summary,
       detail: "",
     },
-
   });
 
   return (
     <div className={styles.container}>
-      <p className={styles.heading}>Resume Builder</p>
+      <p className={styles.heading}>Generate Resume</p>
+
       <div className={styles.toolbar}>
         <div className={styles.colors}>
           {colors.map((item) => (
