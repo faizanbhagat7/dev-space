@@ -90,7 +90,7 @@ const Homepage = () => {
 
             <Route path={`/profile/:profileId/following`} element={<FollowingPage />} />
 
-            <Route path="*" element={<h1>404 not found</h1>} />
+            <Route path="*" element={<Feed />} />
             
           </Routes>
         </div>
