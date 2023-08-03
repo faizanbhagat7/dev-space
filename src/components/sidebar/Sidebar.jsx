@@ -49,6 +49,11 @@ const Sidebar = () => {
       url: "/feed",
     },
     {
+      name: "add post",
+      icon: <PostAddIcon />,
+      url: "/add-post",
+    },
+    {
       name: "profile",
       icon: image,
       url: `/profile/${user?.id}`,
@@ -58,11 +63,7 @@ const Sidebar = () => {
       icon:<PersonSearchIcon />,
       url:'/search'
     },
-    {
-      name: "add post",
-      icon: <PostAddIcon />,
-      url: "/add-post",
-    },
+ 
     {
       name: "chat",
       icon: <ChatBubbleRoundedIcon />,

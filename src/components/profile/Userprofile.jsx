@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link, Routes, Route, useNavigate, useParams } from "react-router-dom";
 import Editprofilemodal from "./Editprofilemodal";
 import { useSession } from "@supabase/auth-helpers-react";
+import Loader from "../loader/Loader";
 
 const Userprofile = () => {
   const { user, setUser, activebutton, setActivebutton, fetchUserProfile } =
@@ -84,13 +85,13 @@ const Userprofile = () => {
         return;
       } else {
         setIsfollowing(true);
-        toast.success(`Followed ${userProfile?.name}`, {
-          position: "top-center",
-          autoClose: 1500,
-          borderRadius: 20,
-          hideProgressBar: true,
-          closeOnClick: true,
-        });
+        // toast.success(`Followed ${userProfile?.name}`, {
+        //   position: "top-center",
+        //   autoClose: 1500,
+        //   borderRadius: 20,
+        //   hideProgressBar: true,
+        //   closeOnClick: true,
+        // });
         fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
       }
@@ -125,13 +126,13 @@ const Userprofile = () => {
         return;
       } else {
         setIsfollowing(false);
-        toast.success(`Unfollowed ${userProfile?.name}`, {
-          position: "top-center",
-          autoClose: 1500,
-          borderRadius: 20,
-          hideProgressBar: true,
-          closeOnClick: true,
-        });
+        // toast.success(`Unfollowed ${userProfile?.name}`, {
+        //   position: "top-center",
+        //   autoClose: 1500,
+        //   borderRadius: 20,
+        //   hideProgressBar: true,
+        //   closeOnClick: true,
+        // });
         fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
       }
@@ -167,7 +168,7 @@ const Userprofile = () => {
   };
 
   if (!userProfile) {
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
 
   return (

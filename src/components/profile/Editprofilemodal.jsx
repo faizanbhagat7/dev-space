@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, Routes, Route, useParams } from "react-router-dom";
 import { useSession } from "@supabase/auth-helpers-react";
+import Loader from "../loader/Loader";
 
 const EditProfileModal = ({
   setShowModal,
@@ -57,7 +58,7 @@ const EditProfileModal = ({
         toast.success("Profile updated successfully", {
           closeOnClick: true,
           closeButton: false,
-          position: "top-center",
+          position: "bottom-center",
           duration: 1000,
           hideProgressBar: true,
         });
@@ -67,7 +68,7 @@ const EditProfileModal = ({
         toast.error("Error updating profile", {
           closeOnClick: true,
           closeButton: false,
-          position: "top-center",
+          position: "bottom-center",
           duration: 1000,
           hideProgressBar: true,
         });
@@ -87,7 +88,7 @@ const EditProfileModal = ({
         toast.success("Profile updated successfully", {
           closeOnClick: true,
           closeButton: false,
-          position: "top-center",
+          position: "bottom-center",
           hideProgressBar: true,
           duration: 1000,
         });
@@ -97,7 +98,7 @@ const EditProfileModal = ({
         toast.error("Error updating profile", {
           closeOnClick: true,
           closeButton: false,
-          position: "top-center",
+          position: "bottom-center",
           duration: 1000,
           hideProgressBar: true,
         });

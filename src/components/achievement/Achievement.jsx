@@ -10,6 +10,7 @@ import "./Achievement.css";
 import { Link } from "react-router-dom";
 import { DeleteForeverOutlined } from "@mui/icons-material";
 import Deleteachievementmodal from "./Deleteachievementmodal";
+import Loader from "../loader/Loader";
 
 const Achievement = () => {
   const { user } = useContext(LoginContext);
@@ -52,7 +53,7 @@ const Achievement = () => {
   }, []);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
 
   return (

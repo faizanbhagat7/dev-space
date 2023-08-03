@@ -5,6 +5,7 @@ import { LoginContext } from "../../context/LoginContext.js";
 import { useContext } from "react";
 import "./Users.css";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import Loader from "../loader/Loader.jsx";
 
 const Users = () => {
   const { user, session, activebutton, setActivebutton } =
@@ -150,10 +151,16 @@ const Users = () => {
                       </div>
                       <div className="recomended-user-details">
                         <div className="recomended-user-name">
-                          {recommendedUser.name}
+                          {/* {recommendedUser.name} */}
+                          {recommendedUser?.name.length > 10 ? (
+                            recommendedUser?.name.slice(0, 10) + ".."
+                          ) : (
+                            <>{recommendedUser.name}</>
+                          )
+                          }
                         </div>
                         <div className="recomended-user-description">
-                          {recommendedUser.description}
+                          {recommendedUser?.description}
                         </div>
                       </div>
                     </div>

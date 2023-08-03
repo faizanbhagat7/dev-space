@@ -3,6 +3,7 @@ import "./Follow.css";
 import { LoginContext } from "../../context/LoginContext";
 import { supabase } from "../../backend/supabaseConfig";
 import { Link, useParams } from "react-router-dom";
+import Loader from "../loader/Loader";
 
 const FollowersPage = () => {
   const { profileId } = useParams();
@@ -57,7 +58,7 @@ const FollowersPage = () => {
         ) }
 
           {
-            loading && <h1>Loading...</h1>
+            loading && <Loader />
           }
 
         {followers.length > 0 &&

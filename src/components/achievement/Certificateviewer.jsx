@@ -7,6 +7,7 @@ import { supabase } from "../../backend/supabaseConfig";
 import { LoginContext } from "../../context/LoginContext";
 import { useContext } from "react";
 import "./Certificateviewer.css";
+import Loader from "../loader/Loader";
 
 const Certificateviewer = () => {
   const { certificateId } = useParams();
@@ -35,7 +36,7 @@ const Certificateviewer = () => {
   }, []);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
   return (
     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">

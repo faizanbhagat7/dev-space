@@ -21,6 +21,7 @@ import { useParams } from "react-router-dom";
 import TestPage from "./components/test/TestPage";
 import FollowersPage from "./components/profile/FollowersPage";
 import FollowingPage from "./components/profile/FollowingPage";
+import Loader from "./components/loader/Loader";
 
 const Homepage = () => {
   const Session = useSession();
@@ -52,7 +53,7 @@ const Homepage = () => {
   if (!user) {
     return (
       <>
-        <h1>Loading...</h1>
+        <Loader />
       </>
     );
   }
@@ -85,13 +86,17 @@ const Homepage = () => {
             />
             <Route path={`/tests/:difficultyLevel`} element={<TestPage />} />
 
-            <Route path={`/profile/:profileId/followers`}
-            element={<FollowersPage />} />
+            <Route
+              path={`/profile/:profileId/followers`}
+              element={<FollowersPage />}
+            />
 
-            <Route path={`/profile/:profileId/following`} element={<FollowingPage />} />
+            <Route
+              path={`/profile/:profileId/following`}
+              element={<FollowingPage />}
+            />
 
             <Route path="*" element={<Feed />} />
-            
           </Routes>
         </div>
       </div>

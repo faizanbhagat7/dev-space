@@ -33,12 +33,12 @@ const Testmodal = ({ setTestmodal, questions }) => {
                         style={{
                             color:"#0077b5"
                         }}
-                        >{score > 8 && "You Rocked it !"}</p>
+                        >{score >= 8 && "You Rocked it !"}</p>
                         <p
                          style={{
                             color:"#15202b"
                         }}
-                        >{score < 8 && score > 5 && "Fantastic! ,You can do better !"}</p>
+                        >{score < 8 && score >= 5 && "Fantastic! ,You can do better !"}</p>
                         <p
                          style={{
                             color:"#ad0c0c"

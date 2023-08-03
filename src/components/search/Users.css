@@ -35,7 +35,6 @@
   font-size: 20px;
   width: 600px;
   background-color: transparent;
-  border: 1px solid #ccc;
   border: none;
   outline: none;
 }
@@ -46,13 +45,23 @@
   outline: none;
 }
 
+
 .search-icon-container {
   background-color: transparent;
   padding: 5px;
-  border: 1px solid #ccc;
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+.search-icon-container:hover {
+  color:#0077b5;
+}
+
+input{
+  background-color: transparent;
+  border: none;
+  outline: none;
 }
 
 .user-card {
@@ -218,10 +227,10 @@ recomended-user-image{
   }
 
   .fetcheduser-name {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
   .fetcheduser-description {
-    font-size: 1.2rem;
+    font-size: 1.0rem;
   }
   .recomended-user-image img{
     width: 140px;

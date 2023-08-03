@@ -1,19 +1,20 @@
-import React ,{ useState, useEffect, useContext} from 'react'
-import { LoginContext } from '../../context/LoginContext'
+import React, { useState, useEffect, useContext } from "react";
+import { LoginContext } from "../../context/LoginContext";
+import Loader from '../loader/Loader'
 
 const Feed = () => {
+  const { activebutton, setActivebutton } = useContext(LoginContext);
 
-    const { activebutton, setActivebutton} = useContext(LoginContext);
-
-    useEffect(() => {
-        setActivebutton('feed');
-    }, [])
+  useEffect(() => {
+    setActivebutton("feed");
+  }, []);
 
   return (
     <>
-        Application Feed
+       <h1> Application feed </h1> 
+ 
     </>
-  )
-}
+  );
+};
 
-export default Feed
+export default Feed;
