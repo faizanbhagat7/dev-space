@@ -79,11 +79,11 @@ const Sidebar = () => {
       icon: <QuizRoundedIcon />,
       url: "/tests",
     },
-    {
-      name: "bookmarks",
-      icon: <CollectionsBookmarkRoundedIcon />,
-      url: "/bookmarks",
-    },
+    // {
+    //   name: "bookmarks",
+    //   icon: <CollectionsBookmarkRoundedIcon />,
+    //   url: "/bookmarks",
+    // },
   ];
 
   return (
