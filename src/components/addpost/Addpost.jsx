@@ -3,6 +3,9 @@ import { LoginContext } from "../../context/LoginContext";
 import "./addpost.css";
 import { Link } from "react-router-dom";
 import Loader from "../loader/Loader";
+import { supabase } from "../../backend/supabaseConfig";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Addpost = () => {
   const { activebutton, user, setActivebutton } = useContext(LoginContext);
@@ -10,6 +13,53 @@ const Addpost = () => {
   useEffect(() => {
     setActivebutton("add post");
   }, []);
+
+  const [caption, setCaption] = useState("");
+  const [image, setImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [imageURL, setImageURL] = useState("");
+  const [filePath, setFilePath] = useState("");
+
+  const fileUpload = (e) => {
+    const file = e.target.files[0];
+    const path = `${user?.id}/${Date.now()}-${file?.name}`;
+    setFilePath(path);
+    const url = `${process.env.REACT_APP_SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
+    setImage(file);
+    setImageURL(url);
+  };
+
+  const postContent = async (e) => {
+    e.preventDefault();
+    setIsUploading(true);
+    const { data, error } = await supabase.storage
+      .from("posts")
+      .upload(filePath, image);
+    if (error) {
+      toast.error("Error uploading image");
+      return;
+    }
+
+    const { data: post, error: postError } = await supabase
+      .from("posts")
+      .insert([
+        {
+          author: user?.id,
+          caption: caption,
+          image: imageURL,
+        },
+      ]);
+    if (postError) {
+      toast.error("Error uploading post");
+      return;
+    }
+    toast.success("Post uploaded successfully");
+    setIsUploading(false);
+    setCaption("");
+    setImage(null);
+    setImageURL("");
+    setFilePath("");
+  };
 
   return (
     <>
@@ -45,7 +95,7 @@ const Addpost = () => {
               <button
                 className="addpost-save-button"
                 type="submit"
-                // onClick={handleSubmit}
+                onClick={(e) => postContent(e)}
                 style={
                   {
                     // display: uploading ? "none" : "inline",
@@ -59,10 +109,12 @@ const Addpost = () => {
           </div>
           <div className="addpost-input-section">
             <div className="addpost-input">
-              <form>
+              <form onSubmit={(e) => postContent(e)}>
                 <textarea
                   className="input-textarea"
                   placeholder="Whats in your mind ?"
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
                 />
 
                 <label className="addpost-avatar-label">
@@ -70,11 +122,17 @@ const Addpost = () => {
                     type="file"
                     accept="image/*"
                     className="addpost-upload-input"
+                    onChange={(e) => fileUpload(e)}
                   />
                   <p>Choose Image</p>
                 </label>
 
-                <p className="image-selected-info">{/* <Loader /> */}</p>
+                <p className="image-selected-info">{
+                  image? `Image selected: ${image.name}` : ""
+                }</p>
+                {
+                  isUploading ? <Loader /> : ""
+                }
               </form>
             </div>
           </div>
