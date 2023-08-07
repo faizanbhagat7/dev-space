@@ -25,7 +25,7 @@ const FollowersPage = () => {
     }
     // fetch followers profile
     let idList = data[0]?.followers;
-    console.log(idList);
+    // console.log(idList);
 
     if (idList === null || idList === []) {
       setLoading(false);

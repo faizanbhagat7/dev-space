@@ -25,7 +25,7 @@ const FollowingPage = () => {
     }
     // fetch following profile
     let idList = data[0]?.following;
-    console.log(idList);
+    // console.log(idList);
 
     if (idList === null || idList === []) {
       setLoading(false);

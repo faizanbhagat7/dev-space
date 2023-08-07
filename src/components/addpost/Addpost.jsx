@@ -31,34 +31,92 @@ const Addpost = () => {
 
   const postContent = async (e) => {
     e.preventDefault();
+    if (caption !== "" || image !== null) {
     setIsUploading(true);
-    const { data, error } = await supabase.storage
-      .from("posts")
-      .upload(filePath, image);
-    if (error) {
-      toast.error("Error uploading image");
-      return;
-    }
+    if (image) {
+      const { data, error } = await supabase.storage
+        .from("posts")
+        .upload(filePath, image);
+      if (error) {
+        toast.error("Error uploading image", {
+          closeOnClick: true,
+          closeButton: false,
+          position: "bottom-center",
+          duration: 1000,
+          hideProgressBar: true,
+        });
+        return;
+      }
 
-    const { data: post, error: postError } = await supabase
-      .from("posts")
-      .insert([
-        {
-          author: user?.id,
-          caption: caption,
-          image: imageURL,
-        },
-      ]);
-    if (postError) {
-      toast.error("Error uploading post");
-      return;
+      const { data: post, error: postError } = await supabase
+        .from("posts")
+        .insert([
+          {
+            author: user?.id,
+            caption: caption,
+            image: imageURL,
+          },
+        ]);
+      if (postError) {
+        toast.error("Error uploading post", {
+          closeOnClick: true,
+          closeButton: false,
+          position: "bottom-center",
+          duration: 1000,
+          hideProgressBar: true,
+        });
+        return;
+      }
+      toast.success("Post uploaded successfully", {
+        closeOnClick: true,
+        closeButton: false,
+        position: "bottom-center",
+        duration: 1000,
+        hideProgressBar: true,
+      });
+      setIsUploading(false);
+      setCaption("");
+      setImage(null);
+      setImageURL("");
+      setFilePath("");
+    } else {
+      const { data: post, error: postError } = await supabase
+        .from("posts")
+        .insert([
+          {
+            author: user?.id,
+            caption: caption,
+          },
+        ]);
+      if (postError) {
+        toast.error("Error uploading post", {
+          closeOnClick: true,
+          closeButton: false,
+          position: "bottom-center",
+          duration: 1000,
+          hideProgressBar: true,
+        });
+        return;
+      }
+      toast.success("Post uploaded successfully", {
+        closeOnClick: true,
+        closeButton: false,
+        position: "bottom-center",
+        duration: 1000,
+        hideProgressBar: true,
+      });
+      setIsUploading(false);
+      setCaption("");
+    }}
+    else{
+      toast.error("Please enter caption or upload image", {
+        closeOnClick: true,
+        closeButton: false,
+        position: "bottom-center",
+        duration: 1000,
+        hideProgressBar: true,
+      });
     }
-    toast.success("Post uploaded successfully");
-    setIsUploading(false);
-    setCaption("");
-    setImage(null);
-    setImageURL("");
-    setFilePath("");
   };
 
   return (
@@ -96,12 +154,6 @@ const Addpost = () => {
                 className="addpost-save-button"
                 type="submit"
                 onClick={(e) => postContent(e)}
-                style={
-                  {
-                    // display: uploading ? "none" : "inline",
-                    // display: bucketUpload ? "none" : "inline",
-                  }
-                }
               >
                 Post Content
               </button>
@@ -127,12 +179,10 @@ const Addpost = () => {
                   <p>Choose Image</p>
                 </label>
 
-                <p className="image-selected-info">{
-                  image? `Image selected: ${image.name}` : ""
-                }</p>
-                {
-                  isUploading ? <Loader /> : ""
-                }
+                <p className="image-selected-info">
+                  {image ? `Image selected: ${image.name}` : ""}
+                </p>
+                {isUploading ? <Loader /> : ""}
               </form>
             </div>
           </div>

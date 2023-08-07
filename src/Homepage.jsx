@@ -46,6 +46,13 @@ const Homepage = () => {
 
   useEffect(() => {
     if (!user || user.id !== Session.user.id) {
+      toast.success("Welcome to the developers Community !} !",{
+        closeOnClick: true,
+        closeButton: false,
+        position: "top-center",
+        duration: 1000,
+        hideProgressBar: true,
+      });
       fetchUserProfile(Session);
     }
   }, [Session]);
