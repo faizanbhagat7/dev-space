@@ -121,13 +121,13 @@ const Sidebar = () => {
                 style={{
                   backgroundColor:
                     activebutton === option.name ? "#e9e9e9" : "white",
-                  color: activebutton === option.name ? "#0077b5" : "#000",
+                  color: activebutton === option.name ? "#007fff" : "#000",
                   borderBottom:
-                    activebutton === option.name ? "2px solid #0077b5" : "none",
+                    activebutton === option.name ? "2px solid #007fff" : "none",
                     transition: "all 0.2s ease-in-out",
                   paddingBottom : "0px",
                   transition: "all 0.2s ease-in-out",
-                  boxShadow: activebutton === option.name ? "0px 0px 5px 0px #0077b5" : "none",
+                  boxShadow: activebutton === option.name ? "0px 0px 5px 0px #007fff" : "none",
                 }}
               >
                 <div className="option-icon">{option.icon}</div>

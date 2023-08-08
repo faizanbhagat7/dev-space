@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import "./feedcard.css";
 import { supabase } from "../../backend/supabaseConfig";
 import { LoginContext } from "../../context/LoginContext";
+import ReactTimeAgo from "react-time-ago";
+import SchoolIcon from '@mui/icons-material/School';
 
 const Feedcard = ({ feed }) => {
   const { user } = useContext(LoginContext);
@@ -25,41 +27,38 @@ const Feedcard = ({ feed }) => {
       <div className="feed-card">
         <div className="feed-card-header">
           <div className="feed-card-header-left">
-            <img src={feedAuthor?.avatar} alt="" className="feed-card-avatar" width='100px' height='100px' />
-            <div className="feed-card-author">
-              <h4>{feedAuthor?.name}</h4>
+            <div className="author-info">
+              <div className="author-avatar">
+                <img
+                  src={feedAuthor?.avatar}
+                  alt=""
+                  className="author-avatar-img"
+                />
+              </div>
+              <div className="author-description">
+                <div className="author-name">{feedAuthor?.name}</div>
+                <div className="author-desc">{feedAuthor?.description}</div>
+                <div className="feed-date">
+                  <ReactTimeAgo date={feed?.created_at} locale="en-US" />
+                </div>
+              </div>
             </div>
           </div>
           <div className="feed-card-header-right">
-            <h4>{new Date(feed.created_at).toLocaleDateString()}</h4>
+            <h1>:</h1>
           </div>
         </div>
         <div className="feed-card-body">
-          <p>{feed.caption}</p>
-          <div className="feed-card-image">
-            <img src={feed.image} alt="" width='500px' height='500px' />
-          </div>
+          <div className="feed-card-body-text">{feed?.caption}</div>
+          {feed?.image && (
+            <div className="feed-card-body-image">
+              <img src={feed?.image} alt="" />
+            </div>
+          )}
         </div>
         <div className="feed-card-footer">
-          <div className="feed-card-footer-left">
-            <h4>{feed.likes} likes</h4>
-          </div>
-          <div className="feed-card-footer-right">
-            <h4>{feed.comments} comments</h4>
-          </div>
-        </div>
-        <div className="feed-card-actions">
-          <div className="feed-card-actions-left">
-            <button className="feed-card-action-button">
-              <i className="far fa-heart"></i>
-              <h4>Like</h4>
-            </button>
-            <button className="feed-card-action-button">
-              <i className="far fa-comment"></i>
-              <h4>Comment</h4>
-            </button>
-          </div>
-        </div>
+           
+        </div>  
       </div>
     </>
   );

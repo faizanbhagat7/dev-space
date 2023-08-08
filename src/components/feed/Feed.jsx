@@ -51,7 +51,7 @@ const Feed = () => {
           }}
         >
           {
-            feed.map((post) => <Feedcard feed={post} />)
+            feed?.map((post) => <Feedcard feed={post} />)
           }
         </div>
       ) : fetching ? (
