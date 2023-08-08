@@ -24,7 +24,7 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  border: 1px solid #0077b5;
+  border: 1px solid #007fff;
   width: min-content;
   background-color: #fff;
   border-radius: 5px;
@@ -55,7 +55,7 @@
 }
 
 .search-icon-container:hover {
-  color:#0077b5;
+  color:#007fff;
 }
 
 input{

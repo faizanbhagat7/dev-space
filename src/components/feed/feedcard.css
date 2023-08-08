@@ -93,3 +93,31 @@
     height: 100%;
 }
 
+.feed-card-footer-left{
+    display: flex;
+    align-items: center;
+    margin:0px 10px 10px 10px;
+}
+
+.feed-card-footer-like-container{
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.feed-card-footer-comment-container{
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    cursor: pointer;
+}
+
+.feed-like-count,.feed-comment-count{
+    font-size: 16px;
+    font-weight: 400;
+    color: #000;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin-left: 2px;
+    margin-bottom: 5px;
+}

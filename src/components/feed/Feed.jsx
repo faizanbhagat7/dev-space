@@ -35,7 +35,7 @@ const Feed = () => {
     setFetching(false);
   };
 
-  console.log(feed);
+  // console.log(feed);
 
   return (
     <>
@@ -47,7 +47,7 @@ const Feed = () => {
             width: "100%",
             height: "100vh",
             overflowY: "scroll",
-
+            padding:"10px"
           }}
         >
           {

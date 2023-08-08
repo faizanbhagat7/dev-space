@@ -26,7 +26,7 @@
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 20px;
-    color: #0077b5;    
+    color: #007fff;    
     text-align:center;
     font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
@@ -61,7 +61,7 @@
 }
 
 .input-field:focus{
-    border: 2px solid #0077b5;
+    border: 2px solid #007fff;
     transition: all 0.3s ease-out;
     transform:  scale(1.02);
 }
@@ -84,7 +84,7 @@
     font-family: 'Montserrat', sans-serif;
     border:1px solid #ccc;
     margin-bottom: 20px;
-    background-color: #0077b5;
+    background-color: #007fff;
     color: #fff;
     cursor: pointer;
 }
@@ -109,7 +109,7 @@
 
 .login-link-text{
     text-decoration: none;
-    color: #0077b5;
+    color: #007fff;
     font-size: 1.4rem;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;

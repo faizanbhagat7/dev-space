@@ -60,7 +60,7 @@
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     margin-left: 70px;
     resize: none;
-    box-shadow: 0 0 0 2px #0077b5;
+    box-shadow: 0 0 0 2px #007fff;
   }
 
   .addpost-upload-input{
@@ -76,7 +76,7 @@
 }
 
 .addpost-avatar-label p{
-    background-color: #0077b5;
+    background-color: #007fff;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
