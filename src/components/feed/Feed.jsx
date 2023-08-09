@@ -35,21 +35,11 @@ const Feed = () => {
     setFetching(false);
   };
 
-  // console.log(feed);
 
   return (
     <>
       {feed.length > 0 ? (
-        <div className="feed-container"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            height: "100vh",
-            overflowY: "scroll",
-            padding:"10px"
-          }}
-        >
+        <div className="feed-container">
           {
             feed?.map((post) => <Feedcard feed={post} />)
           }

@@ -5,18 +5,23 @@ import { LoginContext } from "../../context/LoginContext";
 import ReactTimeAgo from "react-time-ago";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import Comments from "./Comments";
+import { Link } from "react-router-dom";
 
 const Feedcard = ({ feed }) => {
   const { user } = useContext(LoginContext);
   const [feedAuthor, setFeedAuthor] = useState(null);
-  const [isLikedByUser, setIsLikedByUser] = useState(false);
   const [likeList, setLikeList] = useState([]);
   const [likeCount, setLikeCount] = useState(0);
+  const [isLikedByUser, setIsLikedByUser] = useState(false);
+  const [commentpopup, setCommentpopup] = useState(false);
+  const [commentList, setCommentList] = useState([]);
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     getFeedAuthor();
     getLikes();
-    checkIfLikedByUser();
+    getComments();
   }, []);
 
   const getFeedAuthor = async () => {
@@ -44,8 +49,8 @@ const Feedcard = ({ feed }) => {
       },
     ]);
     if (!error) {
-      setIsLikedByUser(true);
       getLikes();
+      setIsLikedByUser(true);
     }
   };
 
@@ -56,8 +61,8 @@ const Feedcard = ({ feed }) => {
       .eq("postId", feed?.id)
       .eq("userId", user?.id);
     if (!error) {
-      setIsLikedByUser(false);
       getLikes();
+      setIsLikedByUser(false);
     }
   };
 
@@ -67,23 +72,37 @@ const Feedcard = ({ feed }) => {
       .select("userId")
       .eq("postId", feed?.id);
     if (!error) {
-      setLikeList(data);
+      setLikeList(data.map((obj) => obj.userId));
       setLikeCount(data.length);
+      if (data.map((obj) => obj.userId).includes(user?.id)) {
+        setIsLikedByUser(true);
+        return;
+      } else {
+        setIsLikedByUser(false);
+      }
     }
   };
 
-  const checkIfLikedByUser = () => {
-    likeList.map((like) => {
-      if (like === user?.id) {
-        setIsLikedByUser(true);
-        return;
-      }
-      else{
-        setIsLikedByUser(false);
-      }
-    });
+  const handleCommentPopup = () => {
+    if (commentpopup === false) {
+      setCommentpopup(true);
+    } else {
+      setCommentpopup(false);
+    }
   };
-  // console.log(likeList)
+
+  const getComments = async () => {
+    const { data, error } = await supabase
+      .from("comments")
+      .select("*")
+      .eq("postId", feed?.id)
+      .order("created_at", { ascending: true });
+    if (!error) {
+      setCommentList(data);
+      setCommentCount(data.length);
+    }
+  };
+
   return (
     <>
       <div className="feed-card">
@@ -104,7 +123,15 @@ const Feedcard = ({ feed }) => {
                 />
               </div>
               <div className="author-description">
-                <div className="author-name">{feedAuthor?.name}</div>
+                <Link
+                  to={`/profile/${feedAuthor?.id}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "black",
+                  }}
+                >
+                  <div className="author-name">{feedAuthor?.name}</div>
+                </Link>
                 <div className="author-desc">{feedAuthor?.description}</div>
                 <div className="feed-date">
                   <ReactTimeAgo date={feed?.created_at} locale="en-US" />
@@ -135,16 +162,46 @@ const Feedcard = ({ feed }) => {
                   }}
                 />
               </div>
-              <div className="feed-like-count">{likeCount}</div>
-            </div>
-            <div className="feed-card-footer-comment-container">
-              <div classname="feed-comment-icon">
-                <ChatBubbleOutlineIcon />
+              <div
+                className="feed-like-count"
+                style={{
+                  color: isLikedByUser ? "#007fff" : "",
+                }}
+              >
+                {likeCount}
               </div>
-              <div className="feed-comment-count">5</div>
+            </div>
+            <div
+              className="feed-card-footer-comment-container"
+              onClick={handleCommentPopup}
+            >
+              <div classname="feed-comment-icon">
+                <ChatBubbleOutlineIcon
+                  style={{
+                    color: commentpopup ? "#007fff" : "",
+                  }}
+                />
+              </div>
+              <div
+                className="feed-comment-count"
+                style={{
+                  color: commentpopup ? "#007fff" : "",
+                }}
+              >
+                {commentCount}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* commments section */}
+        {commentpopup && (
+          <Comments
+            feed={feed}
+            getComments={getComments}
+            commentList={commentList}
+          />
+        )}
       </div>
     </>
   );

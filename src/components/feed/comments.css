@@ -1,0 +1,53 @@
+.feed-comments-section {
+  margin: 10px;
+  margin-top: 0px;
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.feed-comments-section-header {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+}
+
+.feed-comments-section-header-right input {
+  width: 400px;
+  border-radius: 5px;
+  border: none;
+  padding: 5px;
+  margin-left: 15px;
+  outline: none;
+  border: 1px solid gray;
+}
+
+.feed-comments-section-header-right input:focus {
+  border: 1px solid #007fff;
+}
+
+.comment-send-icon {
+  cursor: pointer;
+  width: 30px;
+  margin-left: 5px;
+}
+.feed-comments-section-header-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.feed-comments-section-header-left > img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* mobile responsiveness */
+@media screen and (max-width: 768px) {
+  .feed-comments-section-header-right input {
+    width: 300px;
+  }
+}
