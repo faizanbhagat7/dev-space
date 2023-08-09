@@ -3,19 +3,20 @@ import "./feedcard.css";
 import { supabase } from "../../backend/supabaseConfig";
 import { LoginContext } from "../../context/LoginContext";
 import ReactTimeAgo from "react-time-ago";
-import FavoriteBorderSharpIcon from "@mui/icons-material/FavoriteBorderSharp";
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 const Feedcard = ({ feed }) => {
   const { user } = useContext(LoginContext);
   const [feedAuthor, setFeedAuthor] = useState(null);
   const [isLikedByUser, setIsLikedByUser] = useState(false);
-  const [likeList, setLikeList] = useState([]); 
+  const [likeList, setLikeList] = useState([]);
   const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
     getFeedAuthor();
     getLikes();
+    checkIfLikedByUser();
   }, []);
 
   const getFeedAuthor = async () => {
@@ -28,37 +29,61 @@ const Feedcard = ({ feed }) => {
   };
 
   const handleLike = async () => {
+    if (isLikedByUser === false) {
+      addLike();
+    } else {
+      removeLike();
+    }
+  };
+
+  const addLike = async () => {
+    const { data, error } = await supabase.from("likes").insert([
+      {
+        postId: feed?.id,
+        userId: user?.id,
+      },
+    ]);
+    if (!error) {
+      setIsLikedByUser(true);
+      getLikes();
+    }
+  };
+
+  const removeLike = async () => {
     const { data, error } = await supabase
       .from("likes")
-      .insert([{
-         postId: feed?.id,
-          userId: user?.id,
-      }]);
-      if (data) {
-        console.log(data)
-        setIsLikedByUser(true);
-        getLikes();
-      }
+      .delete()
+      .eq("postId", feed?.id)
+      .eq("userId", user?.id);
+    if (!error) {
+      setIsLikedByUser(false);
+      getLikes();
+    }
   };
 
   const getLikes = async () => {
     const { data, error } = await supabase
       .from("likes")
       .select("userId")
-      if (data) {
-        setLikeList(data);
-        setLikeCount(data.length);
-      }
-      checkIsLikedByUser();
-  }
-
-  const checkIsLikedByUser = () => {
-    const isLiked = likeList.find((like) => like.userId === user?.id);
-    if (isLiked) {
-      setIsLikedByUser(true);
+      .eq("postId", feed?.id);
+    if (!error) {
+      setLikeList(data);
+      setLikeCount(data.length);
     }
-  }
-  console.log(likeList)
+  };
+
+  const checkIfLikedByUser = () => {
+    likeList.map((like) => {
+      if (like === user?.id) {
+        setIsLikedByUser(true);
+        return;
+      }
+      else{
+        setIsLikedByUser(false);
+      }
+    });
+  };
+  // console.log(likeList)
   return (
     <>
       <div className="feed-card">
@@ -103,9 +128,10 @@ const Feedcard = ({ feed }) => {
           <div className="feed-card-footer-left">
             <div className="feed-card-footer-like-container">
               <div className="feed-like-icon" onClick={handleLike}>
-                <FavoriteBorderSharpIcon 
+                <FavoriteIcon
                   style={{
-                    color: isLikedByUser ? "#007fff" : "",
+                    color: isLikedByUser ? "#007fff" : "gray",
+                    transition: "all 0.2s ease-in-out",
                   }}
                 />
               </div>
