@@ -7,7 +7,7 @@ import { LoginContext } from "../../context/LoginContext";
 import DeleteIcon from '@mui/icons-material/Delete';
 
 
-const Commentdata = ({ comment ,getComments, commentList}) => {
+const Commentdata = ({ comment ,getComments,commentList}) => {
   const [commentedUser, setCommentedUser] = useState();
   const { user } = useContext(LoginContext);
 
@@ -33,7 +33,7 @@ const Commentdata = ({ comment ,getComments, commentList}) => {
 
   useEffect(() => {
     fetchCommentedUser();
-  }, []);
+  }, [comment]);
 
   return (
     <>

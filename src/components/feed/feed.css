@@ -3,7 +3,7 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 10px 0px;
+    /* padding: 10px 0px; */
     overflow-y: scroll;
 }
 

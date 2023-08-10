@@ -24,7 +24,7 @@ const Feedcard = ({ feed , getFeed}) => {
     getFeedAuthor();
     getLikes();
     getComments();
-  }, []);
+  }, [feed]);
 
   const getFeedAuthor = async () => {
     const { data, error } = await supabase

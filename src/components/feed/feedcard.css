@@ -79,7 +79,7 @@
     font-weight: 400;
     color: #000;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    padding: 0px 20px;
+    padding: 5px 20px;
 }
 
 .feed-card-body-image{
@@ -134,9 +134,17 @@
 @media only screen and (max-width: 1000px) {
     .feed-card{
         max-width: 90%;
+        
     }
     .feed-card-body-image{
         max-width: 300px;
+    }
+    .feed-card-body{
+        padding: 0px 20px;
+    }
+    .feed-card-body-text{
+        font-size: 16px;
+        padding: 0px 0px;
     }
 }
 

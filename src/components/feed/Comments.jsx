@@ -12,6 +12,9 @@ const Comments = ({ feed, getComments, commentList }) => {
 
   const addComment = async (e) => {
     e.preventDefault();
+    if (commentText.split(" ").join("")=== "") {
+      return;
+    }
     const { data, error } = await supabase.from("comments").insert([
       {
         postId: feed?.id,
@@ -25,11 +28,10 @@ const Comments = ({ feed, getComments, commentList }) => {
     }
   };
 
-  console.log(commentList);
 
-  useEffect(() => {
-    getComments();
-  }, []);
+  // useEffect(() => {
+  //   getComments();
+  // }, []);
 
   return (
     <>
@@ -60,9 +62,11 @@ const Comments = ({ feed, getComments, commentList }) => {
           </form>
         </div>
         <div className="feed-comments-section-body">
-          {commentList.map((comment) => (
+          {commentList?.map((comment) => (
             <div className="feed-comment">
-              <Commentdata comment={comment} getComments={getComments} commentList={commentList}/>
+              <Commentdata comment={comment} getComments={getComments}
+              commentList={commentList}
+              />
             </div>
           ))}
         </div>
