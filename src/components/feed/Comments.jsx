@@ -4,6 +4,7 @@ import { LoginContext } from "../../context/LoginContext";
 import ReactTimeAgo from "react-time-ago";
 import "./comments.css";
 import SendIcon from "@mui/icons-material/Send";
+import Commentdata from "./Commentdata";
 
 const Comments = ({ feed, getComments, commentList }) => {
   const { user } = useContext(LoginContext);
@@ -60,7 +61,9 @@ const Comments = ({ feed, getComments, commentList }) => {
         </div>
         <div className="feed-comments-section-body">
           {commentList.map((comment) => (
-            <div className="feed-comment">{comment.comment}</div>
+            <div className="feed-comment">
+              <Commentdata comment={comment} getComments={getComments} commentList={commentList}/>
+            </div>
           ))}
         </div>
       </div>

@@ -4,12 +4,13 @@
     display: flex;
     flex-direction: column;
     padding: 10px 0px;
+    overflow-y: scroll;
 }
 
 @media screen and (max-width: 1000px){
     .feed-container{
         height: 100vh;
         margin: 0px;
-        
+        align-items: center;
     }
 }

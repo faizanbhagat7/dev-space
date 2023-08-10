@@ -41,7 +41,7 @@ const Feed = () => {
       {feed.length > 0 ? (
         <div className="feed-container">
           {
-            feed?.map((post) => <Feedcard feed={post} />)
+            feed?.map((post) => <Feedcard feed={post} getFeed={getFeed}/>)
           }
         </div>
       ) : fetching ? (

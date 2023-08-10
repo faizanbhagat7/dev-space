@@ -7,8 +7,10 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import Comments from "./Comments";
 import { Link } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
-const Feedcard = ({ feed }) => {
+const Feedcard = ({ feed , getFeed}) => {
   const { user } = useContext(LoginContext);
   const [feedAuthor, setFeedAuthor] = useState(null);
   const [likeList, setLikeList] = useState([]);
@@ -32,6 +34,17 @@ const Feedcard = ({ feed }) => {
       .single();
     setFeedAuthor(data);
   };
+
+  const deletePost = async () => {
+    const { data, error } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", feed?.id);
+    if (!error) {
+        getFeed();
+    }
+    }
+  
 
   const handleLike = async () => {
     if (isLikedByUser === false) {
@@ -96,7 +109,7 @@ const Feedcard = ({ feed }) => {
       .from("comments")
       .select("*")
       .eq("postId", feed?.id)
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: false });
     if (!error) {
       setCommentList(data);
       setCommentCount(data.length);
@@ -140,7 +153,17 @@ const Feedcard = ({ feed }) => {
             </div>
           </div>
           <div className="feed-card-header-right">
-            <h1>:</h1>
+            {
+              feedAuthor?.id === user?.id && (
+                <DeleteIcon 
+                  style={{
+                    color: "red",
+                    cursor: "pointer",
+                  }}
+                  onClick={deletePost}
+                />
+              )
+            }
           </div>
         </div>
         <div className="feed-card-body">
@@ -191,6 +214,13 @@ const Feedcard = ({ feed }) => {
                 {commentCount}
               </div>
             </div>
+            <div className="feed-card-footer-bookmark-container">
+              <BookmarkIcon 
+                style={{
+                  color: "lightgray",
+                }}
+              />
+              </div>
           </div>
         </div>
 

@@ -48,6 +48,6 @@
 /* mobile responsiveness */
 @media screen and (max-width: 768px) {
   .feed-comments-section-header-right input {
-    width: 300px;
+    width: 200px;
   }
 }
