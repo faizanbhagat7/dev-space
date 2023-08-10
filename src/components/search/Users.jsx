@@ -152,8 +152,8 @@ const Users = () => {
                       <div className="recomended-user-details">
                         <div className="recomended-user-name">
                           {/* {recommendedUser.name} */}
-                          {recommendedUser?.name.length > 10 ? (
-                            recommendedUser?.name.slice(0, 10) + ".."
+                          {recommendedUser?.name.length > 12 ? (
+                            recommendedUser?.name.split(" ")[0]
                           ) : (
                             <>{recommendedUser.name}</>
                           )

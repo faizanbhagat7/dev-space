@@ -3,14 +3,20 @@ import "./feedcard.css";
 import { supabase } from "../../backend/supabaseConfig";
 import { LoginContext } from "../../context/LoginContext";
 import ReactTimeAgo from "react-time-ago";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderSharpIcon from "@mui/icons-material/FavoriteBorderSharp";
+import FavoriteSharpIcon from "@mui/icons-material/FavoriteSharp";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import ChatBubbleRoundedIcon from "@mui/icons-material/ChatBubbleRounded";
 import Comments from "./Comments";
 import { Link } from "react-router-dom";
-import DeleteIcon from '@mui/icons-material/Delete';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import DeleteIcon from "@mui/icons-material/Delete";
+import BookmarkBorderSharpIcon from "@mui/icons-material/BookmarkBorderSharp";
+import BookmarkSharpIcon from "@mui/icons-material/BookmarkSharp";
+import Deletemodal from "./Deletemodal";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Feedcard = ({ feed , getFeed}) => {
+const Feedcard = ({ feed, getFeed }) => {
   const { user } = useContext(LoginContext);
   const [feedAuthor, setFeedAuthor] = useState(null);
   const [likeList, setLikeList] = useState([]);
@@ -19,11 +25,14 @@ const Feedcard = ({ feed , getFeed}) => {
   const [commentpopup, setCommentpopup] = useState(false);
   const [commentList, setCommentList] = useState([]);
   const [commentCount, setCommentCount] = useState(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isAddedToSaved, setIsAddedToSaved] = useState(false);
 
   useEffect(() => {
     getFeedAuthor();
     getLikes();
     getComments();
+    checkIsBookmarked();
   }, [feed]);
 
   const getFeedAuthor = async () => {
@@ -34,17 +43,6 @@ const Feedcard = ({ feed , getFeed}) => {
       .single();
     setFeedAuthor(data);
   };
-
-  const deletePost = async () => {
-    const { data, error } = await supabase
-        .from("posts")
-        .delete()
-        .eq("id", feed?.id);
-    if (!error) {
-        getFeed();
-    }
-    }
-  
 
   const handleLike = async () => {
     if (isLikedByUser === false) {
@@ -116,6 +114,66 @@ const Feedcard = ({ feed , getFeed}) => {
     }
   };
 
+  const handleSaveToBookmarks = async () => {
+    if (isAddedToSaved === false) {
+      addToSaved();
+    } else {
+      removeFromSaved();
+    }
+  };
+
+  const addToSaved = async () => {
+    const { data, error } = await supabase.from("bookmarks").insert([
+      {
+        postId: feed?.id,
+        userId: user?.id,
+      },
+    ]);
+    if (!error) {
+      setIsAddedToSaved(true);
+      toast.success("Post added to Bookmarks", {
+        closeOnClick: true,
+        closeButton: false,
+        position: "bottom-center",
+        duration: 200,
+        hideProgressBar: true,
+      });
+    }
+  };
+
+  const removeFromSaved = async () => {
+    const { data, error } = await supabase
+      .from("bookmarks")
+      .delete()
+      .eq("postId", feed?.id)
+      .eq("userId", user?.id);
+    if (!error) {
+      setIsAddedToSaved(false);
+      toast.success("Post removed from Bookmarks", {
+        closeOnClick: true,
+        closeButton: false,
+        position: "bottom-center",
+        duration: 200,
+        hideProgressBar: true,
+      });
+    }
+  };
+
+  const checkIsBookmarked = async () => {
+    const { data, error } = await supabase
+      .from("bookmarks")
+      .select("userId")
+      .eq("postId", feed?.id);
+    if (!error) {
+      if (data.map((obj) => obj.userId).includes(user?.id)) {
+        setIsAddedToSaved(true);
+        return;
+      } else {
+        setIsAddedToSaved(false);
+      }
+    }
+  };
+
   return (
     <>
       <div className="feed-card">
@@ -153,17 +211,23 @@ const Feedcard = ({ feed , getFeed}) => {
             </div>
           </div>
           <div className="feed-card-header-right">
-            {
-              feedAuthor?.id === user?.id && (
-                <DeleteIcon 
-                  style={{
-                    color: "red",
-                    cursor: "pointer",
-                  }}
-                  onClick={deletePost}
-                />
-              )
-            }
+            {feedAuthor?.id === user?.id && (
+              <DeleteIcon
+                style={{
+                  color: "red",
+                  cursor: "pointer",
+                }}
+                setShowDeleteModal={setShowDeleteModal}
+                onClick={() => setShowDeleteModal(true)}
+              />
+            )}
+            {showDeleteModal && (
+              <Deletemodal
+                setShowDeleteModal={setShowDeleteModal}
+                feed={feed}
+                getFeed={getFeed}
+              />
+            )}
           </div>
         </div>
         <div className="feed-card-body">
@@ -178,12 +242,15 @@ const Feedcard = ({ feed , getFeed}) => {
           <div className="feed-card-footer-left">
             <div className="feed-card-footer-like-container">
               <div className="feed-like-icon" onClick={handleLike}>
-                <FavoriteIcon
-                  style={{
-                    color: isLikedByUser ? "#007fff" : "gray",
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                />
+                {isLikedByUser ? (
+                  <FavoriteSharpIcon
+                    style={{
+                      color: "#007fff",
+                    }}
+                  />
+                ) : (
+                  <FavoriteBorderSharpIcon />
+                )}
               </div>
               <div
                 className="feed-like-count"
@@ -199,28 +266,40 @@ const Feedcard = ({ feed , getFeed}) => {
               onClick={handleCommentPopup}
             >
               <div classname="feed-comment-icon">
-                <ChatBubbleOutlineIcon
-                  style={{
-                    color: commentpopup ? "#007fff" : "",
-                  }}
-                />
+                {commentpopup ? (
+                  <ChatBubbleRoundedIcon
+                    style={{
+                      color: "#007fff",
+                    }}
+                  />
+                ) : (
+                  <ChatBubbleOutlineIcon />
+                )}
               </div>
               <div
                 className="feed-comment-count"
                 style={{
                   color: commentpopup ? "#007fff" : "",
+                  transition: "all 0.2s ease-in-out",
                 }}
               >
                 {commentCount}
               </div>
             </div>
-            <div className="feed-card-footer-bookmark-container">
-              <BookmarkIcon 
-                style={{
-                  color: "lightgray",
-                }}
-              />
-              </div>
+            <div
+              className="feed-card-footer-bookmark-container"
+              onClick={handleSaveToBookmarks}
+            >
+              {isAddedToSaved ? (
+                <BookmarkSharpIcon
+                  style={{
+                    color: "#007fff",
+                  }}
+                />
+              ) : (
+                <BookmarkBorderSharpIcon />
+              )}
+            </div>
           </div>
         </div>
 

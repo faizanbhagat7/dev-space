@@ -19,6 +19,7 @@ const Userprofile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [profileAchievementsCount, setProfileAchievementsCount] = useState("");
   const [isfollowing, setIsfollowing] = useState(null);
+  const [profileFeedCount, setProfileFeedCount] = useState(0);
   const Session = useSession();
 
   const fetchDynamicUserProfile = async (profileId) => {
@@ -85,13 +86,6 @@ const Userprofile = () => {
         return;
       } else {
         setIsfollowing(true);
-        // toast.success(`Followed ${userProfile?.name}`, {
-        //   position: "top-center",
-        //   autoClose: 1500,
-        //   borderRadius: 20,
-        //   hideProgressBar: true,
-        //   closeOnClick: true,
-        // });
         fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
       }
@@ -126,13 +120,7 @@ const Userprofile = () => {
         return;
       } else {
         setIsfollowing(false);
-        // toast.success(`Unfollowed ${userProfile?.name}`, {
-        //   position: "top-center",
-        //   autoClose: 1500,
-        //   borderRadius: 20,
-        //   hideProgressBar: true,
-        //   closeOnClick: true,
-        // });
+
         fetchDynamicUserProfile(profileId);
         fetchUserProfile(Session);
       }
@@ -147,16 +135,6 @@ const Userprofile = () => {
     }
   };
 
-  useEffect(() => {
-    if (profileId === user?.id) {
-      setActivebutton("profile");
-    } else {
-      checkIsFollowing(profileId);
-    }
-    fetchDynamicUserProfile(profileId);
-    profileAchievementsCountFunction(profileId);
-  }, [profileId]);
-
   const profileAchievementsCountFunction = async (profileId) => {
     const { data, error } = await supabase
       .from("achievements")
@@ -166,6 +144,27 @@ const Userprofile = () => {
       setProfileAchievementsCount(data.length);
     }
   };
+
+  const profileFeedCountFunction = async (profileId) => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select()
+      .eq("author", profileId);
+    if (!error) {
+      setProfileFeedCount(data.length);
+    }
+  };
+
+  useEffect(() => {
+    if (profileId === user?.id) {
+      setActivebutton("profile");
+    } else {
+      checkIsFollowing(profileId);
+    }
+    fetchDynamicUserProfile(profileId);
+    profileAchievementsCountFunction(profileId);
+    profileFeedCountFunction(profileId);
+  }, [profileId]);
 
   if (!userProfile) {
     return <Loader />;
@@ -187,10 +186,10 @@ const Userprofile = () => {
             </div>
             <div className="profile-connections">
               <div className="post-count">
-                Feed <br /> 3
+                Feed <br /> {profileFeedCount}
               </div>
               <Link
-              to={"followers"}
+                to={"followers"}
                 style={{
                   textDecoration: "none",
                   color: "black",
@@ -206,19 +205,19 @@ const Userprofile = () => {
               </Link>
 
               <Link
-              to={"following"}
+                to={"following"}
                 style={{
                   textDecoration: "none",
                   color: "black",
                   cursor: "pointer",
                 }}
               >
-              <div className="following">
-                following <br />{" "}
-                {userProfile?.following !== null
-                  ? userProfile?.following?.length
-                  : 0}
-              </div>
+                <div className="following">
+                  following <br />{" "}
+                  {userProfile?.following !== null
+                    ? userProfile?.following?.length
+                    : 0}
+                </div>
               </Link>
             </div>
           </div>
@@ -289,7 +288,11 @@ const Userprofile = () => {
               style={{ textDecoration: "none", color: "black" }}
             >
               <p className="feed-header">Feed</p>
-              <p className="feed-count">3 posts by {userProfile?.name}</p>
+              <p className="feed-count">{
+                profileFeedCount <= 1 ? profileFeedCount + " post " : profileFeedCount + " posts "
+              } 
+                from {userProfile?.name}
+              </p>
             </Link>
           </div>
         </div>

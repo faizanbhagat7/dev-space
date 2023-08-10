@@ -29,10 +29,6 @@ const Comments = ({ feed, getComments, commentList }) => {
   };
 
 
-  // useEffect(() => {
-  //   getComments();
-  // }, []);
-
   return (
     <>
       <div className="feed-comments-section">
