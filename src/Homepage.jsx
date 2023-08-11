@@ -22,6 +22,7 @@ import TestPage from "./components/test/TestPage";
 import FollowersPage from "./components/profile/FollowersPage";
 import FollowingPage from "./components/profile/FollowingPage";
 import Loader from "./components/loader/Loader";
+import Profilefeed from "./components/profile/Profilefeed";
 
 const Homepage = () => {
   const Session = useSession();
@@ -46,7 +47,7 @@ const Homepage = () => {
 
   useEffect(() => {
     if (!user || user.id !== Session.user.id) {
-      toast.success("Welcome to the developers Community !} !",{
+      toast.success("Welcome to the developers Community !} !", {
         closeOnClick: true,
         closeButton: false,
         position: "top-center",
@@ -81,12 +82,12 @@ const Homepage = () => {
             <Route path="/chat" element={<Chat />} />
             <Route path="/resume" element={<Resumebody />} />
             <Route path="/tests" element={<Test />} />
-            <Route path="/bookmarks" element={<Bookmark />} />
+            <Route path={`/bookmarks/:profileId`} element={<Bookmark />} />
             <Route
               path={`/achievements/:profileId`}
               element={<Achievement />}
             />
-            <Route path={`/feed/:profileId`} element={<h1>feed</h1>} />
+            <Route path={`/feed/:profileId`} element={<Profilefeed />} />
             <Route
               path={`view-certificate/:certificateId`}
               element={<Certificateviewer />}

@@ -185,9 +185,14 @@ const Userprofile = () => {
               <div className="user-description">{userProfile?.description}</div>
             </div>
             <div className="profile-connections">
-              <div className="post-count">
-                Feed <br /> {profileFeedCount}
-              </div>
+              <Link
+                to={"/feed/" + profileId}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <div className="post-count">
+                  Feed <br /> {profileFeedCount}
+                </div>
+              </Link>
               <Link
                 to={"followers"}
                 style={{
@@ -288,9 +293,10 @@ const Userprofile = () => {
               style={{ textDecoration: "none", color: "black" }}
             >
               <p className="feed-header">Feed</p>
-              <p className="feed-count">{
-                profileFeedCount <= 1 ? profileFeedCount + " post " : profileFeedCount + " posts "
-              } 
+              <p className="feed-count">
+                {profileFeedCount <= 1
+                  ? profileFeedCount + " post "
+                  : profileFeedCount + " posts "}
                 from {userProfile?.name}
               </p>
             </Link>

@@ -180,19 +180,29 @@ const Feedcard = ({ feed, getFeed }) => {
         <div className="feed-card-header">
           <div className="feed-card-header-left">
             <div className="author-info">
-              <div
-                className="author-avatar"
+              <Link
+                to={`/profile/${feedAuthor?.id}`}
                 style={{
-                  border:
-                    feedAuthor?.id === user?.id ? "2px solid #007fff" : "none",
+                  textDecoration: "none",
+                  color: "black",
                 }}
               >
-                <img
-                  src={feedAuthor?.avatar}
-                  alt=""
-                  className="author-avatar-img"
-                />
-              </div>
+                <div
+                  className="author-avatar"
+                  style={{
+                    border:
+                      feedAuthor?.id === user?.id
+                        ? "2px solid #007fff"
+                        : "none",
+                  }}
+                >
+                  <img
+                    src={feedAuthor?.avatar}
+                    alt=""
+                    className="author-avatar-img"
+                  />
+                </div>
+              </Link>
               <div className="author-description">
                 <Link
                   to={`/profile/${feedAuthor?.id}`}

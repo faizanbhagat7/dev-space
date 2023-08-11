@@ -125,7 +125,7 @@ const Addpost = () => {
         {/* bookmarks */}
         <div className="addpost-bookmarks">
           <Link
-            to="/bookmarks"
+            to={`/bookmarks/${user?.id}`}
             style={{ textDecoration: "none", color: "black" }}
           >
             <div className="addpost-bookmarks-title">
