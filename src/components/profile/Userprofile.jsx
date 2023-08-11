@@ -159,6 +159,7 @@ const Userprofile = () => {
     if (profileId === user?.id) {
       setActivebutton("profile");
     } else {
+      setActivebutton("");
       checkIsFollowing(profileId);
     }
     fetchDynamicUserProfile(profileId);
@@ -238,18 +239,39 @@ const Userprofile = () => {
             </button>
           </div>
         ) : (
-          <div className="profile-follow-section">
-            <button
-              className="profile-follow-button"
-              onClick={() => handleFollows(profileId)}
-              style={{
-                backgroundColor: isfollowing ? "gray" : "#1a73e8",
-                boxShadow: isfollowing ? "0px 0px 5px 0px black" : "",
-                border: isfollowing ? "1px solid gray" : "1px solid #1a73e8",
-              }}
+          <div className="mobile-follow-section">
+            <div
+              className={`profile-follow-section-${
+                isfollowing ? "following" : "notfollowing"
+              }`}
             >
-              {isfollowing === true ? <p>following</p> : <p>follow</p>}
-            </button>
+              <button
+                className="profile-follow-button"
+                onClick={() => handleFollows(profileId)}
+                style={{
+                  backgroundColor: isfollowing ? "gray" : "#1a73e8",
+                  boxShadow: isfollowing ? "0px 0px 5px 0px black" : "",
+                  border: isfollowing ? "1px solid gray" : "1px solid #1a73e8",
+                }}
+              >
+                {isfollowing === true ? <p>Following</p> : <p>Follow</p>}
+              </button>
+              {isfollowing === true && (
+                <button
+                  className="profile-message-button"
+                  onClick={() => {
+                    navigate("/chats/" + profileId);
+                  }}
+                  style={{
+                    backgroundColor: "#1a73e8",
+                    boxShadow: "0px 0px 5px 0px black",
+                    border: "1px solid #1a73e8",
+                  }}
+                >
+                  Message
+                </button>
+              )}
+            </div>
           </div>
         )}
         {user?.id === profileId && (

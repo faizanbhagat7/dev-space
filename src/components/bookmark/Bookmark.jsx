@@ -63,7 +63,9 @@ const Bookmark = () => {
       ) : fetching ? (
         <Loader />
       ) : (
-        <h2 align="center">There are no posts saved posts</h2>
+        <div className='noFeed-text'>
+        <div >There are no posts saved </div>
+        </div>
       )}
     </>
   )

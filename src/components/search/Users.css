@@ -45,6 +45,11 @@
   outline: none;
 }
 
+.search-input:hover{
+  border: none;
+  outline: none;
+}
+
 
 .search-icon-container {
   background-color: transparent;

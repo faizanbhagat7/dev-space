@@ -47,7 +47,9 @@ const Feed = () => {
       ) : fetching ? (
         <Loader />
       ) : (
-        <h2 align="center">There are no posts yet</h2>
+        <div classsName="noFeed-text">
+        <div>No feed, Follow people to see their feed</div>
+        </div>
       )}
     </>
   );

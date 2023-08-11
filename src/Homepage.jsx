@@ -47,7 +47,7 @@ const Homepage = () => {
 
   useEffect(() => {
     if (!user || user.id !== Session.user.id) {
-      toast.success("Welcome to the developers Community !} !", {
+      toast.success("Welcome to the developers Community !", {
         closeOnClick: true,
         closeButton: false,
         position: "top-center",
@@ -79,7 +79,7 @@ const Homepage = () => {
             <Route path="/search" element={<Users />} />
             <Route path="/add-post" element={<Addpost />} />
             <Route path="/feed" element={<Feed />} />
-            <Route path="/chat" element={<Chat />} />
+            <Route path={`/chats/:profileId`} element={<Chat />} />
             <Route path="/resume" element={<Resumebody />} />
             <Route path="/tests" element={<Test />} />
             <Route path={`/bookmarks/:profileId`} element={<Bookmark />} />
