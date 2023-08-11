@@ -67,7 +67,7 @@ const Sidebar = () => {
     {
       name: "chat",
       icon: <ChatBubbleRoundedIcon />,
-      url: "/chat",      
+      url: `/chats/${user?.id}`  
     },
     {
       name: "create resume",

@@ -23,6 +23,7 @@ import FollowersPage from "./components/profile/FollowersPage";
 import FollowingPage from "./components/profile/FollowingPage";
 import Loader from "./components/loader/Loader";
 import Profilefeed from "./components/profile/Profilefeed";
+import MessageChannel from "./components/chat/MessageChannel";
 
 const Homepage = () => {
   const Session = useSession();
@@ -103,6 +104,11 @@ const Homepage = () => {
               path={`/profile/:profileId/following`}
               element={<FollowingPage />}
             />
+
+          <Route 
+          path={`messagechannel/:recieverId`}
+          element={<MessageChannel />}
+          />
 
             <Route path="*" element={<Feed />} />
           </Routes>

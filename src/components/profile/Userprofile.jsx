@@ -260,7 +260,7 @@ const Userprofile = () => {
                 <button
                   className="profile-message-button"
                   onClick={() => {
-                    navigate("/chats/" + profileId);
+                    navigate(`/messagechannel/${profileId}`);
                   }}
                   style={{
                     backgroundColor: "#1a73e8",
