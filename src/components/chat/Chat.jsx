@@ -97,7 +97,7 @@ const Chat = () => {
             searchTerm === previuosSearch &&
             users?.map((fetcheduser) => (
               <Link
-                to={`/profile/${fetcheduser.id}`}
+                to={`/messagechannel/${fetcheduser.id}`}
                 style={{ textDecoration: "none", color: "black" }}
               >
                 <div className="user-card">
