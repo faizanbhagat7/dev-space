@@ -6,7 +6,7 @@
     overflow-y: scroll;
 }
 
-.noFeed-text{
+.noFeed{
     width: 100%;
     height: 100vh;
     font-size: 1.5rem;

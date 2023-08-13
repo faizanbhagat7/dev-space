@@ -224,7 +224,7 @@ const Feedcard = ({ feed, getFeed }) => {
             {feedAuthor?.id === user?.id && (
               <DeleteIcon
                 style={{
-                  color: "red",
+                  color: "black",
                   cursor: "pointer",
                 }}
                 setShowDeleteModal={setShowDeleteModal}

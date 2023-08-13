@@ -65,7 +65,7 @@
 .feed-card-header-right{
     display: flex;
     margin-left: auto;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .feed-card-body{
@@ -145,6 +145,10 @@
     .feed-card-body-text{
         font-size: 16px;
         padding: 0px 0px;
+    }
+ 
+    .feed-card-header-right{
+        margin-right: 10px;
     }
 }
 

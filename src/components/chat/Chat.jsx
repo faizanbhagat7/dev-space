@@ -39,29 +39,41 @@ const Chat = () => {
   };
 
   const fetchRecentChatUsers = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from("chats")
       .select()
       .or(`senderId.eq.${user.id},recieverId.eq.${user.id}`)
       .order("created_at", { ascending: false });
-      
-      if (!error)
-      {
-        new Set(data.map((chat) => chat.senderId === user.id ? chat.recieverId : chat.senderId)).forEach(async (id) => {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select()
-            .eq("id", id);
-          if (!error) {
-            setRecentChatUsers((prev) => [...prev, data[0]]);
 
-            // remove duplicates
-            setRecentChatUsers((prev) => [...new Set(prev.map((user) => user.id))].map((id) => prev.find((user) => user.id === id)));
+    let recentChatUsers = [];
+    if (!error) {
+      let recentChatUsersId = [];
+      for (let i = 0; i < data.length; i++) {
+        if (recentChatUsersId.includes(data[i].senderId)) {
+          continue;
+        } else if (recentChatUsersId.includes(data[i].recieverId)) {
+          continue;
+        } else {
+          if (data[i].senderId === user.id) {
+            recentChatUsersId.push(data[i].recieverId);
+          } else {
+            recentChatUsersId.push(data[i].senderId);
           }
-        } );
+        }
       }
-  };
 
+      for (let i = 0; i < recentChatUsersId.length; i++) {
+        const { data: userData, error } = await supabase
+          .from("profiles")
+          .select()
+          .eq("id", recentChatUsersId[i]);
+        recentChatUsers.push(userData[0]);
+      }
+      setRecentChatUsers(recentChatUsers);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     setActivebutton("chat");
@@ -90,77 +102,108 @@ const Chat = () => {
 
   return (
     <>
-      <div className="chat-section-container">
-        <div className="chat-section">
-          <div className="chat-section-header">
-            <div className="chat-user-search-container">
-              <form className="form" onSubmit={(e) => handleSubmit(e)}>
-                <div className="input-container">
-                  <input
-                    type="text"
-                    placeholder="Search for users"
-                    className="search-input"
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                    }}
-                  />
-                </div>
-                <div className="search-icon-container">
-                  <PersonSearchIcon
-                    className="search-icon"
-                    type="submit"
-                    onClick={(e) => {
-                      handleSubmit(e);
-                    }}
-                  />
-                </div>
-              </form>
-            </div>
+      <div className="chat-section">
+        <div className="chat-section-header">
+          <div className="chat-user-search-container">
+            <form className="form" onSubmit={(e) => handleSubmit(e)}>
+              <div className="input-container">
+                <input
+                  type="text"
+                  placeholder="Search for users"
+                  className="search-input"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="search-icon-container">
+                <PersonSearchIcon
+                  className="search-icon"
+                  type="submit"
+                  onClick={(e) => {
+                    handleSubmit(e);
+                  }}
+                />
+              </div>
+            </form>
           </div>
-          <div className="chat-section-body-container">
-            <div className="chat-section-body">
-              {searchTerm.length > 0 &&
-                isSearching === false &&
-                searchTerm === previuosSearch &&
-                users?.map((fetcheduser) => (
-                  <Link
-                    to={`/messagechannel/${fetcheduser.id}`}
-                    style={{ textDecoration: "none", color: "black" }}
-                  >
-                    <div className="user-card">
-                      <div className="user-image">
-                        <img src={fetcheduser.avatar} alt="" />
-                      </div>
-                      <div className="user-details">
-                        <div className="fetcheduser-name">
-                          {fetcheduser.name}
-                        </div>
-                        <div className="fetcheduser-description">
-                          {fetcheduser.description}
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+        </div>
 
-              {users?.length === 0 && user != null ? (
-                <div className="no-user-found">No user found</div>
-              ) : (
-                <div className="Loading"></div>
-              )}
-              {recentChatUsers?.length > 0 &&
-                searchTerm.length === 0 &&
-                recentChatUsers?.map((recentChatUser) => (
-                  <Link
-                    to={`/messagechannel/${recentChatUser.id}`}
-                    style={{ textDecoration: "none", color: "black" }}
-                  >
-                    <h2>{recentChatUser.name}</h2>
-                  </Link>
-                ))}
+        <div className="chat-section-body">
+          {searchTerm.length > 0 &&
+            isSearching === false &&
+            searchTerm === previuosSearch &&
+            users?.map((fetcheduser) => (
+              <Link
+                to={`/messagechannel/${fetcheduser.id}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <div className="recentchat-template">
+                  <div className="recentchat-image">
+                    <img src={fetcheduser.avatar} alt="" />
+                  </div>
+                  <div className="recentchat-details">
+                    <div className="recentchat-name">{fetcheduser.name}</div>
+                    <div className="recentchat-description">
+                      {fetcheduser.description}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+
+          {users?.length === 0 && user != null && searchTerm.length > 0 ? (
+            <div className="no-user-found">No user found</div>
+          ) : (
+            <div className="Loading"></div>
+          )}
+
+          {recentChatUsers?.length > 0 && searchTerm.length === 0 && (
+            <div className="recentchats-label">
+              <p> Recent Chats </p>
             </div>
-          </div>
+          )}
+          {
+            loading && <Loader />
+          }
+          {
+            recentChatUsers?.length === 0 && searchTerm.length === 0 && !loading && <div 
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                height: "70vh",
+                fontSize: "2rem",
+                color: "black",
+                fontFamily:'apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
+              }}
+            ><div>No recent chats</div></div>
+          }
+          {recentChatUsers?.length > 0 &&
+            searchTerm.length === 0 &&
+            recentChatUsers?.map((recentChatUser) => (
+              <Link
+                to={`/messagechannel/${recentChatUser.id}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <div className="recentchat-template">
+                  <div className="recentchat-image">
+                    <img
+                      src={recentChatUser.avatar}
+                      alt=""
+                    />
+                  </div>
+                  <div className="recentchat-details">
+                    <div className="recentchat-name">{recentChatUser.name}</div>
+                    <div className="recentchat-description">
+                      {recentChatUser.description}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
         </div>
       </div>
     </>
