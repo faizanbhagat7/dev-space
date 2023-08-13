@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext,useRef } from "react";
 import "./messagechannel.css";
 import { supabase } from "../../backend/supabaseConfig.js";
 import { Link, useParams } from "react-router-dom";
 import Loader from "../loader/Loader.jsx";
 import { LoginContext } from "../../context/LoginContext";
 import SendIcon from "@mui/icons-material/Send";
-import ReactScrollableFeed from "react-scrollable-feed";
 import MessageTemplate from "./MessageTemplate";
+
 
 const MessageChannel = () => {
   const { user, setActivebutton } = useContext(LoginContext);
@@ -15,6 +15,7 @@ const MessageChannel = () => {
   const [messages, setMessages] = useState([]);
   const [sendMessage, setSendMessage] = useState([]);
   const [recieverProfile, setRecieverProfile] = useState(null);
+  const LastMessageRef = useRef(null);
 
   const handleSubmit = async (e) => {
     if (sendMessage.trim() === "") return;
@@ -83,6 +84,10 @@ const MessageChannel = () => {
     };
   }, []);
 
+  useEffect(() => {
+    LastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <>
       <div className="messageChannel-container">
@@ -113,8 +118,13 @@ const MessageChannel = () => {
               <div className="message-container">
                 <MessageTemplate message={message} recieverProfile={recieverProfile}/>
               </div>
+                
             ))
-          )}
+            
+          )
+          
+          }
+          <div ref={LastMessageRef} />
         </div>
         <div className="messageChannel-footer">
           <form onSubmit={handleSubmit}>

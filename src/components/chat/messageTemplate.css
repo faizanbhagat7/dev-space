@@ -2,28 +2,32 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
     max-width: fit-content;
-    padding:5px;
+    padding:5px 10px;
     margin-left: 30px;
     background-color: lightgray;
-    border-radius: 5px;
     margin-right: 30px;
     word-break:break-all;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
 
 .message-reciever-container{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 10px;
-    padding:5px;
+    margin-bottom: 2px;
+    padding:5px 10px;
     margin-left: 10px;
-    background-color: #007fff;
-    border-radius: 5px;
-    margin-right: 30px;
+    background-color:  #007fff;
     max-width: fit-content;
-    color: white;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    word-break:break-all;
+    margin-right: 30px;
 }
 
 .message-content{
@@ -31,12 +35,19 @@
     overflow-wrap: break-word;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     flex:1;
-    font-size: 15px;
+    font-size: 18px;
     margin: 2px 0px;
-
 }
 
 .message-owner-name{
     font-size: 15px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    
+}
+
+.message-time-text{
+    font-size: 15px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    padding: 0px;
+    margin: 0px;    
 }
