@@ -5,6 +5,8 @@ import { Link, useParams } from "react-router-dom";
 import Loader from "../loader/Loader.jsx";
 import { LoginContext } from "../../context/LoginContext";
 import SendIcon from "@mui/icons-material/Send";
+import ReactScrollableFeed from "react-scrollable-feed";
+import MessageTemplate from "./MessageTemplate";
 
 const MessageChannel = () => {
   const { user, setActivebutton } = useContext(LoginContext);
@@ -109,33 +111,26 @@ const MessageChannel = () => {
           ) : (
             messages?.map((message) => (
               <div className="message-container">
-
-<div className="message-sender-avatar">
-                <img src={message.senderId === user.id ? user.avatar : recieverProfile?.avatar} alt="" />
-                </div>
-                <div className={ message.senderId === user.id ? "message-sender-text" : "message-reciever-text"}>
-                  {message.message}
-                </div>
-                
+                <MessageTemplate message={message} recieverProfile={recieverProfile}/>
               </div>
             ))
           )}
         </div>
         <div className="messageChannel-footer">
           <form onSubmit={handleSubmit}>
-          <div className="input-container">
-            <div className="input-text">
-              <input
-                type="text"
-                placeholder="Type a message ..."
-                value={sendMessage}
-                onChange={(e) => setSendMessage(e.target.value)}
-              />
+            <div className="input-container">
+              <div className="input-text">
+                <input
+                  type="text"
+                  placeholder="Type a message ..."
+                  value={sendMessage}
+                  onChange={(e) => setSendMessage(e.target.value)}
+                />
+              </div>
+              <div className="input-send">
+                <SendIcon onClick={handleSubmit} className="send-icon" />
+              </div>
             </div>
-            <div className="input-send">
-              <SendIcon onClick={handleSubmit} className="send-icon"/>
-            </div>
-          </div>
           </form>
         </div>
       </div>
