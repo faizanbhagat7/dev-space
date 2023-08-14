@@ -9,6 +9,8 @@ import { Link, Routes, Route, useNavigate, useParams } from "react-router-dom";
 import Editprofilemodal from "./Editprofilemodal";
 import { useSession } from "@supabase/auth-helpers-react";
 import Loader from "../loader/Loader";
+import SettingsIcon from '@mui/icons-material/Settings';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 const Userprofile = () => {
   const { user, setUser, activebutton, setActivebutton, fetchUserProfile } =
@@ -230,13 +232,40 @@ const Userprofile = () => {
         </div>
 
         {user?.id === profileId ? (
-          <div className="edit-profile-section">
+          <div className='edit-settings-container'>
+            <div className="edit-profile-section">
             <button
               className="edit-profile-button"
               onClick={() => setShowModal(true)}
             >
+              <div
+              style={{
+                paddingTop:"10px",
+                paddingRight:"10px",
+              }}
+            ><EditCalendarIcon /></div>
+            <div>
               Edit Profile
+            </div>
             </button>
+            </div>
+            <div className="profile-settings-section">
+            <button
+              className="edit-profile-button"
+              onClick = {
+                () => navigate(`/settings/${profileId}`)
+              }
+            ><div
+              style={{
+                paddingTop:"10px",
+                paddingRight:"10px",
+              }}
+            ><SettingsIcon /></div>
+            <div>
+              Settings
+            </div>
+            </button>
+            </div>
           </div>
         ) : (
           <div className="mobile-follow-section">
@@ -274,18 +303,7 @@ const Userprofile = () => {
             </div>
           </div>
         )}
-        {user?.id === profileId && (
-          <button
-            className="logout-button-mobile"
-            onClick={() => {
-              supabase.auth.signOut();
-              setUser(null);
-              navigate("/");
-            }}
-          >
-            Logout
-          </button>
-        )}
+
 
         <div className="profile-footer">
           <div className="skills">
