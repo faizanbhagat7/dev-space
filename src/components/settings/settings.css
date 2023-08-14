@@ -1,18 +1,3 @@
-.logout-button-mobile {
-  width: 90%;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #d11a2a;
-  color: #fff;
-  border: 1px solid #fff;
-  font-size: 20px;
-  font-weight: 600;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  cursor: pointer;
-  outline: none;
-}
-
 .settings-container{
     display: flex;
     flex-direction: column;
@@ -28,17 +13,68 @@
     margin: 10px ;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: gray;
+    align-items: center;
 }   
 
+.settings-logout-container{
+  display: flex;
+  padding:10px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+background-color: #d11a2a;
+color: white;
+border-radius: 5px;
+font-size: 1.5rem;
+font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+font-weight: 400;
+max-width: 300px;
+margin: 10px;
+
+}
+
+.settings-logout{
+  display:flex;
+}
 
 
+.logout-icon-container{
+  padding-top: 3px;
+  padding-right: 15px;
+}
 
+.logout-icon{
+  font-size: 1.5rem;
+  width: 1.5rem;
+}
 
+.bookmarks-title{
 
+}
 
+.bookmarks{
+  display: flex;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width:300px;
+}
 
-@media (min-width: 768px) {
-  .logout-button-mobile {
-    margin: 5px auto;
-  }
+.bookmarks-icon-container{
+  padding-top: 2px;
+  padding-right: 15px;
+}
+
+.bookmarks-icon{
+  font-size: 1.5rem;
+  width: 1.5rem;
+}
+
+.bookmarks-title > p{
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #000;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }

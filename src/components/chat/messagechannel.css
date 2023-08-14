@@ -145,9 +145,7 @@
   .input-text input{
     width: 270px;
   }
-  .input-container{
-    padding: 0px auto;
-  }
+
 }
 
 @media screen and (max-width: 1000px) and (min-width: 768px) {

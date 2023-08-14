@@ -122,17 +122,7 @@ const Addpost = () => {
   return (
     <>
       <div className="addpost-container">
-        {/* bookmarks */}
-        <div className="addpost-bookmarks">
-          <Link
-            to={`/bookmarks/${user?.id}`}
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            <div className="addpost-bookmarks-title">
-              <p>Bookmarks</p>
-            </div>
-          </Link>
-        </div>
+      
 
         {/* addpost */}
         <div className="addpost">
