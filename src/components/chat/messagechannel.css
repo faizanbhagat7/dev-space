@@ -122,7 +122,7 @@
     margin: 0;
     width: 100%;
     border-radius: 0px;
-    height: 85vh;
+    height: 80vh;
   }
 
   .reciever-avatar {
@@ -144,6 +144,7 @@
   }
   .input-text input{
     width: 270px;
+    margin-left: 10px;
   }
 
 }

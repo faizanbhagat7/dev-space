@@ -240,7 +240,7 @@ const Userprofile = () => {
             >
               <div
               style={{
-                paddingTop:"10px",
+                paddingTop:"5px",
                 paddingRight:"10px",
               }}
             ><EditCalendarIcon /></div>
@@ -257,7 +257,7 @@ const Userprofile = () => {
               }
             ><div
               style={{
-                paddingTop:"10px",
+                paddingTop:"5px",
                 paddingRight:"10px",
               }}
             ><SettingsIcon /></div>
