@@ -119,10 +119,10 @@
     border-radius: 0px;
   }
   .messageChannel-container {
-    margin: 0;
+    margin: 0px;
     width: 100%;
     border-radius: 0px;
-    height: 80vh;
+    height: 82vh;
   }
 
   .reciever-avatar {
@@ -144,7 +144,7 @@
   }
   .input-text input{
     width: 270px;
-    margin-left: 10px;
+    margin-left: 25px;
   }
 
 }
