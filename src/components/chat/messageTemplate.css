@@ -51,3 +51,55 @@
     padding: 0px;
     margin: 0px;    
 }
+
+.message-shared-post-container{
+    background-color: #f2f0e4;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin: 10px 0px;
+cursor: pointer;
+}
+
+.message-shared-post-owner-name{
+    font-size: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: black;
+    font-weight: 600;
+}
+
+.message-shared-post-caption{
+    font-size: 18px;
+    color: #657786;
+    font-weight: 400;
+    margin-left:10px;
+}
+
+.message-shared-post-image >img{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.message-shared-post-image{
+    max-width:400px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.message-shared-post-owner{
+    max-width: 400px;
+    word-wrap: normal;
+    overflow: scroll;
+}
+
+@media only screen and (max-width: 600px) {
+    .message-shared-post-image{
+        max-width: 200px;
+    }
+    
+    .message-shared-post-owner{
+        max-width: 200px;
+    }
+}

@@ -126,6 +126,7 @@ const MessageChannel = () => {
           }
           <div ref={LastMessageRef} />
         </div>
+        
         <div className="messageChannel-footer">
           <form onSubmit={handleSubmit}>
             <div className="input-container">

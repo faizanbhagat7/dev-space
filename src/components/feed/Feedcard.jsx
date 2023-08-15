@@ -15,6 +15,8 @@ import BookmarkSharpIcon from "@mui/icons-material/BookmarkSharp";
 import Deletemodal from "./Deletemodal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SendIcon from '@mui/icons-material/Send';
+import Feedsharemodal from './Feedsharemodal'
 
 const Feedcard = ({ feed, getFeed }) => {
   const { user } = useContext(LoginContext);
@@ -27,6 +29,8 @@ const Feedcard = ({ feed, getFeed }) => {
   const [commentCount, setCommentCount] = useState(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isAddedToSaved, setIsAddedToSaved] = useState(false);
+  const [feedShareModal, setFeedShareModal] = useState(false);
+
 
   useEffect(() => {
     getFeedAuthor();
@@ -296,6 +300,22 @@ const Feedcard = ({ feed, getFeed }) => {
                 {commentCount}
               </div>
             </div>
+
+                {/* feed share container */}
+                <div className="feed-share-container"
+                  onClick={
+                    () => setFeedShareModal(true)
+                  }
+                >
+                  <div className="feed-share-icon">
+                    <SendIcon />
+                    </div>
+                    </div>
+                  {
+                    feedShareModal && (
+                      <Feedsharemodal postId={feed.id} setFeedShareModal={setFeedShareModal} />
+                    )
+                  }
             <div
               className="feed-card-footer-bookmark-container"
               onClick={handleSaveToBookmarks}
