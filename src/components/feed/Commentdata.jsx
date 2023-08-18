@@ -27,13 +27,13 @@ const Commentdata = ({ comment ,getComments,commentList}) => {
         .delete()
         .eq("id", comment?.id);
     if (!error) {
-        getComments();
+        // getComments();
     }
     };
 
   useEffect(() => {
     fetchCommentedUser();
-  }, [comment]);
+  }, [comment?.id]);
 
   return (
     <>

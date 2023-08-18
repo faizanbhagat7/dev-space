@@ -12,7 +12,7 @@ const Deletemodal = ({setShowDeleteModal,feed,getFeed}) => {
           .delete()
           .eq("id", feed?.id);
         if (!error) {
-          getFeed();
+          // getFeed(); 
           toast.success("Post deleted successfully",{
             closeOnClick: true,
             closeButton: false,

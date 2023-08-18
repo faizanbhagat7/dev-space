@@ -34,10 +34,16 @@ const Feedcard = ({ feed, getFeed }) => {
 
   useEffect(() => {
     getFeedAuthor();
-    getLikes();
-    getComments();
     checkIsBookmarked();
-  }, [feed]);
+  }, [feed?.id]);
+
+  useEffect(() => {
+    getLikes();
+  }, [likeList]);
+
+  useEffect(() => {
+    getComments();
+  }, [commentList]);
 
   const getFeedAuthor = async () => {
     const { data, error } = await supabase
@@ -64,7 +70,7 @@ const Feedcard = ({ feed, getFeed }) => {
       },
     ]);
     if (!error) {
-      getLikes();
+      // getLikes();
       setIsLikedByUser(true);
     }
   };
@@ -76,7 +82,7 @@ const Feedcard = ({ feed, getFeed }) => {
       .eq("postId", feed?.id)
       .eq("userId", user?.id);
     if (!error) {
-      getLikes();
+      // getLikes();
       setIsLikedByUser(false);
     }
   };
@@ -178,6 +184,46 @@ const Feedcard = ({ feed, getFeed }) => {
     }
   };
 
+    useEffect(() => {
+    const channel = supabase
+      .channel("realtime-likes")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          table: "likes",
+          event: "*",
+        },
+        (payload) => {
+          getLikes();
+        }
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
+
+
+    useEffect(() => {
+    const channel = supabase
+      .channel("realtime-comments")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          table: "comments",
+          event: "*",
+        },
+        (payload) => {
+          getComments();
+        }
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
   return (
     <>
       <div className="feed-card">

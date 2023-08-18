@@ -24,7 +24,7 @@ const Comments = ({ feed, getComments, commentList }) => {
     ]);
     if (!error) {
       setCommentText("");
-      getComments();
+      // getComments();
     }
   };
 

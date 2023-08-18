@@ -37,6 +37,9 @@ const MessageTemplate = ({ message, recieverProfile }) => {
 
 
 
+  if (!message.message && !sharedPostinfo && !postOwner   
+    ) return null;
+
   return (
     <>
     

@@ -82,7 +82,7 @@ const Chat = () => {
 
   useEffect(() => {
     const channel = supabase
-      .channel("chats")
+      .channel("chats-realtime")
       .on(
         "postgres_changes",
         {

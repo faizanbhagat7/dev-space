@@ -15,7 +15,7 @@ const Feed = () => {
   useEffect(() => {
     setActivebutton("feed");
     getFeed();
-  }, []);
+  }, [feed]);
 
   const getFeed = async () => {
     setFetching(true);
@@ -36,7 +36,26 @@ const Feed = () => {
     setFetching(false);
   };
 
-
+  // realtime post updates
+  useEffect(() => {
+    const channel = supabase
+      .channel("posts-realtime")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          table: "posts",
+          event: "INSERT",
+        },
+        (payload) => {
+          setFeed((feed) => [...feed, payload.new]);
+        }
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
   return (
     <>
 
