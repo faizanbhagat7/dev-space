@@ -18,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import SendIcon from '@mui/icons-material/Send';
 import Feedsharemodal from './Feedsharemodal'
 
-const Feedcard = ({ feed, getFeed }) => {
+const Feedcard = ({ feed, getFeed , openCommentdefault , setOpenCommentDefault }) => {
   const { user } = useContext(LoginContext);
   const [feedAuthor, setFeedAuthor] = useState(null);
   const [likeList, setLikeList] = useState([]);

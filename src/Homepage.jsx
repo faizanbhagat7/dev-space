@@ -25,6 +25,7 @@ import Loader from "./components/loader/Loader";
 import Profilefeed from "./components/profile/Profilefeed";
 import MessageChannel from "./components/chat/MessageChannel";
 import Settings from "./components/settings/Settings";
+import Individualfeed from "./components/feed/Individualfeed";
 
 const Homepage = () => {
   const Session = useSession();
@@ -114,6 +115,12 @@ const Homepage = () => {
           <Route 
           path={`settings/:profileId`}
           element={<Settings />}
+          />
+
+
+          <Route 
+          path={`post/:postId`}
+          element={<Individualfeed />}
           />
 
             <Route path="*" element={<Feed />} />

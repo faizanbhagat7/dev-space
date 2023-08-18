@@ -2,6 +2,7 @@ import React,{useState,useEffect} from "react";
 import "./messageTemplate.css";
 import ReactTimeAgo from "react-time-ago";
 import { supabase } from "../../backend/supabaseConfig.js";
+import {Link} from 'react-router-dom'
 
 const MessageTemplate = ({ message, recieverProfile }) => {
   
@@ -75,6 +76,10 @@ const MessageTemplate = ({ message, recieverProfile }) => {
       {
         message?.sharedPostId && sharedPostinfo && postOwner &&  
         (
+          <Link to={`/post/${sharedPostinfo?.id}`} style={{
+            textDecoration: "none",
+            color: "#000",
+          }}>
           <div className="message-shared-post-container">
           <div className="message-shared-post-content">
           {
@@ -99,6 +104,7 @@ const MessageTemplate = ({ message, recieverProfile }) => {
             </span>
           </div>
           </div>
+        </Link>
         )
       }
    
