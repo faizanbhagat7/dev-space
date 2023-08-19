@@ -1,5 +1,5 @@
-import React, { useEffect, useState ,useContext} from "react";
-import { Link ,useNavigate} from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 import { LoginContext } from "../../context/LoginContext";
 import AssistantRoundedIcon from "@mui/icons-material/AssistantRounded";
@@ -8,29 +8,27 @@ import ChatBubbleRoundedIcon from "@mui/icons-material/ChatBubbleRounded";
 import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
 import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookmarkRounded";
 import PostAddIcon from "@mui/icons-material/PostAdd";
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { supabase } from "../../backend/supabaseConfig";
 import { ToastContainer, toast } from "react-toastify";
 
 const Sidebar = () => {
+  const { user, setUser, activebutton, setActivebutton } =
+    useContext(LoginContext);
 
-  const { user,setUser ,activebutton, setActivebutton} = useContext(LoginContext);
-  
   const navigate = useNavigate();
-
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
-      toast.success("Logged out  successfully !",{
-        closeOnClick:   true,
-        closeButton: false, 
+      toast.success("Logged out  successfully !", {
+        closeOnClick: true,
+        closeButton: false,
       });
       setUser(null);
       navigate("/");
     }
   };
-    
 
   // profile image of user
   const image = (
@@ -48,37 +46,38 @@ const Sidebar = () => {
       icon: <AssistantRoundedIcon />,
       url: "/feed",
     },
+
+    {
+      name: "search",
+      icon: <PersonSearchIcon />,
+      url: "/search",
+    },
     {
       name: "add post",
       icon: <PostAddIcon />,
       url: "/add-post",
+    },
+
+    {
+      name: "chat",
+      icon: <ChatBubbleRoundedIcon />,
+      url: `/chats/${user?.id}`,
     },
     {
       name: "profile",
       icon: image,
       url: `/profile/${user?.id}`,
     },
-    {
-      name:'search',
-      icon:<PersonSearchIcon />,
-      url:'/search'
-    },
- 
-    {
-      name: "chat",
-      icon: <ChatBubbleRoundedIcon />,
-      url: `/chats/${user?.id}`  
-    },
-    {
-      name: "create resume",
-      icon: <FeedRoundedIcon />,
-      url: "/resume",
-    },
-    {
-      name: "tests",
-      icon: <QuizRoundedIcon />,
-      url: "/tests",
-    },
+    // {
+    //   name: "create resume",
+    //   icon: <FeedRoundedIcon />,
+    //   url: "/resume",
+    // },
+    // {
+    //   name: "tests",
+    //   icon: <QuizRoundedIcon />,
+    //   url: "/tests",
+    // },
     // {
     //   name: "bookmarks",
     //   icon: <CollectionsBookmarkRoundedIcon />,
@@ -88,24 +87,21 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="sidebar-container" >
+      <div className="sidebar-container">
         {/* profile section */}
         <div className="sidebar-profile-section">
           <div classname="profile-image">
-          <img
-            src={user?.avatar}
-            alt=""
-            border="0"
-            style={{ width: "60px", height: "60px", borderRadius: "10px" }}
-          ></img>
+            <img
+              src={user?.avatar}
+              alt=""
+              border="0"
+              style={{ width: "60px", height: "60px", borderRadius: "10px" }}
+            ></img>
           </div>
           <div className="profile">
-          <p className="sidebar-user-name"> 
-              {user?.name.substring(0, 13)}
-          </p>
-          <p className="sidebar-user-desc">{user?.description}</p>
+            <p className="sidebar-user-name">{user?.name.substring(0, 13)}</p>
+            <p className="sidebar-user-desc">{user?.description}</p>
           </div>
-         
         </div>
 
         {/* sidebar options */}
@@ -124,10 +120,13 @@ const Sidebar = () => {
                   color: activebutton === option.name ? "#007fff" : "#000",
                   borderBottom:
                     activebutton === option.name ? "2px solid #007fff" : "none",
-                    transition: "all 0.2s ease-in-out",
-                  paddingBottom : "0px",
                   transition: "all 0.2s ease-in-out",
-                  boxShadow: activebutton === option.name ? "0px 0px 5px 0px #007fff" : "none",
+                  paddingBottom: "0px",
+                  transition: "all 0.2s ease-in-out",
+                  boxShadow:
+                    activebutton === option.name
+                      ? "0px 0px 5px 0px #007fff"
+                      : "none",
                 }}
               >
                 <div className="option-icon">{option.icon}</div>
@@ -139,9 +138,9 @@ const Sidebar = () => {
 
         {/* logout buttton */}
         <div className="sidebar-logout-section">
-          <button className="logout-button"
-           onClick={handleLogout}
-          >Logout</button>
+          <button className="logout-button" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </div>
       <ToastContainer />

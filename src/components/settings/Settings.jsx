@@ -5,11 +5,15 @@ import { LoginContext } from "../../context/LoginContext";
 import { useNavigate ,Link} from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
+import LogoutModal from "./LogoutModal";
+import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
+import QuizRoundedIcon from '@mui/icons-material/QuizRounded';
 
 const Settings = () => {
-  const navigate = useNavigate();
-  const { user, setUser } = useContext(LoginContext);
+  const { user } = useContext(LoginContext);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  console.log(showLogoutModal)
   return (
     <>
       <div className="settings-container">
@@ -33,13 +37,39 @@ const Settings = () => {
         </div>
           </Link>
 
+          {/* create resume  */}
+          <Link
+            to={`/resume`}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+        <div className="bookmarks">
+            <div className="bookmarks-icon-container">
+              <FeedRoundedIcon className="bookmarks-icon" />
+            </div>
+            <div className="bookmarks-title">
+              <p>Generate Resume</p>
+            </div>
+        </div>
+          </Link>
 
+            {/* test section  */}
+            <Link
+            to={`/tests`}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+        <div className="bookmarks">
+            <div className="bookmarks-icon-container">
+              <QuizRoundedIcon className="bookmarks-icon" />
+            </div>
+            <div className="bookmarks-title">
+              <p>Check technical skills</p>
+            </div>
+        </div>
+          </Link>
+
+            {/* Logout */}
             <div className="settings-logout-container" 
-            onClick={() => {
-              // supabase.auth.signOut();
-              // setUser(null);
-              // navigate("/");
-            }}>
+            onClick={()=>setShowLogoutModal(true)}>
               <div className='settings-logout'>
              <div className='logout-icon-container'>
              <LogoutIcon className="logout-icon"/> 
@@ -49,7 +79,13 @@ const Settings = () => {
               <p>Log Out from Account</p>
              </div> 
              </div>
-          </div>
+            </div>
+            
+            {/* Logout Modal */}
+            {showLogoutModal && (
+              <LogoutModal setShowLogoutModal={setShowLogoutModal} />
+            )}
+
 
         </div>
       </div>
