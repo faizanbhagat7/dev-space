@@ -18,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import SendIcon from '@mui/icons-material/Send';
 import Feedsharemodal from './Feedsharemodal'
 
-const Feedcard = ({ feed, getFeed , openCommentdefault , setOpenCommentDefault }) => {
+const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }) => {
   const { user } = useContext(LoginContext);
   const [feedAuthor, setFeedAuthor] = useState(null);
   const [likeList, setLikeList] = useState([]);
@@ -35,6 +35,7 @@ const Feedcard = ({ feed, getFeed , openCommentdefault , setOpenCommentDefault }
   useEffect(() => {
     getFeedAuthor();
     checkIsBookmarked();
+    openCommentDefault && setCommentpopup(true)
   }, [feed?.id]);
 
   useEffect(() => {
@@ -109,6 +110,7 @@ const Feedcard = ({ feed, getFeed , openCommentdefault , setOpenCommentDefault }
       setCommentpopup(true);
     } else {
       setCommentpopup(false);
+      openCommentDefault && setOpenCommentDefault(false)
     }
   };
 
@@ -271,16 +273,18 @@ const Feedcard = ({ feed, getFeed , openCommentdefault , setOpenCommentDefault }
             </div>
           </div>
           <div className="feed-card-header-right">
-            {feedAuthor?.id === user?.id && (
-              <DeleteIcon
+            {
+              feedAuthor?.id === user?.id && (
+                <div className="feed-delete-icon"
                 style={{
-                  color: "black",
                   cursor: "pointer",
                 }}
-                setShowDeleteModal={setShowDeleteModal}
-                onClick={() => setShowDeleteModal(true)}
-              />
-            )}
+                  onClick={() => setShowDeleteModal(true)}
+                >
+                  <DeleteIcon />
+                </div>
+              )
+            }
             {showDeleteModal && (
               <Deletemodal
                 setShowDeleteModal={setShowDeleteModal}

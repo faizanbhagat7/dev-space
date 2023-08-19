@@ -6,7 +6,6 @@ import { supabase } from "../../backend/supabaseConfig";
 import "./feed.css";
 import Feedcard from "./Feedcard";
 
-
 const Feed = () => {
   const { activebutton, setActivebutton, user } = useContext(LoginContext);
   const [feed, setFeed] = useState([]);
@@ -58,33 +57,32 @@ const Feed = () => {
   }, []);
   return (
     <>
-
       {feed.length > 0 ? (
         <div className="feed-container">
-          {
-            feed?.map((post) => <Feedcard feed={post} getFeed={getFeed}/>)
-          }
+          {feed?.map((post) => (
+            <Feedcard feed={post} getFeed={getFeed} />
+          ))}
         </div>
       ) : fetching ? (
         <Loader />
       ) : (
-        <div classsName="noFeed"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          height: "100vh",
-          fontSize: "1.5rem",
-          color: "black",
-          fontFamily:'apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
-        }}
+        <div
+          classsName="noFeed"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            height: "100vh",
+            fontSize: "1.5rem",
+            color: "black",
+            fontFamily:
+              'apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          }}
         >
-        <div>No feed, Follow people to see their feed</div>
+          <div>No feed, Follow people to see their feed</div>
         </div>
-        
       )}
-
     </>
   );
 };
