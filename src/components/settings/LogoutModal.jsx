@@ -43,7 +43,7 @@ const LogoutModal = ({ setShowLogoutModal }) => {
                 Logout();
               }}
             >
-              Delete
+              Log Out
             </button>
           </div>
         </div>

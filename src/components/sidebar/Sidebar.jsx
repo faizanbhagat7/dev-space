@@ -11,24 +11,15 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { supabase } from "../../backend/supabaseConfig";
 import { ToastContainer, toast } from "react-toastify";
+import LogoutModal from "../settings/LogoutModal";
 
 const Sidebar = () => {
   const { user, setUser, activebutton, setActivebutton } =
     useContext(LoginContext);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-      toast.success("Logged out  successfully !", {
-        closeOnClick: true,
-        closeButton: false,
-      });
-      setUser(null);
-      navigate("/");
-    }
-  };
 
   // profile image of user
   const image = (
@@ -138,11 +129,16 @@ const Sidebar = () => {
 
         {/* logout buttton */}
         <div className="sidebar-logout-section">
-          <button className="logout-button" onClick={handleLogout}>
+          <button className="logout-button" onClick={()=>setShowLogoutModal(true)}>
             Logout
           </button>
         </div>
       </div>
+      {
+        showLogoutModal &&(
+          <LogoutModal setShowLogoutModal={setShowLogoutModal} />
+        )
+      }
       <ToastContainer />
     </>
   );

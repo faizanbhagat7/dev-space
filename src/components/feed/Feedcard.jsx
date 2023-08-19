@@ -294,6 +294,9 @@ const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }
             )}
           </div>
         </div>
+
+        {/* feed body */}
+        <Link to={`/post/${feed?.id}`} style={{ textDecoration: "none" ,color:'#000'}}>
         <div className="feed-card-body">
           <div className="feed-card-body-text">{feed?.caption}</div>
           {feed?.image && (
@@ -302,6 +305,9 @@ const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }
             </div>
           )}
         </div>
+        </Link>
+
+
         <div className="feed-card-footer">
           <div className="feed-card-footer-left">
             <div className="feed-card-footer-like-container">

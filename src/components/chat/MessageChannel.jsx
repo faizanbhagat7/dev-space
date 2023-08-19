@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext,useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./messagechannel.css";
 import { supabase } from "../../backend/supabaseConfig.js";
 import { Link, useParams } from "react-router-dom";
@@ -6,7 +6,7 @@ import Loader from "../loader/Loader.jsx";
 import { LoginContext } from "../../context/LoginContext";
 import SendIcon from "@mui/icons-material/Send";
 import MessageTemplate from "./MessageTemplate";
-
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 const MessageChannel = () => {
   const { user, setActivebutton } = useContext(LoginContext);
@@ -15,7 +15,7 @@ const MessageChannel = () => {
   const [messages, setMessages] = useState([]);
   const [sendMessage, setSendMessage] = useState([]);
   const [recieverProfile, setRecieverProfile] = useState(null);
-  const LastMessageRef = useRef(null);
+  
 
   const handleSubmit = async (e) => {
     if (sendMessage.trim() === "") return;
@@ -33,6 +33,7 @@ const MessageChannel = () => {
   };
 
   const fetchRecieverProfile = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from("profiles")
       .select()
@@ -40,6 +41,7 @@ const MessageChannel = () => {
     if (!error) {
       setRecieverProfile(data[0]);
     }
+    setLoading(false);
   };
 
   const fetchMessages = async () => {
@@ -56,6 +58,7 @@ const MessageChannel = () => {
       console.log(error);
       alert(error.message);
     }
+    
   };
 
   useEffect(() => {
@@ -84,9 +87,6 @@ const MessageChannel = () => {
     };
   }, []);
 
-  useEffect(() => {
-    LastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
   return (
     <>
@@ -110,23 +110,21 @@ const MessageChannel = () => {
             </div>
           </Link>
         </div>
-        <div className="messageChannel-body">
+        <ScrollToBottom className="messageChannel-body" >
           {loading ? (
             <Loader />
           ) : (
             messages?.map((message) => (
               <div className="message-container">
-                <MessageTemplate message={message} recieverProfile={recieverProfile}/>
+                <MessageTemplate
+                  message={message}
+                  recieverProfile={recieverProfile}
+                />
               </div>
-                
             ))
-            
-          )
-          
-          }
-          <div ref={LastMessageRef} />
-        </div>
-        
+          )}
+        </ScrollToBottom>
+
         <div className="messageChannel-footer">
           <form onSubmit={handleSubmit}>
             <div className="input-container">
