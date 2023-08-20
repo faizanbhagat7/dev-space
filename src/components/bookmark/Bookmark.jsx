@@ -11,6 +11,7 @@ const Bookmark = () => {
     const [fetching, setFetching] = useState(false)
     const [savedPosts, setSavedPosts] = useState([])
     const {profileId} = useParams()
+    const {darkMode} = useContext(LoginContext)
 
     useEffect(() => {
         fetchSavedPosts()
@@ -64,7 +65,11 @@ const Bookmark = () => {
         <Loader />
       ) : (
         <div className='noFeed-text'>
-        <div >There are no posts saved </div>
+        <div 
+          style={{
+            color: darkMode ? 'white' : 'black',
+          }}
+        >There are no posts saved </div>
         </div>
       )}
     </>

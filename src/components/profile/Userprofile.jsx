@@ -13,7 +13,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 const Userprofile = () => {
-  const { user, setUser, activebutton, setActivebutton, fetchUserProfile } =
+  const { user, setUser, activebutton, setActivebutton, fetchUserProfile ,darkMode} =
     useContext(LoginContext);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
@@ -175,7 +175,11 @@ const Userprofile = () => {
 
   return (
     <>
-      <div className="profile-container">
+      <div className="profile-container"
+        style={{
+          color: darkMode ? "white" : "black",
+        }}
+      >
         <div className="profile-header">
           <div className="image-section">
             <div className="profile-image">
@@ -184,7 +188,11 @@ const Userprofile = () => {
           </div>
           <div className="profile-details">
             <div className="description">
-              <div className="user-name">{userProfile?.name}</div>
+              <div className="user-name"
+                style={{
+                  color: darkMode ? "white" : "#15202b",
+                  }}
+              >{userProfile?.name}</div>
               <div className="user-description">{userProfile?.description}</div>
             </div>
             <div className="profile-connections">
@@ -192,7 +200,11 @@ const Userprofile = () => {
                 to={"/feed/" + profileId}
                 style={{ textDecoration: "none", color: "black" }}
               >
-                <div className="post-count">
+                <div className="post-count"
+                 style={{
+                  color: darkMode ? "white" : "#000",
+                 }}
+                 >
                   Feed <br /> {profileFeedCount}
                 </div>
               </Link>
@@ -204,7 +216,11 @@ const Userprofile = () => {
                   cursor: "pointer",
                 }}
               >
-                <div className="followers">
+                <div className="followers"
+                style={{
+                  color: darkMode ? "white" : "#000",
+                }}
+                >
                   followers <br />{" "}
                   {userProfile?.followers !== null
                     ? userProfile?.followers?.length
@@ -220,7 +236,11 @@ const Userprofile = () => {
                   cursor: "pointer",
                 }}
               >
-                <div className="following">
+                <div className="following"
+                  style={{
+                    color: darkMode ? "white" : "#000",
+                  }}
+                >
                   following <br />{" "}
                   {userProfile?.following !== null
                     ? userProfile?.following?.length
@@ -306,18 +326,38 @@ const Userprofile = () => {
 
 
         <div className="profile-footer">
-          <div className="skills">
-            <div className="skills-header">Skills</div>
+          <div className="skills"
+            style={{
+              color: darkMode ? "#657786" : "#000",
+              backgroundColor: darkMode ? "#1f1f1f" : "white",
+              boxShadow: darkMode && "0px 0px 3px 0px gray" 
+            }}
+          >
+            <div className="skills-header"
+              style={{
+                color: darkMode ? "#fff" : "#15202b",
+              }}
+            >Skills</div>
             <div className="skills-list">
               {userProfile?.skills ? userProfile?.skills : "No skills added"}
             </div>
           </div>
-          <div className="achievements">
+          <div className="achievements"
+            style={{
+              color: darkMode ? "#657786" : "#000",
+              backgroundColor: darkMode ? "#1f1f1f" : "white",
+              boxShadow: darkMode && "0px 0px 3px 0px gray"
+            }}
+          >
             <Link
               to={"/achievements/" + profileId}
               style={{ textDecoration: "none", color: "black" }}
             >
-              <p className="achievements-header"> Achievements</p>
+              <p className="achievements-header"
+                style={{
+                  color: darkMode ? "#fff" : "#15202b",
+                }}
+              > Achievements</p>
               <p className="achievements-count">
                 {profileAchievementsCount}
                 {profileAchievementsCount === 1
@@ -327,12 +367,22 @@ const Userprofile = () => {
               </p>
             </Link>
           </div>
-          <div className="feed">
+          <div className="feed"
+            style={{
+              color: darkMode ? "#657786" : "#000",
+              backgroundColor: darkMode ? "#1f1f1f" : "white",
+              boxShadow: darkMode && "0px 0px 3px 0px gray"
+            }}
+          >
             <Link
               to={"/feed/" + profileId}
               style={{ textDecoration: "none", color: "black" }}
             >
-              <p className="feed-header">Feed</p>
+              <p className="feed-header"
+                style={{
+                  color: darkMode ? "#fff" : "#15202b",
+                }}
+              >Feed</p>
               <p className="feed-count">
                 {profileFeedCount <= 1
                   ? profileFeedCount + " post "

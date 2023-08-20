@@ -9,7 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
-  const { user, setUser, session, setSession } = useContext(LoginContext);
+  const { darkMode} = useContext(LoginContext);
   const Session = useSession();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -87,41 +87,84 @@ const Register = () => {
   return (
     <>
       <div className="main-body">
-        <div className="container">
+        <div className="container"
+          style={{
+            backgroundColor: darkMode ? "#1F1F1F" : "#fff",
+            color: darkMode ? "#fff" : "#000",
+            boxShadow: darkMode ? "0px 0px 10px #fff" : "0px 0px 10px #000",
+          }}
+        >
           <div className="banner-section">
-            <p className="tagline">
+            <p className="tagline"
+              style={{
+              textShadow: darkMode ? "0px 0px 10px #000" : "0px 0px 10px wheat",                
+              }}
+            >
               Connect with Developers across the globe 🌏
             </p>
           </div>
           <div className="form-section">
-            <p className="form-title">Create a new Account</p>
+            <p className="form-title"
+              style={{
+                color: darkMode ? "#fff" : "#000",
+              }}
+              
+            >Create a new Account</p>
             <form onSubmit={handleRegister}>
-              <p className="input-label">User name</p>
+              <p className="input-label"
+                style={{
+                  color: darkMode ? "#fff" : "#15202b",
+                }}
+              >User name</p>
               <input
                 type="text"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 className="input-field"
+                style={{
+                  color: darkMode && "#fff",
+                  backgroundColor: darkMode && "#15202b",                  
+                }}
               />
-              <p className="input-label">Email</p>
+              <p className="input-label"
+               style={{
+                color: darkMode ? "#fff" : "#15202b",
+              }}
+              >Email</p>
               <input
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 className="input-field"
+                style={{
+                  color: darkMode && "#fff",
+                  backgroundColor: darkMode && "#15202b",                  
+                }}
               />
-              <p className="input-label">Password</p>
+              <p className="input-label"
+               style={{
+                color: darkMode ? "#fff" : "#15202b",
+              }}
+              >Password</p>
               <input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 className="input-field"
+                style={{
+                  color: darkMode && "#fff",
+                  backgroundColor: darkMode && "#15202b",                  
+                }}
               />
               <button type="submit" className="submit-button">
                 Create Account
               </button>
             </form>
-            <p className="login-link">
+            <p className="login-link"
+              style={{
+                color: darkMode && "#fff",
+              }}
+            >
               Already have an account ? &nbsp;
               <Link to="/login" style={{ textDecoration: "none" }}>
                 <span className="login-link-text">Login</span>

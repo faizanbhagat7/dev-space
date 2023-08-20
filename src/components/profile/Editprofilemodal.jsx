@@ -14,7 +14,7 @@ const EditProfileModal = ({
   fetchDynamicUserProfile,
   userProfile,
 }) => {
-  const { user, setUser, fetchUserProfile } = useContext(LoginContext);
+  const { user, setUser, fetchUserProfile ,  darkMode} = useContext(LoginContext);
   const Session = useSession();
   const { profileId } = useParams();
 
@@ -130,23 +130,48 @@ const EditProfileModal = ({
   return (
     <>
       <div className="modal">
-        <div className="modal-content">
+        <div className="modal-content"
+          style={{
+            backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+            color: darkMode ? "#fff" : "#000",
+          }}
+        >
           <div className="modal-header">
             <h4>Edit Profile</h4>
           </div>
-          <div className="modal-body">
-            <form onSubmit={handleSubmit}>
+          <div className="modal-body"
+            style={{
+              backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+              color: darkMode ? "#fff" : "#000",
+            }}
+          >
+            <form onSubmit={handleSubmit}
+              style={{
+                backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+                color: darkMode ? "#fff" : "#000",
+              }}
+            >
               <p className="label">name</p>
               <input
                 type="text"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
+                style={{
+                  backgroundColor: darkMode ? "#15202b" : "#fff",
+                  color: darkMode ? "#fff" : "#000",
+                  border:darkMode && "1px solid #fff"
+                }}
               />
               <p className="label">description</p>
               <input
                 type="text"
                 value={userDescription}
                 onChange={(e) => setUserDescription(e.target.value)}
+                style={{
+                  backgroundColor: darkMode ? "#15202b" : "#fff",
+                  color: darkMode ? "#fff" : "#000",
+                  border:darkMode && "1px solid #fff"
+                }}
               />
               <p className="label">skills</p>
               <textarea
@@ -155,6 +180,11 @@ const EditProfileModal = ({
                 rows="5"
                 value={userSkills}
                 onChange={(e) => setUserSkills(e.target.value)}
+                style={{
+                  backgroundColor: darkMode ? "#15202b" : "#fff",
+                  color: darkMode ? "#fff" : "#000",
+                  border:darkMode && "1px solid #fff"
+                }}
               />
               <p className="label">avatar</p>
 
@@ -172,7 +202,7 @@ const EditProfileModal = ({
               <div className="uploading">
                 <p
                   style={{
-                    color: "#000",
+                    color: darkMode ? "#fff" : "#000",
                     fontSize: "1.2rem",
                     fontWeight: "bold",
                     fontFamily: "sans-serif",
@@ -187,7 +217,7 @@ const EditProfileModal = ({
               uploadData && (
                 <p
                   style={{
-                    color: "#000",
+                    color: darkMode ? "#fff" : "#000",
                     fontSize: "1.2rem",
                     fontWeight: "bold",
                     fontFamily: "sans-serif",

@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState,useContext } from "react";
 import {
   AtSign,
   Calendar,
@@ -10,11 +10,13 @@ import {
 } from "react-feather";
 
 import styles from "./Resume.module.css";
+import { LoginContext } from "../../context/LoginContext";
 
 const Resume = forwardRef((props, ref) => {
   const information = props.information;
   const sections = props.sections;
   const containerRef = useRef();
+  const {darkMode} = useContext(LoginContext);
 
   const [columns, setColumns] = useState([[], []]);
   const [source, setSource] = useState("");
@@ -305,7 +307,11 @@ const Resume = forwardRef((props, ref) => {
 
   return (
     <div ref={ref}>
-      <div ref={containerRef} className={styles.container}>
+      <div ref={containerRef} className={styles.container}
+        style={{
+            color:  "black",
+        }}
+      >
         <div className={styles.header}>
           <p className={styles.heading}>{info.basicInfo?.detail?.name}</p>
           <p className={styles.subHeading}>{info.basicInfo?.detail?.title}</p>

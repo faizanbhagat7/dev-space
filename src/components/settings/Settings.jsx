@@ -8,12 +8,16 @@ import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import LogoutModal from "./LogoutModal";
 import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
 import QuizRoundedIcon from '@mui/icons-material/QuizRounded';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 const Settings = () => {
-  const { user } = useContext(LoginContext);
+  const { user ,darkMode,setDarkMode} = useContext(LoginContext);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  console.log(showLogoutModal)
+  const switchMode = () => {
+    setDarkMode(!darkMode);
+  }
   return (
     <>
       <div className="settings-container">
@@ -27,12 +31,24 @@ const Settings = () => {
             to={`/bookmarks/${user?.id}`}
             style={{ textDecoration: "none", color: "black" }}
           >
-        <div className="bookmarks">
+        <div className="bookmarks"
+          style={{
+            background: darkMode ? "#1f1f1f" : "white",
+            color: darkMode ? "#fff" : "black",
+            boxShadow: darkMode && "0px 0px 2px 0px #fff",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
             <div className="bookmarks-icon-container">
               <BookmarksIcon className="bookmarks-icon" />
             </div>
             <div className="bookmarks-title">
-              <p>Bookmarks</p>
+              <p
+                style={{
+                  color: darkMode ? "#fff" : "black",
+                  transition: "all 0.3s ease-in-out",
+                }}
+              >Bookmarks</p>
             </div>
         </div>
           </Link>
@@ -42,12 +58,24 @@ const Settings = () => {
             to={`/resume`}
             style={{ textDecoration: "none", color: "black" }}
           >
-        <div className="bookmarks">
+        <div className="bookmarks"
+             style={{
+              background: darkMode ? "#1f1f1f" : "white",
+              color: darkMode ? "#fff" : "black",
+              boxShadow: darkMode && "0px 0px 2px 0px #fff",
+              transition: "all 0.3s ease-in-out",
+            }}
+        >
             <div className="bookmarks-icon-container">
               <FeedRoundedIcon className="bookmarks-icon" />
             </div>
             <div className="bookmarks-title">
-              <p>Generate Resume</p>
+              <p
+                 style={{
+                  color: darkMode ? "#fff" : "black",
+                  transition: "all 0.3s ease-in-out",
+                }}
+              >Generate Resume</p>
             </div>
         </div>
           </Link>
@@ -57,15 +85,55 @@ const Settings = () => {
             to={`/tests`}
             style={{ textDecoration: "none", color: "black" }}
           >
-        <div className="bookmarks">
+        <div className="bookmarks"
+           style={{
+            background: darkMode ? "#1f1f1f" : "white",
+            color: darkMode ? "#fff" : "black",
+            boxShadow: darkMode && "0px 0px 2px 0px #fff",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
             <div className="bookmarks-icon-container">
               <QuizRoundedIcon className="bookmarks-icon" />
             </div>
             <div className="bookmarks-title">
-              <p>Check technical skills</p>
+              <p
+                   style={{
+                  color: darkMode ? "#fff" : "black",
+                  transition: "all 0.3s ease-in-out",
+                }}>
+                Check technical skills</p>
             </div>
         </div>
           </Link>
+
+          {/* theme switch */}
+          <div className="bookmarks"
+           style={{
+            background: darkMode ? "white" : "#1f1f1f",
+            color: darkMode ? "#000" : "white",
+            boxShadow: darkMode && "0px 0px 2px 0px #fff",
+            transition: "all 0.3s ease-in-out",
+            cursor:"pointer"
+          }}
+          onClick={switchMode}
+        >
+            <div className="bookmarks-icon-container">
+              {
+                darkMode ? <LightModeIcon className="bookmarks-icon" 
+                /> : <DarkModeIcon className="bookmarks-icon" />
+              }
+            </div>
+            <div className="bookmarks-title">
+              <p
+                   style={{
+                  color: darkMode ? "#000" : "#fff",
+                  transition: "all 0.3s ease-in-out",
+                }}> 
+                  Switch to {darkMode ? "Light" : "Dark"} Mode
+                </p>
+            </div>
+        </div>
 
             {/* Logout */}
             <div className="settings-logout-container" 

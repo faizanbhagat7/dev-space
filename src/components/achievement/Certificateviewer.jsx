@@ -12,7 +12,7 @@ import Loader from "../loader/Loader";
 const Certificateviewer = () => {
   const { certificateId } = useParams();
   const [pdfUrl, setPdfUrl] = useState(null);
-  const { setActivebutton } = useContext(LoginContext);
+  const { setActivebutton ,darkMode} = useContext(LoginContext);
   const [loading, setLoading] = useState(true);
   const [pdfDescription, setPdfDescription] = useState("");
 
@@ -40,7 +40,12 @@ const Certificateviewer = () => {
   }
   return (
     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-      <div className="pdf-container">
+      <div className="pdf-container"
+        style={{
+          backgroundColor: darkMode ? "#1f1f1f" : "white",
+          color: darkMode ? "white" : "black",
+        }}
+      >
         <div className="pdf-description">{pdfDescription}</div>
         <div className="pdf">
           <Viewer fileUrl={pdfUrl} />

@@ -8,7 +8,7 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import Loader from "../loader/Loader.jsx";
 
 const Users = () => {
-  const { user, session, activebutton, setActivebutton } =
+  const { user, session, activebutton, setActivebutton ,darkMode} =
     useContext(LoginContext);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -80,7 +80,12 @@ const Users = () => {
       <div className="search-section">
         <div className="search-section-header">
           <p>Explore Developers</p>
-          <form className="form" onSubmit={(e) => handleSubmit(e)}>
+          <form className="form" onSubmit={(e) => handleSubmit(e)}
+          style={{
+            backgroundColor: darkMode ? "#1f1f1f" : "white",
+            color: darkMode ? "white" : "black",
+          }}
+          >
             <div className="input-container">
               <input
                 type="text"
@@ -88,6 +93,10 @@ const Users = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
+style={{
+  backgroundColor: darkMode ? "#1f1f1f" : "white",
+  color: darkMode ? "white" : "black",
+}}
               />
             </div>
             <div className="search-icon-container">
@@ -111,12 +120,21 @@ const Users = () => {
                 to={`/profile/${fetcheduser.id}`}
                 style={{ textDecoration: "none", color: "black" }}
               >
-                <div className="user-card">
+                <div className="user-card"
+                  style={{
+                    backgroundColor: darkMode ? "#1f1f1f" : "white",
+                    color: darkMode ? "white" : "black",
+                  }}
+                >
                   <div className="user-image">
                     <img src={fetcheduser.avatar} alt="" />
                   </div>
                   <div className="user-details">
-                    <div className="fetcheduser-name">{fetcheduser.name}</div>
+                    <div className="fetcheduser-name"
+                      style={{
+                        color:darkMode? 'white':"#15202b",
+                      }}
+                    >{fetcheduser.name}</div>
                     <div className="fetcheduser-description">
                       {fetcheduser.description}
                     </div>
@@ -126,7 +144,11 @@ const Users = () => {
             ))}
 
           {users?.length === 0 && user != null ? (
-            <div className="no-user-found">No user found</div>
+            <div className="no-user-found"
+              style={{
+                color:darkMode ? "white" : "#15202b",
+              }}
+            >No user found</div>
           ) : (
             <div className="Loading"></div>
           )}
@@ -145,12 +167,21 @@ const Users = () => {
                     to={`/profile/${recommendedUser.id}`}
                     style={{ textDecoration: "none", color: "black" }}
                   >
-                    <div className="recomended-user-card">
+                    <div className="recomended-user-card"
+                      style={{
+                        backgroundColor: darkMode ? "#1f1f1f" : "white",
+                        color: darkMode ? "white" : "black",
+                      }}
+                    >
                       <div className="recomended-user-image">
                         <img src={recommendedUser.avatar} alt="" />
                       </div>
                       <div className="recomended-user-details">
-                        <div className="recomended-user-name">
+                        <div className="recomended-user-name"
+                          style={{
+                            color: darkMode ? "white" : "#15202b",
+                          }}
+                        >
                           {/* {recommendedUser.name} */}
                           {recommendedUser?.name.length > 12 ? (
                             recommendedUser?.name.split(" ")[0]

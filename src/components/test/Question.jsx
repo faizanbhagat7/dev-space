@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import "./Question.css";
+import { LoginContext } from "../../context/LoginContext";
+import { dark } from "@mui/material/styles/createPalette";
 
 const Question = ({
   currentQuestion,
@@ -15,6 +17,7 @@ const Question = ({
   const optionEntries = Object.entries(options)
     .filter((item) => item[1] !== null)
     .slice(0, 4);
+  const {darkMode} = useContext(LoginContext)
 
   const correctAnswerKey = Object.keys(question?.correct_answers).find(
     (key) => question?.correct_answers[key] === "true"
@@ -56,11 +59,11 @@ const Question = ({
                   backgroundColor:
                     optionSelected === value && optionSelected !== null
                       ? "#0077b5"
-                      : "",
+                      : darkMode && "#15202b" ,
                   color:
                     optionSelected === value && optionSelected !== null
                       ? "white"
-                      : "",
+                      : darkMode && "white",
                 }}
               >
                 {value}

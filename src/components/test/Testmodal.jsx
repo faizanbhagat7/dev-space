@@ -1,14 +1,21 @@
-import React,{useState,useEffect} from "react";
+import React,{useState,useEffect,useContext} from "react";
 import "./Testmodal.css";
 import Question from "./Question";
+import { LoginContext } from "../../context/LoginContext";
 
 const Testmodal = ({ setTestmodal, questions }) => {
     const [currentQuestion,setCurrentQuestion] = useState(0)
     const [score,setScore] = useState(0)
+    const {darkMode} = useContext(LoginContext)
   return (
     <>
       <div className="testmodal-container">
-        <div className="testmodal-body">
+        <div className="testmodal-body"
+          style={{
+            backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+            color: darkMode ? "#fff" : "#000",
+          }}
+        >
             {
                 questions.length > 0  && currentQuestion < 10
                  ? (

@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Addpost = () => {
-  const { activebutton, user, setActivebutton } = useContext(LoginContext);
+  const { activebutton, user, setActivebutton ,darkMode} = useContext(LoginContext);
 
   useEffect(() => {
     setActivebutton("add post");
@@ -125,7 +125,12 @@ const Addpost = () => {
       
 
         {/* addpost */}
-        <div className="addpost">
+        <div className="addpost"
+        style={{backgroundColor:darkMode?"#1f1f1f":"#fff"
+      ,
+      color:darkMode?"#fff":"#000"
+    }}
+        >
           <div className="addpost-profile-section">
             <div className="addpost-userinfo">
               <div className="addpost-profile-icon-image">
@@ -157,9 +162,17 @@ const Addpost = () => {
                   placeholder="Whats in your mind ?"
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
+                    style={{
+                      backgroundColor:darkMode?"#1f1f1f":"#fff"
+                      ,color:darkMode?"#fff":"#000"
+                    }}
                 />
 
-                <label className="addpost-avatar-label">
+                <label className="addpost-avatar-label"
+                style={{backgroundColor:darkMode?"#1f1f1f":"#fff"
+                ,color:darkMode?"#fff":"#000"
+              }}
+                >
                   <input
                     type="file"
                     accept="image/*"

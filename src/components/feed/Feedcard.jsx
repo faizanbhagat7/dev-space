@@ -19,7 +19,7 @@ import SendIcon from '@mui/icons-material/Send';
 import Feedsharemodal from './Feedsharemodal'
 
 const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }) => {
-  const { user } = useContext(LoginContext);
+  const { user ,darkMode} = useContext(LoginContext);
   const [feedAuthor, setFeedAuthor] = useState(null);
   const [likeList, setLikeList] = useState([]);
   const [likeCount, setLikeCount] = useState(0);
@@ -228,7 +228,14 @@ const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }
   }, []);
   return (
     <>
-      <div className="feed-card">
+      <div className="feed-card"
+        style={{
+          backgroundColor: darkMode ? "#18191a" : "#fff",
+          color: darkMode ? "#fff" : "#000",
+          boxShadow: darkMode ? "0px 0px 2px 0px #fff" :
+          "0px 0px 10px 0px rgba(0,0,0,0.2)",
+        }}
+      >
         <div className="feed-card-header">
           <div className="feed-card-header-left">
             <div className="author-info">
@@ -263,9 +270,17 @@ const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }
                     color: "black",
                   }}
                 >
-                  <div className="author-name">{feedAuthor?.name}</div>
+                  <div className="author-name"
+                    style={{
+                      color: darkMode ? "#fff" : "#000",
+                    }}
+                  >{feedAuthor?.name}</div>
                 </Link>
-                <div className="author-desc">{feedAuthor?.description}</div>
+                <div className="author-desc"
+                  style={{
+                    color: darkMode ? "#fff" : "#000",
+                  }}
+                >{feedAuthor?.description}</div>
                 <div className="feed-date">
                   <ReactTimeAgo date={feed?.created_at} locale="en-US" />
                 </div>
@@ -298,7 +313,11 @@ const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }
         {/* feed body */}
         <Link to={`/post/${feed?.id}`} style={{ textDecoration: "none" ,color:'#000'}}>
         <div className="feed-card-body">
-          <div className="feed-card-body-text">{feed?.caption}</div>
+          <div className="feed-card-body-text"
+            style={{
+              color: darkMode ? "#fff" : "#000",
+            }}
+          >{feed?.caption}</div>
           {feed?.image && (
             <div className="feed-card-body-image">
               <img src={feed?.image} alt="" />
@@ -325,7 +344,9 @@ const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }
               <div
                 className="feed-like-count"
                 style={{
-                  color: isLikedByUser ? "#007fff" : "",
+                  color: isLikedByUser ? "#007fff" : 
+                  darkMode ? "#fff" : "#000",
+                  
                 }}
               >
                 {likeCount}
@@ -349,7 +370,8 @@ const Feedcard = ({ feed, getFeed , openCommentDefault , setOpenCommentDefault }
               <div
                 className="feed-comment-count"
                 style={{
-                  color: commentpopup ? "#007fff" : "",
+                  color: commentpopup ? "#007fff" : 
+                  darkMode ? "#fff" : "#000",
                   transition: "all 0.2s ease-in-out",
                 }}
               >

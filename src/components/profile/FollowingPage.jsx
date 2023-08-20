@@ -9,6 +9,7 @@ const FollowingPage = () => {
   const { profileId } = useParams();
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { darkMode } = useContext(LoginContext);
 
   const fetchFollowerProfiles = async () => {
     setLoading(true);
@@ -67,12 +68,21 @@ const FollowingPage = () => {
               to={`/profile/${fetcheduser.id}`}
               style={{ textDecoration: "none", color: "black" }}
             >
-              <div className="follow-card">
+              <div className="follow-card"
+                style={{
+                  backgroundColor: darkMode ? "#1f1f1f" : "white",
+                  color: darkMode ? "white" : "black",
+                }}
+              >
                 <div className="follow-image">
                   <img src={fetcheduser.avatar} alt="" />
                 </div>
                 <div className="follow-details">
-                  <div className="follow-name">{fetcheduser.name}</div>
+                  <div className="follow-name"
+                    style={{
+                      color: darkMode ? "white" : "#15202b",
+                    }}
+                  >{fetcheduser.name}</div>
                 </div>
               </div>
             </Link>

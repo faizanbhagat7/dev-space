@@ -7,7 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Addachievementmodal = ({setAddAchievementModal,fetchCertificates}) => {
-  const { user } = useContext(LoginContext);
+  const { user ,darkMode} = useContext(LoginContext);
   const [uploading, setUploading] = useState(false);
   const [certificateDescription, setCertificateDescription] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -90,7 +90,12 @@ const Addachievementmodal = ({setAddAchievementModal,fetchCertificates}) => {
   return (
     <>
       <div className="modal">
-        <div className="modal-content">
+        <div className="modal-content"
+        style={{
+            backgroundColor:darkMode?"#1F1F1F":"white",
+            color:darkMode?"white":"black",
+        }}
+        >
           <div className="modal-header">
             <h4>Add Certification</h4>
           </div>
@@ -103,6 +108,10 @@ const Addachievementmodal = ({setAddAchievementModal,fetchCertificates}) => {
                 rows="5"
                 value={certificateDescription}
                 onChange={(e) => setCertificateDescription(e.target.value)}
+                style={{
+                  backgroundColor: darkMode ? "#15202b" : "#fff",
+                  color: darkMode ? "#fff" : "#000",
+                }}
               />
               <p className="label">Certificate</p>
 

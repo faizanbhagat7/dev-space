@@ -37,6 +37,7 @@ const Homepage = () => {
     setActivebutton,
     recommendedUsers,
     fetchRecommendedUsers,
+    darkMode
   } = useContext(LoginContext);
   const { profileId, certificateId } = useParams();
 
@@ -70,12 +71,30 @@ const Homepage = () => {
   }
   return (
     <>
-      <div className="main">
-        <div className="sidebar">
+      <div className="main"
+        style={{
+          backgroundColor: darkMode ? "#15202b" : "#f2f0e4",
+          color: darkMode ? "#fff" : "#000",
+          transition: "all 0.3s ease-in-out",
+        }}
+      >
+        <div className="sidebar"
+          style={{
+            backgroundColor: darkMode ? "#15202b" : "#f2f0e4",
+            color: darkMode ? "#fff" : "#000",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
           <Sidebar />
         </div>
 
-        <div className="content">
+        <div className="content"
+          style={{
+            backgroundColor: darkMode ? "#15202b" : "#f2f0e4",
+            color: darkMode ? "#fff" : "#000",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
           <Routes>
             <Route path="/" element={<Feed />} />
             <Route path={`/profile/:profileId`} element={<Userprofile />} />

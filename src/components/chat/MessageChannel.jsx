@@ -9,7 +9,7 @@ import MessageTemplate from "./MessageTemplate";
 import ScrollToBottom from 'react-scroll-to-bottom';
 
 const MessageChannel = () => {
-  const { user, setActivebutton } = useContext(LoginContext);
+  const { user, setActivebutton ,darkMode} = useContext(LoginContext);
   const { recieverId } = useParams();
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -90,7 +90,12 @@ const MessageChannel = () => {
 
   return (
     <>
-      <div className="messageChannel-container">
+      <div className="messageChannel-container"
+      style={{
+        backgroundColor: darkMode ? "#1f1f1f" : "white",
+        color: darkMode ? "white" : "black",
+      }}
+      >
         <div className="messageChannel-header">
           <Link
             to={`/profile/${recieverId}`}

@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
+    padding-left:20px;
 }
 
 .noFeed{
@@ -24,5 +25,6 @@
         height: 100vh;
         margin: 0px;
         align-items: center;
+        padding-left: 0px;
     }
 }

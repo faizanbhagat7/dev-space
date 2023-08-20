@@ -8,7 +8,7 @@ const FeedsendLogic = ({ followinguser, postId }) => {
 
     const [loading, setLoading] = useState(false);
     const [send, setSend] = useState(false);
-    const {user} = useContext(LoginContext);
+    const {user,darkMode} = useContext(LoginContext);
 
     const sendPost = async () => {
         setLoading(true);
@@ -34,7 +34,16 @@ const FeedsendLogic = ({ followinguser, postId }) => {
 
   return (
     <>
-      <div className="sharefeed-template">
+      <div className="sharefeed-template"
+        style={{
+          backgroundColor: darkMode ? "#15202b" : "lightgray",
+          color: darkMode ? "white" : "black",
+          boxShadow
+            : darkMode
+              ? "0px 0px 5px 0px rgba(255,255,255,0.2)"
+              : "none",
+        }}
+      >
         <div className="sharefeed-userinfo">
           <div className="sharefeed-image">
             <img src={followinguser.avatar} alt="" />

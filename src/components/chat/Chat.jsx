@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import Loader from "../loader/Loader.jsx";
 
 const Chat = () => {
-  const { activebutton, user, setActivebutton } = useContext(LoginContext);
+  const { activebutton, user, setActivebutton ,darkMode} = useContext(LoginContext);
 
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -105,13 +105,22 @@ const Chat = () => {
       <div className="chat-section">
         <div className="chat-section-header">
           <div className="chat-user-search-container">
-            <form className="form" onSubmit={(e) => handleSubmit(e)}>
+            <form className="form" onSubmit={(e) => handleSubmit(e)}
+            style={{
+              backgroundColor:darkMode ? '#1f1f1f' : 'white',
+              color:darkMode ? 'white' : 'black'
+            }}
+            >
               <div className="input-container">
                 <input
                   type="text"
                   placeholder="Search for users"
                   className="search-input"
                   value={searchTerm}
+                  style={{
+                    backgroundColor:darkMode ? '#1f1f1f' : 'white',
+                    color:darkMode ? 'white' : 'black'
+                  }}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                   }}
@@ -139,11 +148,22 @@ const Chat = () => {
                 to={`/messagechannel/${fetcheduser.id}`}
                 style={{ textDecoration: "none", color: "black" }}
               >
-                <div className="recentchat-template">
+                <div className="recentchat-template"
+                style={{
+                  backgroundColor:darkMode ? '#1f1f1f' : 'white',
+                  color:darkMode ? 'white' : 'black',
+                  boxShadow:darkMode?'0px 0px 2px gray':''
+                }}
+                >
                   <div className="recentchat-image">
                     <img src={fetcheduser.avatar} alt="" />
                   </div>
-                  <div className="recentchat-details">
+                  <div className="recentchat-details"
+                  style={{
+                    backgroundColor:darkMode ? '#1f1f1f' : 'white',
+                    color:darkMode ? 'white' : 'black'
+                  }}
+                  >
                     <div className="recentchat-name">{fetcheduser.name}</div>
                     <div className="recentchat-description">
                       {fetcheduser.description}
@@ -154,7 +174,11 @@ const Chat = () => {
             ))}
 
           {users?.length === 0 && user != null && searchTerm.length > 0 ? (
-            <div className="no-user-found">No user found</div>
+            <div className="no-user-found"
+            style={{
+              color:darkMode ? 'white' : 'black'
+            }}
+            >No user found</div>
           ) : (
             <div className="Loading"></div>
           )}
@@ -179,7 +203,11 @@ const Chat = () => {
                 color: "black",
                 fontFamily:'apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
               }}
-            ><div>No recent chats</div></div>
+            ><div
+              style={{
+                color:darkMode ? 'white' : 'black'
+              }}
+            >No recent chats</div></div>
           }
           {recentChatUsers?.length > 0 &&
             searchTerm.length === 0 &&
@@ -188,7 +216,13 @@ const Chat = () => {
                 to={`/messagechannel/${recentChatUser.id}`}
                 style={{ textDecoration: "none", color: "black" }}
               >
-                <div className="recentchat-template">
+                <div className="recentchat-template"
+                  style={{
+                    backgroundColor:darkMode ? '#1f1f1f' : 'white',
+                    color:darkMode ? 'white' : 'black',
+                    boxShadow:darkMode?'0px 0px 2px gray':''
+                  }}
+                >
                   <div className="recentchat-image">
                     <img
                       src={recentChatUser.avatar}

@@ -7,7 +7,7 @@ import {useNavigate} from "react-router-dom";
 
 const LogoutModal = ({ setShowLogoutModal }) => {
     const navigate = useNavigate();
-    const { user, setUser } = useContext(LoginContext);
+    const { user, setUser,darkMode } = useContext(LoginContext);
     const Logout =  () => {
          supabase.auth.signOut();
          setUser(null);
@@ -17,11 +17,21 @@ const LogoutModal = ({ setShowLogoutModal }) => {
   return (
     <>
       <div className="logout-modal">
-        <div className="logout-modal-content">
+        <div className="logout-modal-content"
+        style={{
+          backgroundColor: darkMode ? "#1f1f1f" : "white",
+          color: darkMode ? "white" : "black",
+        }}
+        >
           <div className="logout-modal-header">
             <p>Log Out from account</p>
           </div>
-          <div className="logout-modal-body">
+          <div className="logout-modal-body"
+          style={{
+            backgroundColor: darkMode ? "#1f1f1f" : "white",
+            color: darkMode ? "white" : "black",
+          }}
+          >
             <p>Are you sure you want to Log Out from account <span
             style={{fontWeight:"bold",
             color:"#1a73e8",
@@ -29,7 +39,12 @@ const LogoutModal = ({ setShowLogoutModal }) => {
         }}
             >{ user?.name }</span> ?</p>
           </div>
-          <div className="logout-modal-footer">
+          <div className="logout-modal-footer"
+            style={{
+              backgroundColor: darkMode ? "#1f1f1f" : "white",
+              color: darkMode ? "white" : "black",
+            }}
+          >
             <button
               className="logout-modal-button-cancel"
               onClick={()=>

@@ -13,7 +13,7 @@ import Deleteachievementmodal from "./Deleteachievementmodal";
 import Loader from "../loader/Loader";
 
 const Achievement = () => {
-  const { user } = useContext(LoginContext);
+  const { user ,darkMode} = useContext(LoginContext);
   const { profileId } = useParams();
   const [addAchievementModal, setAddAchievementModal] = useState(false);
   const [profileDetails, setProfileDetails] = useState([]);
@@ -59,7 +59,11 @@ const Achievement = () => {
   return (
     <>
       <div className="main-achievements">
-        <p className="page-title">
+        <p className="page-title"
+          style={{
+            color: darkMode ? "white" : "black",
+          }}
+        >
           {certificateCount === 1
             ? certificateCount + " Achievement "
             : certificateCount + " Achievements "}
@@ -85,13 +89,22 @@ const Achievement = () => {
 
         <div className="achievements-container">
           {profileCertificates.map((certificate) => (
-            <div className="achievement-card">
+            <div className="achievement-card"
+              style={{
+                backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+                color: darkMode ? "#fff" : "#000",
+              }}
+            >
               <Link
                 to={`/view-certificate/${certificate.id}`}
                 style={{ textDecoration: "none", color: "black" }}
               >
                 <div className="card-description">
-                  <p className="card-title">{certificate.description}</p>
+                  <p className="card-title"
+                    style={{
+                      color: darkMode ? "white" : "black",
+                    }} 
+                  >{certificate.description}</p>
                 </div>
               </Link>
               {user?.id === profileId && (

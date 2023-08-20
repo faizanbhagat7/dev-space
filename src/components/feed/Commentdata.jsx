@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 const Commentdata = ({ comment ,getComments,commentList}) => {
   const [commentedUser, setCommentedUser] = useState();
-  const { user } = useContext(LoginContext);
+  const { user,darkMode } = useContext(LoginContext);
 
   const fetchCommentedUser = async () => {
     const { data, error } = await supabase
@@ -37,7 +37,12 @@ const Commentdata = ({ comment ,getComments,commentList}) => {
 
   return (
     <>
-      <div className="feed-commentdata-section">
+      <div className="feed-commentdata-section"
+        style={{
+          backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+          boxShadow: darkMode ? "0px 0px 2px 0px gray" : "0px 0px 10px 0px rgba(0,0,0,0.1)",
+        }}
+      >
         <div className="feed-commentdata-section-header">
           <Link
             to={`/profile/${commentedUser?.id}`}
@@ -50,7 +55,7 @@ const Commentdata = ({ comment ,getComments,commentList}) => {
               <img src={commentedUser?.avatar} alt="" />
             </div>
           </Link>
-        </div>
+        </div> 
         <div className="feed-commentdata-section-body">
           <Link
             to={`/profile/${commentedUser?.id}`}
@@ -60,13 +65,21 @@ const Commentdata = ({ comment ,getComments,commentList}) => {
             }}
           >
             <p className="commented-user-info">
-              <span className="commented-username">{commentedUser?.name}</span>
+              <span className="commented-username"
+                style={{
+                  color: darkMode ? "white" : "black",
+                }}
+              >{commentedUser?.name}</span>
               <span className="commented-time">
                 <ReactTimeAgo date={comment?.created_at} />
               </span>
             </p>
           </Link>
-          <p className="comment-text">{comment?.comment}</p>
+          <p className="comment-text"
+            style={{
+              color: darkMode ? "white" : "black",
+            }}
+          >{comment?.comment}</p>
         </div>
 
         {user?.id === comment?.userId && (

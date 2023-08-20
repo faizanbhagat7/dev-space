@@ -13,6 +13,7 @@ const App = () => {
   const [session, setSession] = useState(null);
   const [activebutton, setActivebutton] = useState(null);
   const [recommendedUsers, setRecommendedUsers] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
   const fetchUserProfile = async (Session) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -37,7 +38,9 @@ const App = () => {
           setSession,
           fetchUserProfile,
           activebutton,
-          setActivebutton
+          setActivebutton,
+          darkMode,
+          setDarkMode
         }}
       >
         <SessionContextProvider supabaseClient={supabase}>

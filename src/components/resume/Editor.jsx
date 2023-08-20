@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { X } from "react-feather";
+import {LoginContext} from "../../context/LoginContext";
 
 import InputControl from "./InputControl";
 
 import styles from "./Editor.module.css";
 
 function Editor(props) {
+  const {darkMode} = useContext(LoginContext);
   const sections = props.sections;
   const information = props.information;
 
@@ -45,6 +47,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, title: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="Company Name"
@@ -53,6 +59,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, companyName: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
       <div className={styles.row}>
@@ -66,6 +76,10 @@ function Editor(props) {
               certificationLink: event.target.value,
             }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="Location"
@@ -74,6 +88,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, location: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
       <div className={styles.row}>
@@ -85,6 +103,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, startDate: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="End Date"
@@ -94,6 +116,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, endDate: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
 
@@ -103,16 +129,28 @@ function Editor(props) {
           placeholder="Line 1"
           value={values.points ? values.points[0] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 0)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 2"
           value={values.points ? values.points[1] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 1)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 3"
           value={values.points ? values.points[2] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 2)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
     </div>
@@ -127,6 +165,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, title: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
       <InputControl
@@ -136,6 +178,10 @@ function Editor(props) {
         onChange={(event) =>
           setValues((prev) => ({ ...prev, overview: event.target.value }))
         }
+        style = {{
+          backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+          color: darkMode ? "#fff" : "#000",
+        }}
       />
       <div className={styles.row}>
         <InputControl
@@ -145,6 +191,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, link: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="Github Link"
@@ -153,6 +203,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, github: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
       <div className={styles.column}>
@@ -161,21 +215,37 @@ function Editor(props) {
           placeholder="Line 1"
           value={values.points ? values.points[0] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 0)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 2"
           value={values.points ? values.points[1] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 1)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 3"
           value={values.points ? values.points[2] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 2)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 4"
           value={values.points ? values.points[3] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 3)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
     </div>
@@ -190,6 +260,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, title: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
       <InputControl
@@ -199,6 +273,10 @@ function Editor(props) {
         onChange={(event) =>
           setValues((prev) => ({ ...prev, college: event.target.value }))
         }
+        style = {{
+          backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+          color: darkMode ? "#fff" : "#000",
+        }}
       />
       <div className={styles.row}>
         <InputControl
@@ -209,6 +287,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, startDate: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="End Date"
@@ -218,6 +300,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, endDate: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
     </div>
@@ -232,6 +318,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, name: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="Title"
@@ -240,6 +330,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, title: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
       <div className={styles.row}>
@@ -250,6 +344,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, linkedin: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="Github Link"
@@ -258,6 +356,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, github: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
       <div className={styles.row}>
@@ -268,6 +370,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, email: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           label="Enter phone"
@@ -276,6 +382,10 @@ function Editor(props) {
           onChange={(event) =>
             setValues((prev) => ({ ...prev, phone: event.target.value }))
           }
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
     </div>
@@ -288,21 +398,37 @@ function Editor(props) {
           placeholder="Line 1"
           value={values.points ? values.points[0] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 0)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 2"
           value={values.points ? values.points[1] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 1)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 3"
           value={values.points ? values.points[2] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 2)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
         <InputControl
           placeholder="Line 4"
           value={values.points ? values.points[3] : ""}
           onChange={(event) => handlePointUpdate(event.target.value, 3)}
+          style = {{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
       </div>
     </div>
@@ -316,6 +442,10 @@ function Editor(props) {
         onChange={(event) =>
           setValues((prev) => ({ ...prev, summary: event.target.value }))
         }
+        style = {{
+          backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+          color: darkMode ? "#fff" : "#000",
+        }}
       />
     </div>
   );
@@ -328,6 +458,10 @@ function Editor(props) {
         onChange={(event) =>
           setValues((prev) => ({ ...prev, other: event.target.value }))
         }
+        style={{
+          backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+          color: darkMode ? "#fff" : "#000",
+        }}
       />
     </div>
   );
@@ -589,8 +723,15 @@ function Editor(props) {
     });
   }, [activeDetailIndex]);
 
+
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container}
+      style={{
+        backgroundColor: darkMode ? "#1f1f1f" : "#f2f2f2",
+        color: darkMode ? "#fff" : "#000",
+      }}
+    >
       <div className={styles.header}>
         {Object.keys(sections)?.map((key) => (
           <div
@@ -611,6 +752,10 @@ function Editor(props) {
           placeholder="Enter section title"
           value={sectionTitle}
           onChange={(event) => setSectionTitle(event.target.value)}
+          style={{
+            backgroundColor: darkMode ? "#15202b" : "#f2f2f2",
+            color: darkMode ? "#fff" : "#000",
+          }}
         />
 
         <div className={styles.chips}>

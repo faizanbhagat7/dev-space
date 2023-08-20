@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 import './Test.css'
 
 const Test = () => {
-  const { activebutton, user, setActivebutton } = useContext(LoginContext);
+  const { activebutton, user, setActivebutton ,
+    darkMode
+  } = useContext(LoginContext);
   
   useEffect(() => {
     setActivebutton("tests");
@@ -17,10 +19,20 @@ const Test = () => {
   return (
     <>
       <div className="test-container">
-        <div className="test-header">
+        <div className="test-header"
+          style={{
+            backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+            color: darkMode ? "#fff" : "#1f1f1f",
+          }}
+        >
           <p>Check your Technical skills</p>
         </div>
-        <div className="test-body">
+        <div className="test-body"
+        style={{
+          backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+          color: darkMode ? "#fff" : "#000",
+        }}
+        >
           <p>Select Difficulty level</p>
           <div className="test-body-catagory">
             <Link to="easy" style={{textDecoration:"none",color:"black"}}>

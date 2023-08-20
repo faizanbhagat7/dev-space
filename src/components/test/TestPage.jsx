@@ -9,9 +9,10 @@ import { LoginContext } from "../../context/LoginContext";
 const TestPage = () => {
   const { difficultyLevel } = useParams();
   const navigate = useNavigate();
-  const {  setActivebutton } = useContext(LoginContext);
+  const {  setActivebutton , darkMode} = useContext(LoginContext);
   const [questions, setQuestions] = useState([]);
   const [testmodal, setTestmodal] = useState(false);
+
 
   const changeDifficulty = () => {
     navigate("/tests");
@@ -38,7 +39,12 @@ const TestPage = () => {
   return (
     <>
       <div className="testpage-container">
-        <div className="testpage-body">
+        <div className="testpage-body"
+          style={{
+            backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+            color: darkMode ? "#fff" : "#000",
+          }}
+        >
           <div className="testpage-title">
             <p>{difficultyLevel} level test</p>
           </div>

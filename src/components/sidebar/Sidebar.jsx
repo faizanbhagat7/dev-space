@@ -14,7 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 import LogoutModal from "../settings/LogoutModal";
 
 const Sidebar = () => {
-  const { user, setUser, activebutton, setActivebutton } =
+  const { user, setUser, activebutton, setActivebutton ,darkMode } =
     useContext(LoginContext);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -80,7 +80,14 @@ const Sidebar = () => {
     <>
       <div className="sidebar-container">
         {/* profile section */}
-        <div className="sidebar-profile-section">
+        <div className="sidebar-profile-section"
+          style={{
+            backgroundColor: darkMode ? "#1c1c1e" : "white",
+            color: darkMode ? "white" : "black",
+            boxShadow: darkMode ? "0px 0px 3px 0px #007fff" : "none",
+            transition: "all 0.3s ease-in-out",
+          }} 
+        >
           <div classname="profile-image">
             <img
               src={user?.avatar}
@@ -96,7 +103,14 @@ const Sidebar = () => {
         </div>
 
         {/* sidebar options */}
-        <div className="sidebar-options-section">
+        <div className="sidebar-options-section"
+          style={{
+            backgroundColor: darkMode ? "#1c1c1e" : "white",
+            color: darkMode ? "white" : "black",
+            boxShadow: darkMode ? "0px 0px 3px 0px #007fff" : "none",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
           {sidebarOptions.map((option) => (
             <Link
               to={option.url}
@@ -106,18 +120,25 @@ const Sidebar = () => {
               <div
                 className="sidebar-options"
                 style={{
-                  backgroundColor:
-                    activebutton === option.name ? "#e9e9e9" : "white",
-                  color: activebutton === option.name ? "#007fff" : "#000",
+                   
                   borderBottom:
-                    activebutton === option.name ? "2px solid #007fff" : "none",
+                    activebutton === option.name && "2px solid #007fff" ,
                   transition: "all 0.2s ease-in-out",
                   paddingBottom: "0px",
                   transition: "all 0.2s ease-in-out",
                   boxShadow:
                     activebutton === option.name
                       ? "0px 0px 5px 0px #007fff"
-                      : "none",
+                      : "none",                 
+                      
+                      color:
+                    activebutton === option.name ? "#007fff" : 
+                      darkMode ? "#e9e9e9" : "black"
+                    ,
+                    backgroundColor:
+                    activebutton === option.name ? "#e9e9e9" : 
+                      darkMode ? "#1c1c1e" : "white",
+                      transition: "all 0.3s ease-in-out",
                 }}
               >
                 <div className="option-icon">{option.icon}</div>

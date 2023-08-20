@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useContext } from "react";
 import "./profilefeed.css";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../backend/supabaseConfig";
 import Feedcard from "../feed/Feedcard";
 import Loader from "../loader/Loader";
+import { LoginContext } from "../../context/LoginContext";
 
 const Profilefeed = () => {
   const { profileId } = useParams();
   const [profileFeed, setProfileFeed] = useState([]);
   const [fetching, setFetching] = useState(false);
+  const { darkMode } = useContext(LoginContext);
 
   const fetchProfileFeed = async () => {
     setFetching(true);
@@ -44,7 +46,13 @@ const Profilefeed = () => {
         <Loader />
       ) : (
         <div className="noFeed-text">
-            <div>There are no posts yet</div>
+            <div
+              style={{
+                color: darkMode ? "white" : "black",
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+              }}
+            >There are no posts yet</div>
         </div>
         
       )}

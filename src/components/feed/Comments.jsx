@@ -7,7 +7,7 @@ import SendIcon from "@mui/icons-material/Send";
 import Commentdata from "./Commentdata";
 
 const Comments = ({ feed, getComments, commentList }) => {
-  const { user } = useContext(LoginContext);
+  const { user ,darkMode} = useContext(LoginContext);
   const [commentText, setCommentText] = useState("");
 
   const addComment = async (e) => {
@@ -31,7 +31,11 @@ const Comments = ({ feed, getComments, commentList }) => {
 
   return (
     <>
-      <div className="feed-comments-section">
+      <div className="feed-comments-section"
+        style={{
+          backgroundColor: darkMode ? "#15202b" : "whitesmoke",
+        }}
+      >
         <div className="feed-comments-section-header">
           <div className="feed-comments-section-header-left">
             <img src={user?.avatar} alt="" />
@@ -43,6 +47,9 @@ const Comments = ({ feed, getComments, commentList }) => {
                   type="text"
                   placeholder="Add a comment"
                   className="comment-input"
+                  style={{
+                    color: darkMode ? "white" : "black",
+                  }}
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                 />{" "}

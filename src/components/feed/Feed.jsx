@@ -7,7 +7,8 @@ import "./feed.css";
 import Feedcard from "./Feedcard";
 
 const Feed = () => {
-  const { activebutton, setActivebutton, user } = useContext(LoginContext);
+  const { activebutton, setActivebutton, user, darkMode } =
+    useContext(LoginContext);
   const [feed, setFeed] = useState([]);
   const [fetching, setFetching] = useState(false);
 
@@ -22,17 +23,28 @@ const Feed = () => {
       .from("posts")
       .select("*")
       .order("created_at", { ascending: false });
+    if (data) {
+      // filtering data, show only feed of following people
 
-    // filtering data, show only feed of following people
-    let postList = [];
-
-    data.map((post) => {
-      if (user.following.includes(post.author) || post.author === user?.id) {
-        postList = [...postList, post];
+      if (user?.following?.length <= 0) {
+        setFetching(false);
+        return;
       }
-    });
-    setFeed(postList);
-    setFetching(false);
+
+      let postList = [];
+      data?.map((post) => {
+        if (
+          user?.following?.includes(post.author) ||
+          post.author === user?.id
+        ) {
+          postList = [...postList, post];
+        }
+      });
+      setFeed(postList);
+      setFetching(false);
+    } else {
+      setFetching(false);
+    }
   };
 
   // realtime post updates
@@ -78,6 +90,7 @@ const Feed = () => {
             color: "black",
             fontFamily:
               'apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+            color: darkMode ? "white" : "black",
           }}
         >
           <div>No feed, Follow people to see their feed</div>

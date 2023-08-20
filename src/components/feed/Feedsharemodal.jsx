@@ -8,7 +8,7 @@ import FeedsendLogic from "./FeedsendLogic";
 const Feedsharemodal = ({ postId, setFeedShareModal }) => {
   const [followingList, setFollowingList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { user } = useContext(LoginContext);
+  const { user,darkMode } = useContext(LoginContext);
 
   useEffect(() => {
     getFollowingList();
@@ -37,7 +37,12 @@ const Feedsharemodal = ({ postId, setFeedShareModal }) => {
   return (
     <>
       <div className="feedsharemodal-container">
-        <div className="feedsharemodal-wrapper">
+        <div className="feedsharemodal-wrapper"
+          style={{
+            backgroundColor: darkMode ? "#1f1f1f" : "#fff",
+            color: darkMode ? "#fff" : "#000",
+          }}
+        >
           <div className="feedsharemodal-header">
             <p>Share Post</p>
           </div>
