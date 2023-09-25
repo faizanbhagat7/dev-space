@@ -44,7 +44,7 @@ const Users = () => {
     }
     // remove recomended users that are already followed
     userList.map((Luser) => {
-      if (user.following.includes(Luser.id)) {
+      if (user?.following?.includes(Luser.id)) {
         userList = userList.filter((user) => user.id !== Luser.id);
       }
     });
