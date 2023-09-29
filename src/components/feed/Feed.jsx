@@ -26,7 +26,8 @@ const Feed = () => {
     if (data) {
       // filtering data, show only feed of following people
 
-      if (user?.following?.length <= 0) {
+      if (user?.following?.length <= 0
+        ) {
         setFetching(false);
         return;
       }
@@ -75,7 +76,8 @@ const Feed = () => {
             <Feedcard feed={post} getFeed={getFeed} />
           ))}
         </div>
-      ) : fetching ? (
+      ) : fetching && user?.following !== null && user?.following?.length <= 0
+      ? (
         <Loader />
       ) : (
         <div

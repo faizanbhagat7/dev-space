@@ -21,7 +21,7 @@ const Addachievementmodal = ({setAddAchievementModal,fetchCertificates}) => {
       toast.error("Please select a file");
       return;
     } 
-    else if (selectedFile.type !== "application/pdf") {
+    else if (selectedFile?.type !== "application/pdf") {
       toast.error("Please select a pdf file");
       return;
     }

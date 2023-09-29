@@ -25,12 +25,12 @@ const Chat = () => {
       .from("profiles")
       .select()
       .ilike("name", `%${searchTerm}%`)
-      .neq("id", user.id);
+      .neq("id", user?.id);
 
     let userList = [];
     for (let i = 0; i < data.length; i++) {
-      if (user.following.includes(data[i].id)) {
-        userList.push(data[i]);
+      if (user?.following?.includes(data[i]?.id)) {
+        userList?.push(data[i]);
       }
     }
     setUsers(userList);
@@ -43,22 +43,22 @@ const Chat = () => {
     const { data, error } = await supabase
       .from("chats")
       .select()
-      .or(`senderId.eq.${user.id},recieverId.eq.${user.id}`)
+      .or(`senderId.eq.${user.id},recieverId.eq.${user?.id}`)
       .order("created_at", { ascending: false });
 
     let recentChatUsers = [];
     if (!error) {
       let recentChatUsersId = [];
       for (let i = 0; i < data.length; i++) {
-        if (recentChatUsersId.includes(data[i].senderId)) {
+        if (recentChatUsersId?.includes(data[i]?.senderId)) {
           continue;
-        } else if (recentChatUsersId.includes(data[i].recieverId)) {
+        } else if (recentChatUsersId?.includes(data[i]?.recieverId)) {
           continue;
         } else {
-          if (data[i].senderId === user.id) {
-            recentChatUsersId.push(data[i].recieverId);
+          if (data[i]?.senderId === user?.id) {
+            recentChatUsersId.push(data[i]?.recieverId);
           } else {
-            recentChatUsersId.push(data[i].senderId);
+            recentChatUsersId.push(data[i]?.senderId);
           }
         }
       }
@@ -145,7 +145,7 @@ const Chat = () => {
             searchTerm === previuosSearch &&
             users?.map((fetcheduser) => (
               <Link
-                to={`/messagechannel/${fetcheduser.id}`}
+                to={`/messagechannel/${fetcheduser?.id}`}
                 style={{ textDecoration: "none", color: "black" }}
               >
                 <div className="recentchat-template"
@@ -156,7 +156,7 @@ const Chat = () => {
                 }}
                 >
                   <div className="recentchat-image">
-                    <img src={fetcheduser.avatar} alt="" />
+                    <img src={fetcheduser?.avatar} alt="" />
                   </div>
                   <div className="recentchat-details"
                   style={{
@@ -166,7 +166,7 @@ const Chat = () => {
                   >
                     <div className="recentchat-name">{fetcheduser.name}</div>
                     <div className="recentchat-description">
-                      {fetcheduser.description}
+                      {fetcheduser?.description}
                     </div>
                   </div>
                 </div>
