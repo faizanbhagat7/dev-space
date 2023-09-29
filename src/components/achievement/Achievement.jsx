@@ -104,7 +104,7 @@ const Achievement = () => {
                     style={{
                       color: darkMode ? "white" : "black",
                     }} 
-                  >{certificate.description}</p>
+                  >{certificate?.description}</p>
                 </div>
               </Link>
               {user?.id === profileId && (

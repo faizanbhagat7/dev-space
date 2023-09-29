@@ -16,8 +16,8 @@ const FeedsendLogic = ({ followinguser, postId }) => {
             .from("chats")
             .insert([
                 {
-                    senderId: user.id,
-                    recieverId: followinguser.id,
+                    senderId: user?.id,
+                    recieverId: followinguser?.id,
                     sharedPostId: postId,
                 },
             ]);
@@ -25,7 +25,7 @@ const FeedsendLogic = ({ followinguser, postId }) => {
             setSend(true);
         }
         else{
-            alert(error.message)
+            // alert(error.message)
         }
         setLoading(false);
     };
@@ -46,10 +46,10 @@ const FeedsendLogic = ({ followinguser, postId }) => {
       >
         <div className="sharefeed-userinfo">
           <div className="sharefeed-image">
-            <img src={followinguser.avatar} alt="" />
+            <img src={followinguser?.avatar} alt="" />
           </div>
           <div className="sharefeed-details">
-            <div className="sharefeed-name">{followinguser.name}</div>
+            <div className="sharefeed-name">{followinguser?.name}</div>
           </div>
         </div>
 

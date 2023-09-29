@@ -17,11 +17,11 @@ const Feedsharemodal = ({ postId, setFeedShareModal }) => {
   const getFollowingList = async () => {
     setLoading(true);
     let followingListTemp = [];
-    for (let i = 0; i < user.following.length; i++) {
+    for (let i = 0; i < user?.following?.length; i++) {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.following[i]);
+        .eq("id", user?.following[i]);
       if (!error) {
         if(!followingListTemp.includes(data[0])){
           followingListTemp = [...followingListTemp, data[0]];

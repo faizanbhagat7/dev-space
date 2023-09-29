@@ -44,8 +44,8 @@ const Users = () => {
     }
     // remove recomended users that are already followed
     userList.map((Luser) => {
-      if (user.following.includes(Luser.id)) {
-        userList = userList.filter((user) => user.id !== Luser.id);
+      if (user?.following?.includes(Luser.id)) {
+        userList = userList?.filter((user) => user?.id !== Luser?.id);
       }
     });
 
@@ -61,7 +61,7 @@ const Users = () => {
       .from("profiles")
       .select()
       .ilike("name", `%${searchTerm}%`)
-      .neq("id", user.id);
+      .neq("id", user?.id);
     setUsers(data);
     setLoading(false);
     setIsSearching(false);
