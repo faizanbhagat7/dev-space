@@ -7,17 +7,25 @@ import "./feed.css";
 
 const Feed = () => {
   const { setActivebutton, user } = useContext(LoginContext);
+
   const [feed, setFeed] = useState([]);
-  const [fetching, setFetching] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setActivebutton("feed");
-    if (user) getFeed();
+
+    if (user) {
+      getFeed();
+    } else {
+      setLoading(false); // important: stop loader if no user
+    }
   }, [user]);
 
   const getFeed = async () => {
     try {
-      setFetching(true);
+      setLoading(true);
+      setError(null);
 
       const { data, error } = await supabase
         .from("posts")
@@ -28,25 +36,48 @@ const Feed = () => {
 
       const following = user?.following || [];
 
-      const filtered = data?.filter(
-        (post) =>
-          following.includes(post.author) || post.author === user?.id
-      );
+      const filtered =
+        data?.filter(
+          (post) =>
+            following.includes(post.author) || post.author === user?.id
+        ) || [];
 
-      setFeed(filtered || []);
+      setFeed(filtered);
     } catch (err) {
       console.error("Feed error:", err);
+      setError("Something went wrong while loading feed.");
+      setFeed([]);
     } finally {
-      setFetching(false);
+      setLoading(false);
     }
   };
 
-  if (fetching) return <Loader />;
+  // 🧠 UI STATES (clean and controlled)
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!user) {
+    return (
+      <div className="noFeed">
+        Please login to see your feed 🔐
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="noFeed">
+        {error}
+      </div>
+    );
+  }
 
   if (!feed.length) {
     return (
-      <div style={{ textAlign: "center", marginTop: "40px" }}>
-        No feed yet. Follow users to see content 🚀
+      <div className="noFeed">
+        No posts yet. Start following people 🚀
       </div>
     );
   }
