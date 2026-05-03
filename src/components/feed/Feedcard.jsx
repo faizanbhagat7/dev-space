@@ -191,21 +191,19 @@ const Feedcard = ({ feed, getFeed }) => {
                   color: "black",
                 }}
               >
-                <div
-                  className="author-avatar"
-                  style={{
-                    border:
-                      feedAuthor?.id === user?.id
-                        ? "2px solid #007fff"
-                        : "none",
-                  }}
-                >
-                  <img
-                    src={feedAuthor?.avatar}
-                    alt=""
-                    className="author-avatar-img"
-                  />
-                </div>
+                <div className="author-avatar">
+  {user?.image ? (
+    <img
+      src={user.image}
+      alt="avatar"
+      className="author-avatar-img"
+    />
+  ) : (
+    <span className="avatar-fallback">
+      {user?.name?.charAt(0).toUpperCase()}
+    </span>
+  )}
+</div>
               </Link>
               <div className="author-description">
                 <Link
