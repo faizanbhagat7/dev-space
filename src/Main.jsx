@@ -12,9 +12,9 @@ const Main = () => {
   const Session = useSession()
 
 
-  if(Session!=null && Session.user!=null && Session.user.email!=null ){
-    return <Homepage />
-  }
+ if (Session?.user) {
+  return <Homepage />;
+}
   // console.log(Session)
  
   return (
