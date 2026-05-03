@@ -13,13 +13,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import BookmarkBorderSharpIcon from "@mui/icons-material/BookmarkBorderSharp";
 import BookmarkSharpIcon from "@mui/icons-material/BookmarkSharp";
 import Deletemodal from "./Deletemodal";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import SendIcon from '@mui/icons-material/Send';
-import Feedsharemodal from './Feedsharemodal'
+import { toast } from "react-toastify";
+import SendIcon from "@mui/icons-material/Send";
+import Feedsharemodal from "./Feedsharemodal";
 
 const Feedcard = ({ feed, getFeed }) => {
   const { user } = useContext(LoginContext);
+
   const [feedAuthor, setFeedAuthor] = useState(null);
   const [likeList, setLikeList] = useState([]);
   const [likeCount, setLikeCount] = useState(0);
@@ -31,312 +31,272 @@ const Feedcard = ({ feed, getFeed }) => {
   const [isAddedToSaved, setIsAddedToSaved] = useState(false);
   const [feedShareModal, setFeedShareModal] = useState(false);
 
-
   useEffect(() => {
-    getFeedAuthor();
-    getLikes();
-    getComments();
-    checkIsBookmarked();
+    if (feed) {
+      getFeedAuthor();
+      getLikes();
+      getComments();
+      checkIsBookmarked();
+    }
   }, [feed]);
 
+  /* =========================
+     FETCH AUTHOR
+  ========================= */
+
   const getFeedAuthor = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", feed.author)
       .single();
+
     setFeedAuthor(data);
   };
 
-  const handleLike = async () => {
-    if (isLikedByUser === false) {
-      addLike();
-    } else {
-      removeLike();
-    }
+  /* =========================
+     LIKES
+  ========================= */
+
+  const handleLike = () => {
+    isLikedByUser ? removeLike() : addLike();
   };
 
   const addLike = async () => {
-    const { data, error } = await supabase.from("likes").insert([
+    await supabase.from("likes").insert([
       {
         postId: feed?.id,
         userId: user?.id,
       },
     ]);
-    if (!error) {
-      getLikes();
-      setIsLikedByUser(true);
-    }
+    getLikes();
+    setIsLikedByUser(true);
   };
 
   const removeLike = async () => {
-    const { data, error } = await supabase
+    await supabase
       .from("likes")
       .delete()
       .eq("postId", feed?.id)
       .eq("userId", user?.id);
-    if (!error) {
-      getLikes();
-      setIsLikedByUser(false);
-    }
+
+    getLikes();
+    setIsLikedByUser(false);
   };
 
   const getLikes = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("likes")
       .select("userId")
       .eq("postId", feed?.id);
-    if (!error) {
-      setLikeList(data.map((obj) => obj.userId));
-      setLikeCount(data.length);
-      if (data.map((obj) => obj.userId).includes(user?.id)) {
-        setIsLikedByUser(true);
-        return;
-      } else {
-        setIsLikedByUser(false);
-      }
+
+    if (data) {
+      const users = data.map((obj) => obj.userId);
+      setLikeList(users);
+      setLikeCount(users.length);
+      setIsLikedByUser(users.includes(user?.id));
     }
   };
 
+  /* =========================
+     COMMENTS
+  ========================= */
+
   const handleCommentPopup = () => {
-    if (commentpopup === false) {
-      setCommentpopup(true);
-    } else {
-      setCommentpopup(false);
-    }
+    setCommentpopup(!commentpopup);
   };
 
   const getComments = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("comments")
       .select("*")
       .eq("postId", feed?.id)
       .order("created_at", { ascending: false });
-    if (!error) {
+
+    if (data) {
       setCommentList(data);
       setCommentCount(data.length);
     }
   };
 
-  const handleSaveToBookmarks = async () => {
-    if (isAddedToSaved === false) {
-      addToSaved();
-    } else {
-      removeFromSaved();
-    }
+  /* =========================
+     BOOKMARKS
+  ========================= */
+
+  const handleSaveToBookmarks = () => {
+    isAddedToSaved ? removeFromSaved() : addToSaved();
   };
 
   const addToSaved = async () => {
-    const { data, error } = await supabase.from("bookmarks").insert([
+    await supabase.from("bookmarks").insert([
       {
         postId: feed?.id,
         userId: user?.id,
       },
     ]);
-    if (!error) {
-      setIsAddedToSaved(true);
-      toast.success("Post added to Bookmarks", {
-        closeOnClick: true,
-        closeButton: false,
-        position: "bottom-center",
-        duration: 200,
-        hideProgressBar: true,
-      });
-    }
+    setIsAddedToSaved(true);
+    toast.success("Saved");
   };
 
   const removeFromSaved = async () => {
-    const { data, error } = await supabase
+    await supabase
       .from("bookmarks")
       .delete()
       .eq("postId", feed?.id)
       .eq("userId", user?.id);
-    if (!error) {
-      setIsAddedToSaved(false);
-      toast.success("Post removed from Bookmarks", {
-        closeOnClick: true,
-        closeButton: false,
-        position: "bottom-center",
-        duration: 200,
-        hideProgressBar: true,
-      });
-    }
+
+    setIsAddedToSaved(false);
+    toast.success("Removed");
   };
 
   const checkIsBookmarked = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("bookmarks")
       .select("userId")
       .eq("postId", feed?.id);
-    if (!error) {
-      if (data.map((obj) => obj.userId).includes(user?.id)) {
-        setIsAddedToSaved(true);
-        return;
-      } else {
-        setIsAddedToSaved(false);
-      }
+
+    if (data) {
+      setIsAddedToSaved(data.map((u) => u.userId).includes(user?.id));
     }
   };
 
-  return (
-    <>
-      <div className="feed-card">
-        <div className="feed-card-header">
-          <div className="feed-card-header-left">
-            <div className="author-info">
-              <Link
-                to={`/profile/${feedAuthor?.id}`}
-                style={{
-                  textDecoration: "none",
-                  color: "black",
-                }}
-              >
-       <div className="author-avatar">
-  {user?.image ? (
-    <img src={user.image} className="author-avatar-img" />
-  ) : (
-    <span className="avatar-fallback">
-      {user?.name?.charAt(0).toUpperCase()}
-    </span>
-  )}
-</div>
-              </Link>
-              <div className="author-description">
-                <Link
-                  to={`/profile/${feedAuthor?.id}`}
-                  style={{
-                    textDecoration: "none",
-                    color: "black",
-                  }}
-                >
-                  <div className="author-name">{feedAuthor?.name}</div>
-                </Link>
-                <div className="author-desc">{feedAuthor?.description}</div>
-                <div className="feed-date">
-                  <ReactTimeAgo date={feed?.created_at} locale="en-US" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="feed-card-header-right">
-            {feedAuthor?.id === user?.id && (
-              <DeleteIcon
-                style={{
-                  color: "black",
-                  cursor: "pointer",
-                }}
-                setShowDeleteModal={setShowDeleteModal}
-                onClick={() => setShowDeleteModal(true)}
-              />
-            )}
-            {showDeleteModal && (
-              <Deletemodal
-                setShowDeleteModal={setShowDeleteModal}
-                feed={feed}
-                getFeed={getFeed}
-              />
-            )}
-          </div>
-        </div>
-        <div className="feed-card-body">
-          <div className="feed-card-body-text">{feed?.caption}</div>
-          {feed?.image && (
-            <div className="feed-card-body-image">
-              <img src={feed?.image} alt="" />
-            </div>
-          )}
-        </div>
-        <div className="feed-card-footer">
-          <div className="feed-card-footer-left">
-            <div className="feed-card-footer-like-container">
-              <div className="feed-like-icon" onClick={handleLike}>
-                {isLikedByUser ? (
-                  <FavoriteSharpIcon
-                    style={{
-                      color: "#007fff",
-                    }}
-                  />
-                ) : (
-                  <FavoriteBorderSharpIcon />
-                )}
-              </div>
-              <div
-                className="feed-like-count"
-                style={{
-                  color: isLikedByUser ? "#007fff" : "",
-                }}
-              >
-                {likeCount}
-              </div>
-            </div>
-            <div
-              className="feed-card-footer-comment-container"
-              onClick={handleCommentPopup}
-            >
-              <div classname="feed-comment-icon">
-                {commentpopup ? (
-                  <ChatBubbleRoundedIcon
-                    style={{
-                      color: "#007fff",
-                    }}
-                  />
-                ) : (
-                  <ChatBubbleOutlineIcon />
-                )}
-              </div>
-              <div
-                className="feed-comment-count"
-                style={{
-                  color: commentpopup ? "#007fff" : "",
-                  transition: "all 0.2s ease-in-out",
-                }}
-              >
-                {commentCount}
-              </div>
-            </div>
+  /* =========================
+     SAFE DATA
+  ========================= */
 
-                {/* feed share container */}
-                <div className="feed-share-container"
-                  onClick={
-                    () => setFeedShareModal(true)
-                  }
-                >
-                  <div className="feed-share-icon">
-                    <SendIcon />
-                    </div>
-                    </div>
-                  {
-                    feedShareModal && (
-                      <Feedsharemodal postId={feed.id} setFeedShareModal={setFeedShareModal} />
-                    )
-                  }
-            <div
-              className="feed-card-footer-bookmark-container"
-              onClick={handleSaveToBookmarks}
-            >
-              {isAddedToSaved ? (
-                <BookmarkSharpIcon
-                  style={{
-                    color: "#007fff",
-                  }}
-                />
+  const name = feedAuthor?.name || "User";
+  const image = feedAuthor?.image || null;
+
+  /* =========================
+     UI
+  ========================= */
+
+  return (
+    <div className="feed-card">
+      {/* HEADER */}
+      <div className="feed-card-header">
+        <div className="feed-card-header-left">
+          <Link
+            to={`/profile/${feedAuthor?.id}`}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <div className="author-avatar">
+              {image ? (
+                <img src={image} className="author-avatar-img" />
               ) : (
-                <BookmarkBorderSharpIcon />
+                <span className="avatar-fallback">
+                  {name.charAt(0).toUpperCase()}
+                </span>
               )}
             </div>
+          </Link>
+
+          <div className="author-info">
+            <Link
+              to={`/profile/${feedAuthor?.id}`}
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <div className="author-name">{name}</div>
+            </Link>
+
+            <div className="author-desc">
+              {feedAuthor?.description || "User"}
+            </div>
+
+            <div className="feed-date">
+              <ReactTimeAgo date={feed?.created_at} locale="en-US" />
+            </div>
           </div>
         </div>
 
-        {/* commments section */}
-        {commentpopup && (
-          <Comments
-            feed={feed}
-            getComments={getComments}
-            commentList={commentList}
-          />
+        <div className="feed-card-header-right">
+          {feedAuthor?.id === user?.id && (
+            <DeleteIcon onClick={() => setShowDeleteModal(true)} />
+          )}
+
+          {showDeleteModal && (
+            <Deletemodal
+              setShowDeleteModal={setShowDeleteModal}
+              feed={feed}
+              getFeed={getFeed}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* BODY */}
+      <div className="feed-card-body">
+        <div className="feed-card-body-text">{feed?.caption}</div>
+
+        {feed?.image && (
+          <div className="feed-card-body-image">
+            <img src={feed.image} alt="post" />
+          </div>
         )}
       </div>
-    </>
+
+      {/* FOOTER */}
+      <div className="feed-card-footer">
+        <div className="feed-card-footer-left">
+          <div className="feed-card-footer-like-container">
+            <div onClick={handleLike}>
+              {isLikedByUser ? (
+                <FavoriteSharpIcon style={{ color: "#007fff" }} />
+              ) : (
+                <FavoriteBorderSharpIcon />
+              )}
+            </div>
+            <div>{likeCount}</div>
+          </div>
+
+          <div
+            className="feed-card-footer-comment-container"
+            onClick={handleCommentPopup}
+          >
+            {commentpopup ? (
+              <ChatBubbleRoundedIcon style={{ color: "#007fff" }} />
+            ) : (
+              <ChatBubbleOutlineIcon />
+            )}
+            <div>{commentCount}</div>
+          </div>
+
+          <div
+            className="feed-share-container"
+            onClick={() => setFeedShareModal(true)}
+          >
+            <SendIcon />
+          </div>
+
+          {feedShareModal && (
+            <Feedsharemodal
+              postId={feed.id}
+              setFeedShareModal={setFeedShareModal}
+            />
+          )}
+
+          <div
+            className="feed-card-footer-bookmark-container"
+            onClick={handleSaveToBookmarks}
+          >
+            {isAddedToSaved ? (
+              <BookmarkSharpIcon style={{ color: "#007fff" }} />
+            ) : (
+              <BookmarkBorderSharpIcon />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* COMMENTS */}
+      {commentpopup && (
+        <Comments
+          feed={feed}
+          getComments={getComments}
+          commentList={commentList}
+        />
+      )}
+    </div>
   );
 };
 
