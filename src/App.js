@@ -1,50 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Main from "./Main";
 import { supabase } from "./backend/supabaseConfig";
-import {
-  SessionContextProvider,
-  useSession,
-} from "@supabase/auth-helpers-react";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { LoginContext } from "./context/LoginContext";
 
 const App = () => {
-  const Session = useSession();
   const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
   const [activebutton, setActivebutton] = useState(null);
-  const [recommendedUsers, setRecommendedUsers] = useState([]);
-  const fetchUserProfile = async (Session) => {
+
+  const fetchUserProfile = async (session) => {
+    if (!session?.user) return;
+
     const { data, error } = await supabase
       .from("profiles")
-      .select()
-      .eq("id", Session.user.id);
-    if (error) {
-      console.log(error);
-    } else {
-      setUser(data[0]);
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
+
+    if (!data) {
+      // auto-create profile
+      await supabase.from("profiles").insert([
+        { id: session.user.id, name: "New User" }
+      ]);
     }
+
+    setUser(data);
   };
 
-  
-
   return (
-    <>
-      <LoginContext.Provider
-        value={{
-          user,
-          setUser,
-          session,
-          setSession,
-          fetchUserProfile,
-          activebutton,
-          setActivebutton
-        }}
-      >
-        <SessionContextProvider supabaseClient={supabase}>
-          <Main />
-        </SessionContextProvider>
-      </LoginContext.Provider>
-    </>
+    <LoginContext.Provider
+      value={{
+        user,
+        setUser,
+        fetchUserProfile,
+        activebutton,
+        setActivebutton
+      }}
+    >
+      <SessionContextProvider supabaseClient={supabase}>
+        <Main />
+      </SessionContextProvider>
+    </LoginContext.Provider>
   );
 };
 
