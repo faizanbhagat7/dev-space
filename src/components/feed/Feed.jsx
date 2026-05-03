@@ -3,6 +3,7 @@ import { LoginContext } from "../../context/LoginContext";
 import Loader from "../loader/Loader";
 import { supabase } from "../../backend/supabaseConfig";
 import Feedcard from "./Feedcard";
+import "./feed.css";
 
 const Feed = () => {
   const { setActivebutton, user } = useContext(LoginContext);
