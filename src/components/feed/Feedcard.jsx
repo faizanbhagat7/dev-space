@@ -191,13 +191,9 @@ const Feedcard = ({ feed, getFeed }) => {
                   color: "black",
                 }}
               >
-                <div className="author-avatar">
+       <div className="author-avatar">
   {user?.image ? (
-    <img
-      src={user.image}
-      alt="avatar"
-      className="author-avatar-img"
-    />
+    <img src={user.image} className="author-avatar-img" />
   ) : (
     <span className="avatar-fallback">
       {user?.name?.charAt(0).toUpperCase()}
