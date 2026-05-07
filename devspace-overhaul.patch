@@ -1,0 +1,5780 @@
+From 96177987dd793b44c8168dcd0d8104d82981bab9 Mon Sep 17 00:00:00 2001
+From: Faizan <faizan@devspace.dev>
+Date: Thu, 7 May 2026 00:33:28 +0000
+Subject: [PATCH] =?UTF-8?q?feat:=20full=20UI=20overhaul=20=E2=80=94=20crea?=
+ =?UTF-8?q?m/black/magenta=20theme,=20mobile=20responsive,=20realtime=20li?=
+ =?UTF-8?q?kes/comments,=20fixed=20Feed=20null=20bug,=20improved=20Quiz=20?=
+ =?UTF-8?q?UX,=20code=20aesthetics?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- New design system: CSS variables, Syne + Space Mono + DM Sans fonts
+- Sidebar: dark themed, mobile bottom nav, active state indicators
+- Feedcard: realtime Supabase subscriptions for likes + comments
+- Feed.jsx: fixed user.following null check bug
+- Auth pages: split layout with animated banner
+- Quiz: correct/wrong answer highlighting, progress bar, better scoring
+- Profile: cleaner layout, box-shadow accent on avatar
+- Search: UserCard component, smart recommendations dedup
+- Loader: minimal spinner replacing gif
+- Global: animations, transitions, scroll styles, selection color
+- Mobile: fully responsive across all breakpoints
+---
+ src/authentication/Login.jsx           |  86 ++--
+ src/authentication/form.css            | 366 ++++++++++------
+ src/components/addpost/addpost.css     | 192 +++++----
+ src/components/feed/Commentdata.jsx    |  91 ++--
+ src/components/feed/Comments.jsx       |  81 ++--
+ src/components/feed/Feed.jsx           |  67 +--
+ src/components/feed/Feedcard.jsx       | 283 ++++--------
+ src/components/feed/commentdata.css    | 100 ++---
+ src/components/feed/comments.css       | 115 +++--
+ src/components/feed/feed.css           |  42 +-
+ src/components/feed/feedcard.css       | 189 ++++----
+ src/components/loader/Loader.jsx       |  53 +--
+ src/components/profile/Userprofile.css | 574 +++++++------------------
+ src/components/profile/Userprofile.jsx | 368 ++++------------
+ src/components/search/Users.css        | 328 +++++---------
+ src/components/search/Users.jsx        | 230 ++++------
+ src/components/sidebar/Sidebar.css     | 277 +++++++-----
+ src/components/sidebar/Sidebar.jsx     | 131 ++----
+ src/components/test/Question.css       | 297 ++++++-------
+ src/components/test/Question.jsx       | 135 +++---
+ src/components/test/Test.css           | 150 +++----
+ src/components/test/Test.jsx           |  53 +--
+ src/components/test/Testmodal.css      | 175 ++++----
+ src/components/test/Testmodal.jsx      |  89 ++--
+ src/components/test/Testpage.css       | 192 +++++----
+ src/homepage.css                       |  89 ++--
+ src/index.css                          |  67 ++-
+ 27 files changed, 2082 insertions(+), 2738 deletions(-)
+
+diff --git a/src/authentication/Login.jsx b/src/authentication/Login.jsx
+index 54d622e..0655e83 100644
+--- a/src/authentication/Login.jsx
++++ b/src/authentication/Login.jsx
+@@ -1,4 +1,4 @@
+-import React, { useState, useffect } from "react";
++import React, { useState } from "react";
+ import { Link, useNavigate } from "react-router-dom";
+ import { supabase } from "../backend/supabaseConfig";
+ import "./form.css";
+@@ -8,50 +8,27 @@ import "react-toastify/dist/ReactToastify.css";
+ const Login = () => {
+   const [email, setEmail] = useState("");
+   const [password, setPassword] = useState("");
++  const [loading, setLoading] = useState(false);
+   const navigate = useNavigate();
+ 
+   const handleLogin = async (event) => {
+     event.preventDefault();
+-
+     if (!email || !password) {
+-      toast.error("All Fields Must Be Filled !", {
+-        position: "top-center",
+-        autoClose: 1500,
+-        borderRadius: 20,
+-        hideProgressBar: true,
+-        closeOnClick: true,
+-        closeButton: false,
+-      });
++      toast.error("All fields required", { position: "top-center", autoClose: 1500, hideProgressBar: true, closeOnClick: true, closeButton: false });
+       return;
+-    } else if (password.length < 6) {
+-      toast.error("Password must be at least 6 characters long !", {
+-        position: "top-center",
+-        autoClose: 1500,
+-        borderRadius: 20,
+-        hideProgressBar: true,
+-        closeOnClick: true,
+-        closeButton: false,
+-      });
++    }
++    if (password.length < 6) {
++      toast.error("Password must be 6+ characters", { position: "top-center", autoClose: 1500, hideProgressBar: true, closeOnClick: true, closeButton: false });
+       return;
++    }
++    setLoading(true);
++    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
++    setLoading(false);
++    if (error) {
++      toast.error(error.message, { position: "top-center", autoClose: 2000, hideProgressBar: true, closeOnClick: true, closeButton: false });
+     } else {
+-      let { data, error } = await supabase.auth.signInWithPassword({
+-        email: email,
+-        password: password,
+-      });
+-      if (error) {
+-        toast.error(error.message, {
+-          position: "top-center",
+-          autoClose: 1500,
+-          borderRadius: 20,
+-          hideProgressBar: true,
+-          closeOnClick: true,
+-          closeButton: false,
+-        });
+-      } else {
+-        navigate("/");
+-        setEmail("");
+-        setPassword("");
+-      }
++      navigate("/");
++      setEmail(""); setPassword("");
+     }
+   };
+ 
+@@ -60,31 +37,28 @@ const Login = () => {
+       <div className="main-body">
+         <div className="container">
+           <div className="banner-section">
+-            <p className="tagline">Empowering the developer community 🚀</p>
++            <div className="banner-logo">dev<span>_</span>space</div>
++            <p className="tagline">// where developers<br />// connect + grow<br />// together</p>
++            <div className="banner-tags">
++              <span className="banner-tag">#open_source</span>
++              <span className="banner-tag">#devs</span>
++              <span className="banner-tag">#community</span>
++              <span className="banner-tag">#code</span>
++            </div>
+           </div>
+           <div className="form-section">
+-            <p className="form-title">Login to Your Account</p>
++            <p className="form-title">Welcome back</p>
+             <form onSubmit={handleLogin}>
+-              <p className="input-label">Email</p>
+-              <input
+-                type="email"
+-                value={email}
+-                onChange={(event) => setEmail(event.target.value)}
+-                className="input-field"
+-              />
+-              <p className="input-label">Password</p>
+-              <input
+-                type="password"
+-                value={password}
+-                onChange={(event) => setPassword(event.target.value)}
+-                className="input-field"
+-              />
+-              <button type="submit" className="submit-button">
+-                Login
++              <label className="input-label">email</label>
++              <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="input-field" placeholder="you@example.com" />
++              <label className="input-label">password</label>
++              <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="input-field" placeholder="••••••••" />
++              <button type="submit" className="submit-button" disabled={loading}>
++                <span>{loading ? "logging in..." : "Login →"}</span>
+               </button>
+             </form>
+             <p className="login-link">
+-              Don't have an Account ? &nbsp;
++              No account?&nbsp;
+               <Link to="/register" style={{ textDecoration: "none" }}>
+                 <span className="login-link-text">Register</span>
+               </Link>
+diff --git a/src/authentication/form.css b/src/authentication/form.css
+index 44fa8dc..417bac4 100644
+--- a/src/authentication/form.css
++++ b/src/authentication/form.css
+@@ -1,137 +1,235 @@
+-.main-body{
+-    width:100vw;
+-    height:100vh;
+-    display:flex;
+-    justify-content:center;
+-    align-items:center;
+-    background:url('https://cdn.dribbble.com/users/1626229/screenshots/15505372/media/780519905cfaa655f83a5ef0497c67e5.jpg?resize=768x576&vertical=center');
+-}
+-
+-
+-
+-.container{
+-
+-    background-color: #fff;
+-    border-radius: 10px;
+-    box-shadow: 0 0 10px #000;
+-    display:flex;
+-    flex-direction:column;
+-    align-items:center;
+-    justify-content:spacecenter;
+-    padding: 20px;
+-    margin: 10px;
+-}
+-
+-.tagline{
+-    font-size: 1.5rem;
+-    font-weight: 600;
+-    margin-bottom: 20px;
+-    color: #007fff;    
+-    text-align:center;
+-    font-family: 'Montserrat', sans-serif;
+-    text-transform: uppercase;
+-    text-shadow: 0 0 10px wheat;
+-    word-spacing:1px;
+-}
+-
+-.form-title{
+-    font-size: 1.4rem;
+-    margin-bottom: 25px;
+-    margin-top: 10px;
+-    color: #000000;    
+-    text-align:center;
+-    font-family: 'Montserrat', sans-serif;
+-    font-weight: 550;
+-    text-transform:capitalize;
+-}
+-
+-.input-field{
+-    width: 100%;
+-    padding: 10px;
+-    border-radius: 7px;
+-    outline: none;
+-    font-size: 1rem;
+-    font-family: 'Montserrat', sans-serif;
+-    border:none;
+-    border: 2px solid #ccc;
+-    margin-bottom: 20px;
+-    display:block;
+-    background-color:transparent;
+-
+-}
+-
+-.input-field:focus{
+-    border: 2px solid #007fff;
+-    transition: all 0.3s ease-out;
+-    transform:  scale(1.02);
+-}
+-
+-.input-label{
+-    font-size: 20px;
+-    font-weight: 500;
+-    margin-top: 10px;
+-    color: #15202b;
+-    font-family: 'Montserrat', sans-serif;
+-    text-transform:capitalize;
+-    margin-bottom: 5px;
++/* ===== AUTH PAGES ===== */
++.main-body {
++  width: 100vw;
++  height: 100vh;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  background: var(--black);
++  position: relative;
++  overflow: hidden;
++}
++
++/* Animated code grid background */
++.main-body::before {
++  content: '';
++  position: absolute;
++  inset: 0;
++  background-image:
++    linear-gradient(rgba(232,18,124,0.04) 1px, transparent 1px),
++    linear-gradient(90deg, rgba(232,18,124,0.04) 1px, transparent 1px);
++  background-size: 48px 48px;
++  animation: gridDrift 20s linear infinite;
++}
++
++@keyframes gridDrift {
++  from { transform: translate(0,0); }
++  to { transform: translate(48px, 48px); }
++}
++
++/* Corner accent */
++.main-body::after {
++  content: '{ dev_space }';
++  position: absolute;
++  top: 32px;
++  left: 40px;
++  font-family: var(--font-mono);
++  font-size: 13px;
++  color: var(--magenta);
++  opacity: 0.6;
++  letter-spacing: 0.05em;
++}
++
++.container {
++  background: var(--surface);
++  border-radius: var(--radius-xl);
++  box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
++  display: flex;
++  width: 780px;
++  max-width: 95vw;
++  overflow: hidden;
++  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
++  position: relative;
++  z-index: 1;
++}
++
++/* Left banner */
++.banner-section {
++  width: 45%;
++  background: var(--black-soft);
++  padding: 48px 36px;
++  display: flex;
++  flex-direction: column;
++  justify-content: center;
++  position: relative;
++  overflow: hidden;
++  flex-shrink: 0;
++}
++
++.banner-section::before {
++  content: '';
++  position: absolute;
++  top: -40px;
++  right: -40px;
++  width: 200px;
++  height: 200px;
++  border-radius: 50%;
++  background: radial-gradient(circle, rgba(232,18,124,0.3), transparent 70%);
++  pointer-events: none;
++}
++
++.banner-section::after {
++  content: '';
++  position: absolute;
++  bottom: -60px;
++  left: -60px;
++  width: 240px;
++  height: 240px;
++  border-radius: 50%;
++  background: radial-gradient(circle, rgba(0,200,200,0.12), transparent 70%);
++  pointer-events: none;
++}
++
++.banner-logo {
++  font-family: var(--font-display);
++  font-size: 32px;
++  font-weight: 800;
++  color: var(--cream);
++  line-height: 1;
++  margin-bottom: 12px;
++}
++
++.banner-logo span { color: var(--magenta); }
++
++.tagline {
++  font-family: var(--font-mono);
++  font-size: 11px;
++  color: rgba(245,240,232,0.5);
++  letter-spacing: 0.05em;
++  line-height: 1.7;
++}
++
++.banner-tags {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 8px;
++  margin-top: 32px;
++}
++
++.banner-tag {
++  font-family: var(--font-mono);
++  font-size: 10px;
++  background: rgba(232,18,124,0.12);
++  color: var(--magenta-light);
++  border: 1px solid rgba(232,18,124,0.25);
++  padding: 4px 10px;
++  border-radius: 99px;
++}
++
++/* Right form */
++.form-section {
++  flex: 1;
++  padding: 48px 40px;
++  display: flex;
++  flex-direction: column;
++  justify-content: center;
++}
++
++.form-title {
++  font-family: var(--font-display);
++  font-size: 24px;
++  font-weight: 800;
++  color: var(--text-primary);
++  margin-bottom: 28px;
++}
++
++.input-label {
++  font-family: var(--font-mono);
++  font-size: 11px;
++  font-weight: 700;
++  color: var(--text-muted);
++  letter-spacing: 0.08em;
++  text-transform: uppercase;
++  margin-bottom: 6px;
++  display: block;
++}
++
++.input-field {
++  width: 100%;
++  padding: 11px 14px;
++  border: 1.5px solid var(--border-strong);
++  border-radius: var(--radius-md);
++  background: var(--cream);
++  font-family: var(--font-body);
++  font-size: 14px;
++  color: var(--text-primary);
++  outline: none;
++  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
++  margin-bottom: 18px;
++  display: block;
++}
++
++.input-field:focus {
++  border-color: var(--magenta);
++  box-shadow: 0 0 0 3px rgba(232,18,124,0.12);
++  transform: none;
+ }
+ 
+ .submit-button {
+-    padding: 10px;
+-    border-radius: 7px;
+-    outline: none;
+-    font-size: 1.2rem;
+-    font-family: 'Montserrat', sans-serif;
+-    border:1px solid #ccc;
+-    margin-bottom: 20px;
+-    background-color: #007fff;
+-    color: #fff;
+-    cursor: pointer;
+-}
+-
+-.submit-button:hover{
+-    transition: all 0.3s ease-out;
+-    transform:  scale(1.02);
+-}
+-
+-.login-link{
+-    text-decoration: none;
+-    color: #15202b;
+-    font-size: 1.3rem;
+-    font-family: 'Montserrat', sans-serif;
+-    font-weight: 500;
+-    margin-top: 10px;
+-    margin-bottom: 10px;
+-    text-align:center;
+-    text-transform:capitalize;
+-    text-align: center;
+-}
+-
+-.login-link-text{
+-    text-decoration: none;
+-    color: #007fff;
+-    font-size: 1.4rem;
+-    font-family: 'Montserrat', sans-serif;
+-    font-weight: 600;
+-    text-align:center;
+-    text-transform:capitalize;
+-}
+-
+-.login-link-text:hover{
+-    text-decoration: underline;
+-    transition: all 0.3s ease-out;  
+-}
+-
+-/* mobile responsive design */
+-@media screen and (max-width: 768px) {
+-    .input-field{
+-        width: 90%;
+-    }
+-    .container{
+-        width: 90%;
+-    }    
+-    .main-body{
+-        align-items: center;
+-
+-    }
+-}
+\ No newline at end of file
++  width: 100%;
++  padding: 12px;
++  background: var(--black);
++  color: var(--cream);
++  border: none;
++  border-radius: var(--radius-md);
++  font-family: var(--font-display);
++  font-size: 14px;
++  font-weight: 700;
++  cursor: pointer;
++  transition: all var(--transition);
++  margin-top: 4px;
++  margin-bottom: 20px;
++  letter-spacing: 0.03em;
++  position: relative;
++  overflow: hidden;
++}
++
++.submit-button::before {
++  content: '';
++  position: absolute;
++  inset: 0;
++  background: var(--magenta);
++  transform: scaleX(0);
++  transform-origin: left;
++  transition: transform 0.3s ease;
++  z-index: 0;
++}
++
++.submit-button:hover::before { transform: scaleX(1); }
++.submit-button span { position: relative; z-index: 1; }
++.submit-button:hover { box-shadow: var(--shadow-magenta); }
++
++.login-link {
++  font-family: var(--font-body);
++  font-size: 13px;
++  color: var(--text-muted);
++  text-align: center;
++}
++
++.login-link-text {
++  color: var(--magenta);
++  font-weight: 600;
++  cursor: pointer;
++  text-decoration: none;
++  transition: color var(--transition);
++}
++.login-link-text:hover { color: var(--magenta-light); text-decoration: underline; }
++
++@media (max-width: 768px) {
++  .container { flex-direction: column; width: 92vw; border-radius: var(--radius-lg); }
++  .banner-section { width: 100%; padding: 28px 24px; }
++  .banner-logo { font-size: 24px; }
++  .banner-tags { display: none; }
++  .form-section { padding: 28px 24px; }
++  .main-body::after { display: none; }
++}
+diff --git a/src/components/addpost/addpost.css b/src/components/addpost/addpost.css
+index e8b6966..4d475e3 100644
+--- a/src/components/addpost/addpost.css
++++ b/src/components/addpost/addpost.css
+@@ -1,116 +1,124 @@
+-.addpost-container{
+-    width: 100%;
+-    height: 90vh;
+-    margin: 10px;
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: center;
++.addpost-container {
++  max-width: 620px;
++  margin: 0 auto;
++  padding: 24px 16px 80px;
++  animation: fadeIn 0.4s ease both;
+ }
+ 
++.addpost {
++  background: var(--surface);
++  border-radius: var(--radius-xl);
++  border: 1px solid var(--border);
++  box-shadow: var(--shadow-sm);
++  overflow: hidden;
++}
+ 
+-
+-.addpost{
+-    background-color: #fff;
+-    width: 80%;
+-    margin: 10px;
+-    padding: 10px;
+-    border-radius: 10px;
++.addpost-profile-section {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  padding: 16px 20px;
++  border-bottom: 1px solid var(--border);
+ }
+ 
++.addpost-userinfo {
++  display: flex;
++  align-items: center;
++  gap: 10px;
++}
+ 
+-.addpost-profile-section{
+-    display: flex;
+-    flex-direction: row;
+-    justify-content: space-between;
+-    align-items: center;
+-    padding: 10px;
++.addpost-profile-icon-image {
++  width: 38px;
++  height: 38px;
++  border-radius: var(--radius-sm);
++  overflow: hidden;
++  border: 2px solid var(--border);
++  flex-shrink: 0;
+ }
+ 
+-.addpost-profile-icon-image img{
+-    width: 50px;
+-    height: 50px;
+-    border-radius: 100%;
+-    margin-right: 10px;
++.addpost-profile-icon-image img {
++  width: 100%;
++  height: 100%;
++  object-fit: cover;
+ }
+ 
+-.addpost-profile-name{
+-    font-size: 1.5rem;
+-    font-weight: 600;
++.addpost-profile-name {
++  font-family: var(--font-display);
++  font-size: 14px;
++  font-weight: 700;
++  color: var(--text-primary);
+ }
+ 
+-.input-textarea {
+-    width: 80%;
+-    min-height: 200px;
+-    padding: 10px;
+-    font-size: 16px;
+-    border: none;
+-    border-radius: 5px;
+-    resize: vertical;
+-    outline: none;
+-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+-    margin-left: 70px;
+-    resize: none;
+-    box-shadow: 0 0 0 2px #007fff;
+-  }
+-
+-  .addpost-upload-input{
+-    display: none;
++.addpost-save-button {
++  padding: 8px 20px;
++  background: var(--black);
++  color: var(--cream);
++  border: none;
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 12px;
++  font-weight: 700;
++  cursor: pointer;
++  transition: all var(--transition-bounce);
+ }
+ 
+-.addpost-userinfo{
+-    display: flex;
+-    flex-direction: row;
+-    justify-content: flex-start;
+-    align-items: center;
+-    padding: 10px;
++.addpost-save-button:hover {
++  background: var(--magenta);
++  box-shadow: var(--shadow-magenta);
++  transform: translateY(-1px);
+ }
+ 
+-.addpost-avatar-label p{
+-    background-color: #007fff;
+-    color: white;
+-    padding: 5px 10px;
+-    border-radius: 5px;
+-    border: none;
+-    cursor: pointer;
+-    font-size: 20px;
+-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+-    width: 20%;
+-    margin-left: 70px;
+-    margin-top: 10px;
++.addpost-input-section { padding: 16px 20px; }
++
++.input-textarea {
++  width: 100%;
++  min-height: 120px;
++  resize: vertical;
++  border: 1.5px solid var(--border);
++  border-radius: var(--radius-md);
++  padding: 12px 14px;
++  font-family: var(--font-body);
++  font-size: 15px;
++  color: var(--text-primary);
++  background: var(--cream);
++  outline: none;
++  transition: border-color var(--transition), box-shadow var(--transition);
++  line-height: 1.6;
+ }
+ 
+-.image-selected-info{
+-    color:'#000';
+-    font-size: 1.5rem;
+-    font-weight: 600;
+-    margin-left: 70px;
+-    margin-top: 10px;
+-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
++.input-textarea:focus {
++  border-color: var(--black);
++  box-shadow: 0 0 0 3px rgba(10,10,10,0.06);
+ }
+ 
+-.addpost-save-button{
+-    background-color: limegreen;
+-    color: white;
+-    padding: 5px 10px;
+-    border-radius: 5px;
+-    border: none;
+-    cursor: pointer;
+-    font-size: 20px;
+-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
++.input-textarea::placeholder { color: var(--text-muted); font-style: italic; }
++
++.addpost-avatar-label {
++  display: inline-flex;
++  align-items: center;
++  gap: 6px;
++  margin-top: 12px;
++  padding: 8px 14px;
++  border: 1.5px dashed var(--border-strong);
++  border-radius: var(--radius-md);
++  cursor: pointer;
++  transition: all var(--transition);
++  font-family: var(--font-mono);
++  font-size: 11px;
++  color: var(--text-muted);
+ }
+ 
++.addpost-avatar-label:hover {
++  border-color: var(--black);
++  color: var(--text-primary);
++  background: var(--cream);
++}
+ 
++.addpost-upload-input { display: none; }
+ 
+-  @media screen and (max-width: 600px) {
+-    .input-textarea {
+-        margin-left: 10px;
+-        width: 90%;
+-    }
+-    .addpost-avatar-label p{
+-        width: 50%;
+-        margin-left: 10px;
+-    }
+-    .image-selected-info{
+-        margin-left: 10px;
+-    }
+-}
+\ No newline at end of file
++.image-selected-info {
++  font-family: var(--font-mono);
++  font-size: 11px;
++  color: var(--green-code);
++  margin-top: 6px;
++}
+diff --git a/src/components/feed/Commentdata.jsx b/src/components/feed/Commentdata.jsx
+index b9a6e3c..ef9555d 100644
+--- a/src/components/feed/Commentdata.jsx
++++ b/src/components/feed/Commentdata.jsx
+@@ -4,81 +4,46 @@ import { Link } from "react-router-dom";
+ import ReactTimeAgo from "react-time-ago";
+ import "./commentdata.css";
+ import { LoginContext } from "../../context/LoginContext";
+-import DeleteIcon from '@mui/icons-material/Delete';
++import DeleteIcon from "@mui/icons-material/Delete";
+ 
+-
+-const Commentdata = ({ comment ,getComments,commentList}) => {
+-  const [commentedUser, setCommentedUser] = useState();
++const Commentdata = ({ comment, getComments }) => {
++  const [commentedUser, setCommentedUser] = useState(null);
+   const { user } = useContext(LoginContext);
+ 
+-  const fetchCommentedUser = async () => {
+-    const { data, error } = await supabase
+-      .from("profiles")
+-      .select("*")
+-      .eq("id", comment?.userId);
+-    if (!error) {
+-      setCommentedUser(data[0]);
+-    }
+-  };
++  useEffect(() => {
++    supabase.from("profiles").select("*").eq("id", comment?.userId).single()
++      .then(({ data }) => data && setCommentedUser(data));
++  }, [comment?.userId]);
+ 
+   const deleteComment = async () => {
+-    const { data, error } = await supabase
+-        .from("comments")
+-        .delete()
+-        .eq("id", comment?.id);
+-    if (!error) {
+-        getComments();
+-    }
+-    };
++    await supabase.from("comments").delete().eq("id", comment?.id);
++    getComments();
++  };
+ 
+-  useEffect(() => {
+-    fetchCommentedUser();
+-  }, [comment]);
++  const avatar = commentedUser?.avatar || commentedUser?.image;
+ 
+   return (
+-    <>
+-      <div className="feed-commentdata-section">
+-        <div className="feed-commentdata-section-header">
+-          <Link
+-            to={`/profile/${commentedUser?.id}`}
+-            style={{
+-              textDecoration: "none",
+-              color: "black",
+-            }}
+-          >
+-            <div className="feed-commentdata-section-header-image-container">
+-              <img src={commentedUser?.avatar} alt="" />
+-            </div>
+-          </Link>
++    <div className="comment-item">
++      <Link to={`/profile/${commentedUser?.id}`} style={{textDecoration:'none'}}>
++        <div className="comment-item-avatar">
++          {avatar ? <img src={avatar} alt="" /> : commentedUser?.name?.[0]?.toUpperCase()}
+         </div>
+-        <div className="feed-commentdata-section-body">
+-          <Link
+-            to={`/profile/${commentedUser?.id}`}
+-            style={{
+-              textDecoration: "none",
+-              color: "black",
+-            }}
+-          >
+-            <p className="commented-user-info">
+-              <span className="commented-username">{commentedUser?.name}</span>
+-              <span className="commented-time">
+-                <ReactTimeAgo date={comment?.created_at} />
+-              </span>
+-            </p>
++      </Link>
++      <div className="comment-item-body">
++        <div className="comment-item-header">
++          <Link to={`/profile/${commentedUser?.id}`} style={{textDecoration:'none'}}>
++            <span className="comment-item-name">{commentedUser?.name || "User"}</span>
+           </Link>
+-          <p className="comment-text">{comment?.comment}</p>
++          <span className="comment-item-time">
++            {comment?.created_at && <ReactTimeAgo date={new Date(comment.created_at)} locale="en-US" />}
++          </span>
+         </div>
+-
+-        {user?.id === comment?.userId && (
+-          <div className="delete-comment-section">
+-            <DeleteIcon 
+-                style={{ color: "red", cursor: "pointer" ,margin:'auto'}}
+-                onClick={deleteComment}
+-            />
+-          </div>
+-        )}
++        <div className="comment-item-text">{comment?.comment}</div>
+       </div>
+-    </>
++      {(user?.id === comment?.userId) && (
++        <DeleteIcon className="comment-item-delete" fontSize="small" onClick={deleteComment} />
++      )}
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/feed/Comments.jsx b/src/components/feed/Comments.jsx
+index fb742b2..8faed0d 100644
+--- a/src/components/feed/Comments.jsx
++++ b/src/components/feed/Comments.jsx
+@@ -1,9 +1,7 @@
+-import React, { useState, useEffect, useContext } from "react";
++import React, { useState, useContext } from "react";
+ import { supabase } from "../../backend/supabaseConfig";
+ import { LoginContext } from "../../context/LoginContext";
+-import ReactTimeAgo from "react-time-ago";
+ import "./comments.css";
+-import SendIcon from "@mui/icons-material/Send";
+ import Commentdata from "./Commentdata";
+ 
+ const Comments = ({ feed, getComments, commentList }) => {
+@@ -11,63 +9,38 @@ const Comments = ({ feed, getComments, commentList }) => {
+   const [commentText, setCommentText] = useState("");
+ 
+   const addComment = async (e) => {
+-    e.preventDefault();
+-    if (commentText.split(" ").join("")=== "") {
+-      return;
+-    }
+-    const { data, error } = await supabase.from("comments").insert([
+-      {
+-        postId: feed?.id,
+-        userId: user?.id,
+-        comment: commentText,
+-      },
+-    ]);
+-    if (!error) {
+-      setCommentText("");
+-      getComments();
+-    }
++    e?.preventDefault();
++    if (!commentText.trim()) return;
++    const { error } = await supabase.from("comments").insert([{
++      postId: feed?.id, userId: user?.id, comment: commentText,
++    }]);
++    if (!error) { setCommentText(""); getComments(); }
+   };
+ 
++  const avatar = user?.avatar || user?.image;
+ 
+   return (
+-    <>
+-      <div className="feed-comments-section">
+-        <div className="feed-comments-section-header">
+-          <div className="feed-comments-section-header-left">
+-            <img src={user?.avatar} alt="" />
+-          </div>
+-          <form onSubmit={addComment}>
+-            <div className="feed-comments-section-header-right">
+-              <div>
+-                <input
+-                  type="text"
+-                  placeholder="Add a comment"
+-                  className="comment-input"
+-                  value={commentText}
+-                  onChange={(e) => setCommentText(e.target.value)}
+-                />{" "}
+-              </div>
+-              <div>
+-                <SendIcon
+-                  className="comment-send-icon"
+-                  type="submit"
+-                  onClick={addComment}
+-                />
+-              </div>
+-            </div>
+-          </form>
+-        </div>
+-        <div className="feed-comments-section-body">
+-          {commentList?.map((comment) => (
+-            <div className="feed-comment">
+-              <Commentdata comment={comment} getComments={getComments}
+-              commentList={commentList}
+-              />
+-            </div>
+-          ))}
++    <div className="comments-section">
++      <div className="add-comment">
++        <div className="comment-avatar" style={{flexShrink:0}}>
++          {avatar ? <img src={avatar} alt="" /> : user?.name?.[0]?.toUpperCase()}
+         </div>
++        <input
++          type="text"
++          placeholder="Add a comment..."
++          className="comment-input"
++          value={commentText}
++          onChange={e => setCommentText(e.target.value)}
++          onKeyDown={e => e.key === "Enter" && addComment(e)}
++        />
++        <button className="comment-submit-btn" onClick={addComment}>send</button>
++      </div>
++      <div className="comments-list">
++        {commentList?.map(comment => (
++          <Commentdata key={comment.id} comment={comment} getComments={getComments} commentList={commentList} />
++        ))}
+       </div>
+-    </>
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/feed/Feed.jsx b/src/components/feed/Feed.jsx
+index fa7c348..09bc105 100644
+--- a/src/components/feed/Feed.jsx
++++ b/src/components/feed/Feed.jsx
+@@ -7,19 +7,14 @@ import "./feed.css";
+ 
+ const Feed = () => {
+   const { setActivebutton, user } = useContext(LoginContext);
+-
+   const [feed, setFeed] = useState([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState(null);
+ 
+   useEffect(() => {
+     setActivebutton("feed");
+-
+-    if (user) {
+-      getFeed();
+-    } else {
+-      setLoading(false); // important: stop loader if no user
+-    }
++    if (user) getFeed();
++    else setLoading(false);
+   }, [user]);
+ 
+   const getFeed = async () => {
+@@ -34,58 +29,40 @@ const Feed = () => {
+ 
+       if (error) throw error;
+ 
+-      const following = user?.following || [];
++      // Safe null check on following
++      const following = Array.isArray(user?.following) ? user.following : [];
+ 
+-      const filtered =
+-        data?.filter(
+-          (post) =>
+-            following.includes(post.author) || post.author === user?.id
+-        ) || [];
++      // Algorithm: show own posts + following posts, sorted by recency
++      const filtered = (data || []).filter(
++        post => following.includes(post.author) || post.author === user?.id
++      );
+ 
+       setFeed(filtered);
+     } catch (err) {
+       console.error("Feed error:", err);
+-      setError("Something went wrong while loading feed.");
++      setError("Something went wrong loading feed.");
+       setFeed([]);
+     } finally {
+       setLoading(false);
+     }
+   };
+ 
+-  // 🧠 UI STATES (clean and controlled)
+-
+-  if (loading) {
+-    return <Loader />;
+-  }
+-
+-  if (!user) {
+-    return (
+-      <div className="noFeed">
+-        Please login to see your feed 🔐
+-      </div>
+-    );
+-  }
+-
+-  if (error) {
+-    return (
+-      <div className="noFeed">
+-        {error}
+-      </div>
+-    );
+-  }
+-
+-  if (!feed.length) {
+-    return (
+-      <div className="noFeed">
+-        No posts yet. Start following people 🚀
+-      </div>
+-    );
+-  }
++  if (loading) return <Loader />;
++  if (!user) return <div className="noFeed"><p>Please login to see your feed 🔐</p></div>;
++  if (error) return <div className="noFeed"><p>{error}</p></div>;
++  if (!feed.length) return (
++    <div className="noFeed">
++      <p>No posts yet.</p>
++      <p style={{fontSize:11,marginTop:4}}>Start following devs to fill your feed 🚀</p>
++    </div>
++  );
+ 
+   return (
+     <div className="feed-container">
+-      {feed.map((post) => (
+-        <Feedcard key={post.id} feed={post} getFeed={getFeed} />
++      {feed.map((post, i) => (
++        <div key={post.id} className={`animate-slide stagger-${Math.min(i + 1, 5)}`}>
++          <Feedcard feed={post} getFeed={getFeed} />
++        </div>
+       ))}
+     </div>
+   );
+diff --git a/src/components/feed/Feedcard.jsx b/src/components/feed/Feedcard.jsx
+index bf61297..37f9e1f 100644
+--- a/src/components/feed/Feedcard.jsx
++++ b/src/components/feed/Feedcard.jsx
+@@ -1,4 +1,4 @@
+-import React, { useState, useEffect, useContext } from "react";
++import React, { useState, useEffect, useContext, useRef } from "react";
+ import "./feedcard.css";
+ import { supabase } from "../../backend/supabaseConfig";
+ import { LoginContext } from "../../context/LoginContext";
+@@ -19,9 +19,7 @@ import Feedsharemodal from "./Feedsharemodal";
+ 
+ const Feedcard = ({ feed, getFeed }) => {
+   const { user } = useContext(LoginContext);
+-
+   const [feedAuthor, setFeedAuthor] = useState(null);
+-  const [likeList, setLikeList] = useState([]);
+   const [likeCount, setLikeCount] = useState(0);
+   const [isLikedByUser, setIsLikedByUser] = useState(false);
+   const [commentpopup, setCommentpopup] = useState(false);
+@@ -30,272 +28,179 @@ const Feedcard = ({ feed, getFeed }) => {
+   const [showDeleteModal, setShowDeleteModal] = useState(false);
+   const [isAddedToSaved, setIsAddedToSaved] = useState(false);
+   const [feedShareModal, setFeedShareModal] = useState(false);
++  const [likeAnimate, setLikeAnimate] = useState(false);
++  const realtimeRef = useRef(null);
+ 
+   useEffect(() => {
+-    if (feed) {
+-      getFeedAuthor();
+-      getLikes();
+-      getComments();
+-      checkIsBookmarked();
+-    }
+-  }, [feed]);
+-
+-  /* =========================
+-     FETCH AUTHOR
+-  ========================= */
++    if (!feed) return;
++    getFeedAuthor();
++    getLikes();
++    getComments();
++    checkIsBookmarked();
++    subscribeToLikes();
++    subscribeToComments();
++    return () => {
++      if (realtimeRef.current) supabase.removeChannel(realtimeRef.current);
++    };
++  }, [feed?.id]);
+ 
+   const getFeedAuthor = async () => {
+-    const { data } = await supabase
+-      .from("profiles")
+-      .select("*")
+-      .eq("id", feed.author)
+-      .single();
+-
++    const { data } = await supabase.from("profiles").select("*").eq("id", feed.author).single();
+     setFeedAuthor(data);
+   };
+ 
+-  /* =========================
+-     LIKES
+-  ========================= */
++  /* Real-time subscriptions */
++  const subscribeToLikes = () => {
++    const channel = supabase
++      .channel(`likes-${feed.id}`)
++      .on("postgres_changes", { event: "*", schema: "public", table: "likes", filter: `postId=eq.${feed.id}` },
++        () => getLikes()
++      )
++      .subscribe();
++    if (!realtimeRef.current) realtimeRef.current = channel;
++  };
+ 
++  const subscribeToComments = () => {
++    supabase
++      .channel(`comments-${feed.id}`)
++      .on("postgres_changes", { event: "*", schema: "public", table: "comments", filter: `postId=eq.${feed.id}` },
++        () => getComments()
++      )
++      .subscribe();
++  };
++
++  /* Likes */
+   const handleLike = () => {
++    setLikeAnimate(true);
++    setTimeout(() => setLikeAnimate(false), 400);
+     isLikedByUser ? removeLike() : addLike();
+   };
+ 
+   const addLike = async () => {
+-    await supabase.from("likes").insert([
+-      {
+-        postId: feed?.id,
+-        userId: user?.id,
+-      },
+-    ]);
+-    getLikes();
+     setIsLikedByUser(true);
++    setLikeCount(c => c + 1);
++    await supabase.from("likes").insert([{ postId: feed?.id, userId: user?.id }]);
+   };
+ 
+   const removeLike = async () => {
+-    await supabase
+-      .from("likes")
+-      .delete()
+-      .eq("postId", feed?.id)
+-      .eq("userId", user?.id);
+-
+-    getLikes();
+     setIsLikedByUser(false);
++    setLikeCount(c => Math.max(0, c - 1));
++    await supabase.from("likes").delete().eq("postId", feed?.id).eq("userId", user?.id);
+   };
+ 
+   const getLikes = async () => {
+-    const { data } = await supabase
+-      .from("likes")
+-      .select("userId")
+-      .eq("postId", feed?.id);
+-
++    const { data } = await supabase.from("likes").select("userId").eq("postId", feed?.id);
+     if (data) {
+-      const users = data.map((obj) => obj.userId);
+-      setLikeList(users);
++      const users = data.map(o => o.userId);
+       setLikeCount(users.length);
+       setIsLikedByUser(users.includes(user?.id));
+     }
+   };
+ 
+-  /* =========================
+-     COMMENTS
+-  ========================= */
+-
+-  const handleCommentPopup = () => {
+-    setCommentpopup(!commentpopup);
+-  };
+-
++  /* Comments */
+   const getComments = async () => {
+-    const { data } = await supabase
+-      .from("comments")
+-      .select("*")
+-      .eq("postId", feed?.id)
+-      .order("created_at", { ascending: false });
+-
+-    if (data) {
+-      setCommentList(data);
+-      setCommentCount(data.length);
+-    }
++    const { data } = await supabase.from("comments").select("*").eq("postId", feed?.id).order("created_at", { ascending: false });
++    if (data) { setCommentList(data); setCommentCount(data.length); }
+   };
+ 
+-  /* =========================
+-     BOOKMARKS
+-  ========================= */
+-
+-  const handleSaveToBookmarks = () => {
+-    isAddedToSaved ? removeFromSaved() : addToSaved();
+-  };
++  /* Bookmarks */
++  const handleSaveToBookmarks = () => { isAddedToSaved ? removeFromSaved() : addToSaved(); };
+ 
+   const addToSaved = async () => {
+-    await supabase.from("bookmarks").insert([
+-      {
+-        postId: feed?.id,
+-        userId: user?.id,
+-      },
+-    ]);
++    await supabase.from("bookmarks").insert([{ postId: feed?.id, userId: user?.id }]);
+     setIsAddedToSaved(true);
+-    toast.success("Saved");
++    toast.success("Saved to bookmarks");
+   };
+ 
+   const removeFromSaved = async () => {
+-    await supabase
+-      .from("bookmarks")
+-      .delete()
+-      .eq("postId", feed?.id)
+-      .eq("userId", user?.id);
+-
++    await supabase.from("bookmarks").delete().eq("postId", feed?.id).eq("userId", user?.id);
+     setIsAddedToSaved(false);
+-    toast.success("Removed");
++    toast.success("Removed from bookmarks");
+   };
+ 
+   const checkIsBookmarked = async () => {
+-    const { data } = await supabase
+-      .from("bookmarks")
+-      .select("userId")
+-      .eq("postId", feed?.id);
+-
+-    if (data) {
+-      setIsAddedToSaved(data.map((u) => u.userId).includes(user?.id));
+-    }
++    const { data } = await supabase.from("bookmarks").select("userId").eq("postId", feed?.id);
++    if (data) setIsAddedToSaved(data.map(u => u.userId).includes(user?.id));
+   };
+ 
+-  /* =========================
+-     SAFE DATA
+-  ========================= */
+-
+   const name = feedAuthor?.name || "User";
+-  const image = feedAuthor?.image || null;
+-
+-  /* =========================
+-     UI
+-  ========================= */
++  const image = feedAuthor?.avatar || feedAuthor?.image || null;
+ 
+   return (
+-    <div className="feed-card">
++    <div className="feed-card animate-slide">
+       {/* HEADER */}
+       <div className="feed-card-header">
+         <div className="feed-card-header-left">
+-          <Link
+-            to={`/profile/${feedAuthor?.id}`}
+-            style={{ textDecoration: "none", color: "black" }}
+-          >
++          <Link to={`/profile/${feedAuthor?.id}`} style={{ textDecoration: "none" }}>
+             <div className="author-avatar">
+-              {image ? (
+-                <img src={image} className="author-avatar-img" />
+-              ) : (
+-                <span className="avatar-fallback">
+-                  {name.charAt(0).toUpperCase()}
+-                </span>
+-              )}
++              {image
++                ? <img src={image} className="author-avatar-img" alt={name} />
++                : <span className="avatar-fallback">{name.charAt(0).toUpperCase()}</span>
++              }
+             </div>
+           </Link>
+-
+           <div className="author-info">
+-            <Link
+-              to={`/profile/${feedAuthor?.id}`}
+-              style={{ textDecoration: "none", color: "black" }}
+-            >
++            <Link to={`/profile/${feedAuthor?.id}`} style={{ textDecoration: "none" }}>
+               <div className="author-name">{name}</div>
+             </Link>
+-
+-            <div className="author-desc">
+-              {feedAuthor?.description || "User"}
+-            </div>
+-
++            <div className="author-desc">{feedAuthor?.description || "developer"}</div>
+             <div className="feed-date">
+-              <ReactTimeAgo date={feed?.created_at} locale="en-US" />
++              {feed?.created_at && <ReactTimeAgo date={new Date(feed.created_at)} locale="en-US" />}
+             </div>
+           </div>
+         </div>
+-
+         <div className="feed-card-header-right">
+           {feedAuthor?.id === user?.id && (
+-            <DeleteIcon onClick={() => setShowDeleteModal(true)} />
+-          )}
+-
+-          {showDeleteModal && (
+-            <Deletemodal
+-              setShowDeleteModal={setShowDeleteModal}
+-              feed={feed}
+-              getFeed={getFeed}
+-            />
++            <DeleteIcon onClick={() => setShowDeleteModal(true)} fontSize="small" />
+           )}
+         </div>
+       </div>
+ 
++      {showDeleteModal && <Deletemodal setShowDeleteModal={setShowDeleteModal} feed={feed} getFeed={getFeed} />}
++
+       {/* BODY */}
+       <div className="feed-card-body">
+-        <div className="feed-card-body-text">{feed?.caption}</div>
+-
++        {feed?.caption && <div className="feed-card-body-text">{feed.caption}</div>}
+         {feed?.image && (
+           <div className="feed-card-body-image">
+-            <img src={feed.image} alt="post" />
++            <img src={feed.image} alt="post" loading="lazy" />
+           </div>
+         )}
+       </div>
+ 
+       {/* FOOTER */}
+-      <div className="feed-card-footer">
+-        <div className="feed-card-footer-left">
+-          <div className="feed-card-footer-like-container">
+-            <div onClick={handleLike}>
+-              {isLikedByUser ? (
+-                <FavoriteSharpIcon style={{ color: "#007fff" }} />
+-              ) : (
+-                <FavoriteBorderSharpIcon />
+-              )}
+-            </div>
+-            <div>{likeCount}</div>
+-          </div>
++      <div className="feed-card-footer-left">
++        <div className={`feed-card-footer-like-container${likeAnimate ? " feed-like-active" : ""}`} onClick={handleLike}>
++          {isLikedByUser
++            ? <FavoriteSharpIcon style={{ color: "var(--magenta)", fontSize: 18 }} />
++            : <FavoriteBorderSharpIcon style={{ fontSize: 18 }} />
++          }
++          <span className="like-count">{likeCount}</span>
++        </div>
+ 
+-          <div
+-            className="feed-card-footer-comment-container"
+-            onClick={handleCommentPopup}
+-          >
+-            {commentpopup ? (
+-              <ChatBubbleRoundedIcon style={{ color: "#007fff" }} />
+-            ) : (
+-              <ChatBubbleOutlineIcon />
+-            )}
+-            <div>{commentCount}</div>
+-          </div>
++        <div className="feed-card-footer-comment-container" onClick={() => setCommentpopup(!commentpopup)}>
++          {commentpopup
++            ? <ChatBubbleRoundedIcon style={{ color: "var(--cyan)", fontSize: 18 }} />
++            : <ChatBubbleOutlineIcon style={{ fontSize: 18 }} />
++          }
++          <span className="comment-count">{commentCount}</span>
++        </div>
+ 
+-          <div
+-            className="feed-share-container"
+-            onClick={() => setFeedShareModal(true)}
+-          >
+-            <SendIcon />
+-          </div>
++        <div className="feed-share-container" onClick={() => setFeedShareModal(true)}>
++          <SendIcon style={{ fontSize: 16 }} />
++        </div>
+ 
+-          {feedShareModal && (
+-            <Feedsharemodal
+-              postId={feed.id}
+-              setFeedShareModal={setFeedShareModal}
+-            />
+-          )}
++        {feedShareModal && <Feedsharemodal postId={feed.id} setFeedShareModal={setFeedShareModal} />}
+ 
+-          <div
+-            className="feed-card-footer-bookmark-container"
+-            onClick={handleSaveToBookmarks}
+-          >
+-            {isAddedToSaved ? (
+-              <BookmarkSharpIcon style={{ color: "#007fff" }} />
+-            ) : (
+-              <BookmarkBorderSharpIcon />
+-            )}
+-          </div>
++        <div className="feed-card-footer-bookmark-container" onClick={handleSaveToBookmarks}>
++          {isAddedToSaved
++            ? <BookmarkSharpIcon style={{ color: "var(--green-code)", fontSize: 18 }} />
++            : <BookmarkBorderSharpIcon style={{ fontSize: 18 }} />
++          }
+         </div>
+       </div>
+ 
+-      {/* COMMENTS */}
+-      {commentpopup && (
+-        <Comments
+-          feed={feed}
+-          getComments={getComments}
+-          commentList={commentList}
+-        />
+-      )}
++      {commentpopup && <Comments feed={feed} getComments={getComments} commentList={commentList} />}
+     </div>
+   );
+ };
+diff --git a/src/components/feed/commentdata.css b/src/components/feed/commentdata.css
+index 593825d..943cb34 100644
+--- a/src/components/feed/commentdata.css
++++ b/src/components/feed/commentdata.css
+@@ -1,64 +1,66 @@
+-.feed-commentdata-section{
+-    margin:10px;
+-    padding: 5px;
+-    border-radius: 10px;
+-    background-color: #fff;
+-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+-    display: flex;
+-    align-items: center;
+-    max-width: 95%;
++.comment-item {
++  display: flex;
++  gap: 10px;
++  animation: slideUp 0.2s ease both;
++  padding: 4px 0;
+ }
+ 
+-.feed-commentdata-section-header{
+-    margin-right: 5px;
++.comment-item-avatar {
++  width: 28px;
++  height: 28px;
++  border-radius: var(--radius-sm);
++  overflow: hidden;
++  flex-shrink: 0;
++  background: var(--cream-darker);
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  font-family: var(--font-display);
++  font-size: 11px;
++  font-weight: 800;
++  border: 1px solid var(--border);
+ }
+ 
+-.feed-commentdata-section-header-image-container{
+-    width: 40px;
+-    height: 40px;
+-    border-radius: 50%;
+-    overflow: hidden;
+-}
++.comment-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
+ 
+-.feed-commentdata-section-header-image-container img{
+-    width: 100%;
+-    height: 100%;
+-}
++.comment-item-body { flex: 1; min-width: 0; }
+ 
+-.commented-username{
+-    font-size: 16px;
+-    font-weight: 600;
+-    color: #000;
++.comment-item-header {
++  display: flex;
++  align-items: baseline;
++  gap: 8px;
++  flex-wrap: wrap;
+ }
+ 
+-.commented-time{
+-    font-size: 12px;
+-    font-weight: 400;
+-    color: #657786;
+-    margin-left: 5px;
+-    font-family: 'Roboto', sans-serif;   
++.comment-item-name {
++  font-family: var(--font-display);
++  font-size: 12px;
++  font-weight: 700;
++  color: var(--text-primary);
+ }
+ 
+-.comment-text{
+-    font-size: 14px;
+-    font-weight: 400;
+-    color: #000;
+-    margin-top: 2px;
+-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+-    overflow-wrap: break-word;
+-    word-wrap: break-word;
+-    padding: 0px 2px;
++.comment-item-time {
++  font-family: var(--font-mono);
++  font-size: 10px;
++  color: var(--text-muted);
+ }
+ 
+-.delete-comment-section{
+-    margin-left: auto;
+-    margin-right: 5px;
++.comment-item-text {
++  font-family: var(--font-body);
++  font-size: 13px;
++  color: var(--text-secondary);
++  line-height: 1.5;
++  margin-top: 2px;
++  word-break: break-word;
++}
+ 
++.comment-item-delete {
++  color: var(--text-muted);
++  cursor: pointer;
++  font-size: 14px !important;
++  transition: color var(--transition);
++  flex-shrink: 0;
++  align-self: center;
+ }
+ 
+-@media only screen and (max-width: 600px){
+-    .feed-commentdata-section{
+-        margin: 5px;
+-        padding: 5px;
+-    }
+-}
+\ No newline at end of file
++.comment-item-delete:hover { color: #e53e3e; }
+diff --git a/src/components/feed/comments.css b/src/components/feed/comments.css
+index df5227a..01e060e 100644
+--- a/src/components/feed/comments.css
++++ b/src/components/feed/comments.css
+@@ -1,53 +1,96 @@
+-.feed-comments-section {
+-  margin: 10px;
+-  margin-top: 0px;
+-  background-color: whitesmoke;
+-  display: flex;
+-  flex-direction: column;
+-  padding: 5px;
+-  border-radius: 5px;
++.comments-section {
++  border-top: 1px solid var(--border);
++  padding: 14px 16px;
++  animation: slideUp 0.25s ease both;
+ }
+ 
+-.feed-comments-section-header {
++.add-comment {
+   display: flex;
+-  align-items: center;
+-  padding: 5px;
++  gap: 8px;
++  margin-bottom: 14px;
+ }
+ 
+-.feed-comments-section-header-right input {
+-  width: 400px;
+-  border-radius: 5px;
+-  border: none;
+-  padding: 5px;
+-  margin-left: 15px;
++.comment-input {
++  flex: 1;
++  padding: 9px 12px;
++  border: 1.5px solid var(--border);
++  border-radius: var(--radius-md);
++  background: var(--cream);
++  font-family: var(--font-body);
++  font-size: 13px;
++  color: var(--text-primary);
+   outline: none;
+-  border: 1px solid gray;
++  transition: border-color var(--transition);
+ }
+ 
+-.feed-comments-section-header-right input:focus {
+-  border: 1px solid #007fff;
+-}
++.comment-input:focus { border-color: var(--magenta); }
++.comment-input::placeholder { color: var(--text-muted); }
+ 
+-.comment-send-icon {
++.comment-submit-btn {
++  padding: 9px 16px;
++  background: var(--black);
++  color: var(--cream);
++  border: none;
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 11px;
++  font-weight: 700;
+   cursor: pointer;
+-  width: 30px;
+-  margin-left: 5px;
++  transition: all var(--transition-bounce);
++  flex-shrink: 0;
++}
++
++.comment-submit-btn:hover {
++  background: var(--magenta);
++  box-shadow: var(--shadow-magenta);
+ }
+-.feed-comments-section-header-right {
++
++.comments-list { display: flex; flex-direction: column; gap: 10px; }
++
++.comment-item {
++  display: flex;
++  gap: 10px;
++  animation: slideUp 0.25s ease both;
++}
++
++.comment-avatar {
++  width: 30px;
++  height: 30px;
++  border-radius: var(--radius-sm);
++  background: var(--cream-darker);
++  flex-shrink: 0;
++  overflow: hidden;
+   display: flex;
+-  flex-direction: row;
+   align-items: center;
++  justify-content: center;
++  font-family: var(--font-display);
++  font-size: 12px;
++  font-weight: 800;
++  border: 1.5px solid var(--border);
+ }
+ 
+-.feed-comments-section-header-left > img {
+-  width: 40px;
+-  height: 40px;
+-  border-radius: 50%;
++.comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
++
++.comment-content { flex: 1; }
++
++.comment-author {
++  font-family: var(--font-display);
++  font-size: 12px;
++  font-weight: 700;
++  color: var(--text-primary);
++}
++
++.comment-text {
++  font-family: var(--font-body);
++  font-size: 13px;
++  color: var(--text-secondary);
++  line-height: 1.5;
++  margin-top: 2px;
+ }
+ 
+-/* mobile responsiveness */
+-@media screen and (max-width: 768px) {
+-  .feed-comments-section-header-right input {
+-    width: 190px;
+-  }
+-}
+\ No newline at end of file
++.comment-time {
++  font-family: var(--font-mono);
++  font-size: 10px;
++  color: var(--text-muted);
++  margin-top: 2px;
++}
+diff --git a/src/components/feed/feed.css b/src/components/feed/feed.css
+index 9d2ea0a..56fbf0a 100644
+--- a/src/components/feed/feed.css
++++ b/src/components/feed/feed.css
+@@ -1,34 +1,36 @@
+ .feed-container {
+   width: 100%;
+-  max-width: 600px;
+-
+-  margin: 40px auto;
+-  padding: 16px;
+-
++  max-width: 620px;
++  margin: 0 auto;
++  padding: 24px 16px 80px;
+   display: flex;
+   flex-direction: column;
+-  gap: 20px;
+-
+-  overflow-y: auto;
+-  min-height: 100vh;
++  gap: 16px;
++  animation: fadeIn 0.4s ease both;
+ }
+ 
+ .noFeed {
+   display: flex;
+-  justify-content: center;
++  flex-direction: column;
+   align-items: center;
+-
++  justify-content: center;
+   min-height: 60vh;
+-
+-  font-size: 1.2rem;
+-  color: #555;
++  gap: 12px;
++  color: var(--text-muted);
++  font-family: var(--font-mono);
++  font-size: 13px;
+   text-align: center;
+ }
+ 
+-/* Responsive tweak */
+-@media screen and (max-width: 768px) {
+-  .feed-container {
+-    padding: 12px;
+-    margin: 20px auto;
+-  }
++.noFeed::before {
++  content: '// 404';
++  font-family: var(--font-mono);
++  font-size: 40px;
++  font-weight: 700;
++  color: var(--cream-darker);
++  display: block;
++}
++
++@media (max-width: 768px) {
++  .feed-container { padding: 12px 10px 80px; gap: 12px; }
+ }
+diff --git a/src/components/feed/feedcard.css b/src/components/feed/feedcard.css
+index 238270f..c0787a2 100644
+--- a/src/components/feed/feedcard.css
++++ b/src/components/feed/feedcard.css
+@@ -1,173 +1,172 @@
+-/* =========================
+-   FEED CARD
+-========================= */
+-
++/* ===== FEED CARD ===== */
+ .feed-card {
+-  display: flex;
+-  flex-direction: column;
+-  width: 100%;
+-
+-  background-color: #fff;
+-  border-radius: 16px;
+-  margin: 12px 0;
+-
+-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+-  transition: 0.2s ease;
++  background: var(--surface);
++  border-radius: var(--radius-lg);
++  border: 1px solid var(--border);
++  box-shadow: var(--shadow-sm);
++  transition: transform var(--transition), box-shadow var(--transition);
++  animation: slideUp 0.35s ease both;
++  overflow: hidden;
+ }
+ 
+ .feed-card:hover {
+   transform: translateY(-2px);
++  box-shadow: var(--shadow-md);
+ }
+ 
+-/* =========================
+-   HEADER
+-========================= */
+-
++/* ===== HEADER ===== */
+ .feed-card-header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+-
+-  padding: 12px 16px;
+-  border-bottom: 1px solid #eee;
++  padding: 14px 16px 12px;
++  border-bottom: 1px solid var(--border);
+ }
+ 
+ .feed-card-header-left {
+   display: flex;
+   align-items: center;
+   gap: 10px;
++  min-width: 0;
+ }
+ 
+ .author-avatar {
+-  width: 42px;
+-  height: 42px;
+-
+-  border-radius: 50%;
++  width: 40px;
++  height: 40px;
++  border-radius: var(--radius-sm);
+   overflow: hidden;
+-
+-  background: #ddd;
+-
++  background: var(--cream-darker);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+-
+   flex-shrink: 0;
+-  font-weight: 600;
+-  color: #555;
++  border: 2px solid var(--border);
++  transition: border-color var(--transition);
+ }
+ 
+-.author-avatar-img {
+-  width: 100%;
+-  height: 100%;
+-  object-fit: cover;
+-}
++.feed-card:hover .author-avatar { border-color: var(--magenta); }
++
++.author-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+ 
+ .avatar-fallback {
++  font-family: var(--font-display);
+   font-size: 16px;
+-  font-weight: 600;
+-  color: #555;
++  font-weight: 800;
++  color: var(--text-primary);
+ }
+ 
+-.author-info {
+-  display: flex;
+-  flex-direction: column;
+-  line-height: 1.2;
+-}
++.author-info { display: flex; flex-direction: column; min-width: 0; }
+ 
+ .author-name {
+-  font-size: 15px;
+-  font-weight: 600;
+-  color: #111;
++  font-family: var(--font-display);
++  font-size: 14px;
++  font-weight: 700;
++  color: var(--text-primary);
++  white-space: nowrap;
++  overflow: hidden;
++  text-overflow: ellipsis;
+ }
+ 
+ .author-desc {
+-  font-size: 13px;
+-  color: #666;
++  font-family: var(--font-mono);
++  font-size: 10px;
++  color: var(--magenta);
++  white-space: nowrap;
++  overflow: hidden;
++  text-overflow: ellipsis;
+ }
+ 
++.author-desc::before { content: '// '; opacity: 0.5; }
++
+ .feed-date {
+-  font-size: 12px;
+-  color: #888;
++  font-family: var(--font-mono);
++  font-size: 10px;
++  color: var(--text-muted);
++  margin-top: 1px;
+ }
+ 
+ .feed-card-header-right {
+   cursor: pointer;
+-  opacity: 0.6;
+-  transition: 0.2s;
+-}
+-
+-.feed-card-header-right:hover {
+-  opacity: 1;
++  color: var(--text-muted);
++  transition: color var(--transition);
++  flex-shrink: 0;
+ }
++.feed-card-header-right:hover { color: #e53e3e; }
+ 
+-/* =========================
+-   BODY
+-========================= */
+-
+-.feed-card-body {
+-  display: flex;
+-  flex-direction: column;
+-  padding: 12px 16px;
+-}
++/* ===== BODY ===== */
++.feed-card-body { padding: 14px 16px; }
+ 
+ .feed-card-body-text {
+-  font-size: 16px;
+-  color: #000;
+-  margin-bottom: 10px;
++  font-family: var(--font-body);
++  font-size: 15px;
++  color: var(--text-primary);
++  line-height: 1.6;
++  margin-bottom: 12px;
++  white-space: pre-wrap;
+ }
+ 
+ .feed-card-body-image {
+   width: 100%;
+-  border-radius: 10px;
++  border-radius: var(--radius-md);
+   overflow: hidden;
++  background: var(--cream-dark);
+ }
+ 
+ .feed-card-body-image img {
+   width: 100%;
+   height: auto;
+   object-fit: cover;
++  display: block;
++  transition: transform var(--transition-slow);
+ }
++.feed-card-body-image:hover img { transform: scale(1.02); }
+ 
+-/* =========================
+-   FOOTER
+-========================= */
+-
++/* ===== FOOTER ===== */
+ .feed-card-footer-left {
+   display: flex;
+   align-items: center;
+-  padding: 10px 16px;
++  gap: 4px;
++  padding: 10px 14px;
++  border-top: 1px solid var(--border);
+ }
+ 
+ .feed-card-footer-like-container,
+ .feed-card-footer-comment-container,
+-.feed-share-container {
++.feed-share-container,
++.feed-card-footer-bookmark-container {
+   display: flex;
+   align-items: center;
+-  margin-right: 20px;
++  gap: 5px;
++  padding: 6px 10px;
++  border-radius: var(--radius-sm);
+   cursor: pointer;
++  transition: background var(--transition), color var(--transition), transform var(--transition-bounce);
++  color: var(--text-secondary);
++  font-family: var(--font-mono);
++  font-size: 12px;
++  user-select: none;
+ }
+ 
+-.feed-like-count,
+-.feed-comment-count {
+-  font-size: 14px;
+-  margin-left: 5px;
+-}
++.feed-card-footer-like-container:hover { background: rgba(232,18,124,0.08); color: var(--magenta); }
++.feed-card-footer-comment-container:hover { background: rgba(0,200,200,0.08); color: var(--cyan); }
++.feed-share-container:hover { background: rgba(245,196,0,0.10); color: var(--yellow); }
++.feed-card-footer-bookmark-container:hover { background: rgba(34,197,94,0.08); color: var(--green-code); }
+ 
+-.feed-card-footer-bookmark-container {
+-  margin-left: auto;
+-  cursor: pointer;
+-}
++.feed-card-footer-like-container:active,
++.feed-card-footer-comment-container:active { transform: scale(0.92); }
+ 
+-/* =========================
+-   MOBILE
+-========================= */
++/* liked state pulse */
++.feed-like-active { animation: pulse-ring 0.4s ease; }
+ 
+-@media (max-width: 768px) {
+-  .feed-card {
+-    border-radius: 12px;
+-  }
++.feed-card-footer-bookmark-container { margin-left: auto; }
+ 
+-  .feed-card-body-text {
+-    font-size: 15px;
+-  }
++/* Count */
++.like-count, .comment-count { font-size: 11px; font-weight: 700; }
++
++/* ===== COMMENTS ===== */
++@media (max-width: 768px) {
++  .feed-card { border-radius: var(--radius-md); }
++  .feed-card-body-text { font-size: 14px; }
++  .feed-card-header { padding: 10px 12px; }
++  .feed-card-body { padding: 10px 12px; }
+ }
+diff --git a/src/components/loader/Loader.jsx b/src/components/loader/Loader.jsx
+index c80f8c0..46ecbcd 100644
+--- a/src/components/loader/Loader.jsx
++++ b/src/components/loader/Loader.jsx
+@@ -1,28 +1,29 @@
+-import React from 'react'
+-import LoaderImage from './loader.gif'
++import React from "react";
+ 
+-const Loader = () => {
+-  return (
++const Loader = () => (
++  <div style={{
++    display: "flex",
++    flexDirection: "column",
++    alignItems: "center",
++    justifyContent: "center",
++    minHeight: "60vh",
++    gap: 12,
++    fontFamily: "var(--font-mono)",
++    fontSize: 11,
++    color: "var(--text-muted)",
++    letterSpacing: "0.08em",
++  }}>
++    <div style={{
++      width: 36,
++      height: 36,
++      border: "2.5px solid var(--cream-darker)",
++      borderTopColor: "var(--magenta)",
++      borderRadius: "50%",
++      animation: "spin 0.8s linear infinite",
++    }} />
++    <span>// loading...</span>
++    <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
++  </div>
++);
+ 
+-
+-    <div className="loader" 
+-        style={{
+-            display: "flex",
+-            justifyContent: "center",
+-            alignItems: "center",
+-            height: "100vh",
+-            width: "100vw",
+-            position: "fixed",
+-            top: 0,
+-            left: 0,
+-            zIndex: 9999,
+-            
+-        }}
+-    >
+-        <img src={LoaderImage} alt="Loading..." width='400px'/>  
+-    </div>
+-    
+-  )
+-}
+-
+-export default Loader
++export default Loader;
+diff --git a/src/components/profile/Userprofile.css b/src/components/profile/Userprofile.css
+index be28ae8..41b5232 100644
+--- a/src/components/profile/Userprofile.css
++++ b/src/components/profile/Userprofile.css
+@@ -1,484 +1,214 @@
+ .profile-container {
+-  display: flex;
+-  flex-direction: column;
+-  padding: 10px;
+-  overflow: hidden; 
++  max-width: 680px;
++  margin: 0 auto;
++  padding: 24px 16px 80px;
++  animation: fadeIn 0.4s ease both;
+ }
+ 
++/* ===== HEADER ===== */
+ .profile-header {
+   display: flex;
+-  align-items: center;
+-  padding: 10px;
++  align-items: flex-start;
++  gap: 20px;
++  background: var(--surface);
++  border-radius: var(--radius-xl);
++  padding: 24px;
++  border: 1px solid var(--border);
++  box-shadow: var(--shadow-sm);
++  margin-bottom: 16px;
+ }
+ 
+-.image-section {
+-  display: flex;
+-  flex-direction: column;
+-  align-items: center;
+-  padding: 10px;
+-  justify-content: center;
+-}
+-
+-.profile-image > img {
+-  width: 100%;
+-  height: 100%;
+-}
++.image-section { flex-shrink: 0; }
+ 
+ .profile-image {
+-  width: 180px;
+-  height: 180px;
+-  border-radius: 15%;
++  width: 100px;
++  height: 100px;
++  border-radius: var(--radius-md);
+   overflow: hidden;
+-  border: 1px solid #ccc;
+-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
++  border: 2.5px solid var(--black);
++  box-shadow: 4px 4px 0 var(--magenta);
++  background: var(--cream-darker);
+ }
+ 
+-.edit-profile-section{
+-  display: flex;
+-  flex-direction: column;
+-  padding: 10px;
+-  justify-content: center;
+-  padding-left: 30px;
+-  margin-right: 30px;
+-}
++.profile-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+ 
+-.profile-follow-section{
++.profile-details {
++  flex: 1;
++  min-width: 0;
+   display: flex;
+   flex-direction: column;
+-  padding: 10px;
+-  justify-content: center;
+-  padding-left: 30px;
++  gap: 12px;
+ }
+ 
+-.edit-profile-section > button{
+-  width: 300px;
+-  padding: 10px;
+-  border-radius: 10px;
+-  background-color: #007fff;
+-  color: #fff;
+-  border: 1px solid #fff;
+-  font-size: 20px;
+-  font-weight: 600;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-  cursor: pointer;
+-  outline: none;
+-}
+-
+-.profile-settings-section
+-> button{
+-  width: 300px;
+-  padding: 10px;
+-  border-radius: 10px;
+-  background-color: gray;
+-  color: #fff;
+-  border: 1px solid #fff;
+-  font-size: 20px;
+-  font-weight: 600;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-  cursor: pointer;
+-  outline: none;
++.user-name {
++  font-family: var(--font-display);
++  font-size: 22px;
++  font-weight: 800;
++  color: var(--text-primary);
+ }
+ 
+-
+-.profile-follow-section-notfollowing > button{
+-  width: 400px;
+-  padding: 10px;
+-  border-radius: 10px;
+-  background-color: #007fff;
+-  color: #fff;
+-  border: 1px solid #fff;
+-  font-size: 20px;
+-  font-weight: 600;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-  cursor: pointer;
+-  outline: none;
+-  transition: all 0.2s ease-in-out;
+-  margin-left: 10px;
+-}
+- 
+-.profile-follow-section-following > button{
+-  width: 200px;
+-  padding: 10px;
+-  border-radius: 10px;
+-  background-color: #007fff;
+-  color: #fff;
+-  border: 1px solid #fff;
+-  font-size: 20px;
+-  font-weight: 600;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-  cursor: pointer;
+-  outline: none;
+-  transition: all 0.2s ease-in-out;
+-  margin-left: 10px;
+-}
+-.profile-settings-section > button:hover{
+-  background-color: #657786;
++.user-description {
++  font-family: var(--font-mono);
++  font-size: 12px;
++  color: var(--magenta);
+ }
+ 
+-.profile-settings-section > button{
+-  display:flex;
+-  align-items: center;
+-  justify-content: center;
+-}
++.user-description::before { content: '// '; opacity: 0.5; }
+ 
+-.edit-profile-section >button{
++.profile-connections {
+   display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  border-radius: 10px;
+-}
+-
+-.edit-profile-section > button:hover {
+-  background-color: #006097;
+-}
+-
+-.profile-follow-section-following > button:hover {
+-  background-color: #006097;
++  gap: 20px;
+ }
+ 
+-.profile-follow-section-notfollowing > button:hover {
+-  background-color: #006097;
+-}
+-
+-
+-.profile-details {
+-  height: 100%;
+-  width: 100%;
+-  margin-left: 20px;
++.followers, .following, .post-count {
+   display: flex;
+   flex-direction: column;
+-  justify-content: space-around;
+-  align-items: space-evenly;
++  align-items: center;
++  gap: 2px;
++  cursor: pointer;
+ }
+ 
+-.user-name {
+-  font-size: 2rem;
+-  font-weight: 600;
+-  font-family: "Montserrat", sans-serif;
+-  font-weight: 600;
+-  color: #15202b;
++.followers strong, .following strong, .post-count strong {
++  font-family: var(--font-display);
++  font-size: 18px;
++  font-weight: 800;
++  color: var(--text-primary);
++  line-height: 1;
+ }
+ 
+-.user-description {
+-  font-size: 1.5rem;
+-  font-weight: 400;
+-  font-family: "Montserrat", sans-serif;
+-  font-weight: 400;
+-  color: #657786;
++.followers span, .following span, .post-count span {
++  font-family: var(--font-mono);
++  font-size: 10px;
++  color: var(--text-muted);
++  text-transform: uppercase;
++  letter-spacing: 0.06em;
+ }
+ 
+-.profile-connections {
++/* ===== ACTIONS ===== */
++.edit-settings-container,
++.mobile-follow-section {
+   display: flex;
+-  align-items: center;
+-  margin-top: 20px;
++  gap: 10px;
++  margin-bottom: 16px;
+ }
+ 
+-.followers,
+-.following,
+-.post-count {
++.edit-profile-button {
+   display: flex;
+-  flex-direction: column;
+   align-items: center;
+-  margin: 0 10px;
+-  font-size: 1.2rem;
+-  font-weight: 600;
+-  color: #000;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-  text-align: center;
+-  text-transform: capitalize;
+-  margin-right: 20px;
++  gap: 8px;
++  padding: 10px 18px;
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 12px;
++  font-weight: 700;
++  cursor: pointer;
++  transition: all var(--transition-bounce);
++  border: 1.5px solid var(--black);
++  background: transparent;
++  color: var(--text-primary);
+ }
+ 
+-.profile-footer {
+-  display: flex;
+-  flex-direction: column;
+-  margin-top: 20px;
++.edit-profile-button:hover {
++  background: var(--black);
++  color: var(--cream);
++  transform: translateY(-2px);
++  box-shadow: var(--shadow-md);
+ }
+ 
+-.skills {
+-  display: flex;
+-  flex-direction: column;
+-  background-color: #fff;
+-  padding: 10px;
+-  width: 95%;
+-  height: 120px;
+-  border-radius: 10px;
+-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+-}
++.edit-profile-section .edit-profile-button { border-color: var(--black); }
++.profile-settings-section .edit-profile-button { border-color: var(--border-strong); color: var(--text-secondary); }
++.profile-settings-section .edit-profile-button:hover { background: var(--text-secondary); color: var(--cream); }
+ 
+-.skills-header {
+-  font-size: 1.5rem;
+-  font-weight: 600;
+-  font-family: "Montserrat", sans-serif;
+-  font-weight: 600;
+-  color: #15202b;
++.profile-follow-button, .profile-message-button {
++  padding: 10px 24px;
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 12px;
++  font-weight: 700;
++  cursor: pointer;
++  transition: all var(--transition-bounce);
++  border: none;
+ }
+ 
+-.skills-list {
+-  display: flex;
+-  flex-wrap: wrap;
+-  margin-top: 7px;
+-  font-size: 1.2rem;
+-  font-weight: 400;
+-  font-family: "Montserrat", sans-serif;
+-  overflow-y: scroll;
+-  overflow-x: hidden;
+-  overflow-wrap: break-word;
+-  scrollbar-width: none;
++.profile-follow-button {
++  background: var(--black);
++  color: var(--cream);
+ }
+ 
+-.skills-list::-webkit-scrollbar {
+-  display: none;
++.profile-follow-button:hover {
++  background: var(--magenta);
++  box-shadow: var(--shadow-magenta);
++  transform: translateY(-2px);
+ }
+ 
+-.achievements,
+-.feed {
+-  background-color: #fff;
+-  padding: 10px;
+-  width: 95%;
+-  border-radius: 10px;
+-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+-  margin-top: 10px;
++.profile-message-button {
++  background: transparent;
++  color: var(--text-primary);
++  border: 1.5px solid var(--border-strong) !important;
+ }
+ 
+-.achievements-header,
+-.feed-header {
+-  font-size: 1.5rem;
+-  font-weight: 600;
+-  font-family: "Montserrat", sans-serif;
+-  font-weight: 600;
+-  color: #15202b;
++.profile-message-button:hover {
++  border-color: var(--black) !important;
++  background: var(--black);
++  color: var(--cream);
+ }
+ 
+-.achievements-count,
+-.feed-count {
+-  font-size: 1.2rem;
+-  font-weight: 400;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-  font-weight: 400;
+-  color: #657786;
+-  margin-top: 5px;
++/* ===== FOOTER CARDS ===== */
++.profile-footer {
++  display: flex;
++  flex-direction: column;
++  gap: 12px;
+ }
+ 
+-
+-
+-.logout-button-mobile{
+-  width:90%;
+-  padding: 10px;
+-  border-radius: 10px;
+-  background-color:#d11a2a;
+-  color: #fff;
+-  border: 1px solid #fff;
+-  font-size: 20px;
+-  font-weight: 600;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-  cursor: pointer;
+-  outline: none;
+-  display: none;
++.skills, .achievements, .feed {
++  background: var(--surface);
++  border-radius: var(--radius-lg);
++  padding: 18px 20px;
++  border: 1px solid var(--border);
++  box-shadow: var(--shadow-sm);
++  transition: transform var(--transition), box-shadow var(--transition);
+ }
+ 
+-.edit-settings-container{
+-  display: flex;
+-  align-items: center;
++.skills:hover, .achievements:hover, .feed:hover {
++  transform: translateY(-2px);
++  box-shadow: var(--shadow-md);
+ }
+ 
++.skills-header, .achievements-header, .feed-header {
++  font-family: var(--font-mono);
++  font-size: 10px;
++  font-weight: 700;
++  color: var(--magenta);
++  text-transform: uppercase;
++  letter-spacing: 0.1em;
++  margin-bottom: 10px;
++}
+ 
++.skills-header::before { content: '// '; opacity: 0.5; }
+ 
+-/* mobile responsiveness */
+-
+-@media screen and (max-width: 1000px) {
+-  .profile-container {
+-    padding: 10px;
+-  }
+-
+-  .profile-header {
+-    padding: 10;
+-    padding-left: 0px;
+-  }
+-
+-  .image-section {
+-    padding: 0;
+-  }
+-
+-  .profile-image {
+-    width: 100px;
+-    height: 100px;
+-  }
+-
+-  .edit-profile-section{
+-    padding: 0;
+-    padding-left: 10px;
+-    margin-right : 20px;
+-  }
+-  
+-  .profile-follow-section{
+-    padding: 0;
+-    padding-left: 10px;
+-  }
+-
+-
+-
+-
+-
+-
+-  .profile-settings-section > button{
+-    width: 200px;
+-    padding: 10px 20px;
+-    border-radius: 10px;
+-    background-color: gray;
+-    color: #fff;
+-    border: 1px solid #fff;
+-    font-size: 20px;
+-    font-weight: 600;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+-      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+-      sans-serif;
+-    cursor: pointer;
+-    outline: none;
+-    margin: 5px auto;
+-  }
+-
+-  .profile-settings-section > button:hover{
+-    background-color: #657786;
+-  }
+-    
+-
+-  .mobile-follow-section{
+-    display: flex;
+-    justify-content: center;
+-    align-items: center;
+-    flex: 1;
+-  }
+-
+-  .profile-follow-section-following > button{
+-    width: 140px;
+-    padding: 10px;
+-    border-radius: 10px;
+-    background-color: #007fff;
+-    color: #fff;
+-    border: 1px solid #fff;
+-    font-size: 20px;
+-    font-weight: 600;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+-      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+-      sans-serif;
+-    cursor: pointer;
+-    outline: none;
+-
+-  }
+-
+-
+-  .profile-follow-section-notfollowing > button{
+-    width: 250px;
+-    padding: 10px;
+-    border-radius: 10px;
+-    background-color: #007fff;
+-    color: #fff;
+-    border: 1px solid #fff;
+-    font-size: 20px;
+-    font-weight: 600;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+-      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+-      sans-serif;
+-    cursor: pointer;
+-    outline: none;
+-
+-  }
+-
+-  .edit-profile-section > button:hover{
+-    background-color: #006097;
+-  }
+-
+-  .profile-follow-section > button:hover{
+-    background-color: #006097;
+-  }
+-
+-  .profile-details {
+-    margin-left: 10px;
+-  }
+-
+-  .user-name {
+-    font-size: 1.5rem;
+-    font-weight: 600;
+-    font-family: "Montserrat", sans-serif;
+-    font-weight: 600;
+-    color: #15202b;
+-  }
+-
+-  .user-description {
+-    font-size: 1rem;
+-    font-weight: 400;
+-    font-family: "Montserrat", sans-serif;
+-    font-weight: 400;
+-    color: #657786;
+-  }
+-
+-  .profile-connections {
+-    margin-top: 10px;
+-  }
+-
+-  .followers,
+-  .following,
+-  .post-count {
+-    margin: 0 5px;
+-    font-size: 1rem;
+-    font-weight: 600;
+-    color: #000;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+-      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+-      sans-serif;
+-    text-align: center;
+-    text-transform: capitalize;
+-    margin-right: 10px;
+-  }
+-
+-  .profile-footer {
+-    margin-top: 10px;
+-  }
+-
+-  .achievements,.feed {
+-    padding: 5px;
+-
+-  }
+-
+-  .skills {
+-    padding: 5px;
+-    height: 200px;
+-  }
+-
+-  .logout-button-mobile{
+-    display: block;
+-    margin: 5px auto;
+-  }
+-
+-  .edit-settings-container{
+-    /* flex-direction: column;  */
+-    margin : 2px auto;
+-  }
+-
+-  .edit-profile-section{
+-    margin-right: 10px;
+-    width: 150px;
+-  }
+-
+-  .profile-settings-section{
+-    /* margin-left: 10px; */
+-    width: 150px;
+-  }
+-
+-
+-  .edit-profile-section > button, .profile-settings-section > button{
+-   width: 150px;
+-    font-size: 15px;
+-    padding: 5px;
+-  }
+-
++.skills-list {
++  font-family: var(--font-body);
++  font-size: 14px;
++  color: var(--text-secondary);
++  line-height: 1.6;
++  overflow-y: auto;
++  max-height: 100px;
++}
++
++.achievements-count, .feed-count {
++  font-family: var(--font-body);
++  font-size: 14px;
++  color: var(--text-secondary);
++  line-height: 1.5;
++}
++
++/* ===== MOBILE ===== */
++@media (max-width: 768px) {
++  .profile-container { padding: 12px 10px 80px; }
++  .profile-header { padding: 16px; gap: 14px; }
++  .profile-image { width: 72px; height: 72px; }
++  .user-name { font-size: 18px; }
++  .profile-connections { gap: 16px; }
++  .edit-settings-container { flex-wrap: wrap; }
++  .edit-profile-button { padding: 8px 14px; font-size: 11px; }
+ }
+-
+diff --git a/src/components/profile/Userprofile.jsx b/src/components/profile/Userprofile.jsx
+index d001107..2d874c1 100644
+--- a/src/components/profile/Userprofile.jsx
++++ b/src/components/profile/Userprofile.jsx
+@@ -3,228 +3,105 @@ import "./Userprofile.css";
+ import { supabase } from "../../backend/supabaseConfig";
+ import { useState, useEffect, useContext } from "react";
+ import { LoginContext } from "../../context/LoginContext";
+-import { ToastContainer, toast } from "react-toastify";
+-import "react-toastify/dist/ReactToastify.css";
+-import { Link, Routes, Route, useNavigate, useParams } from "react-router-dom";
++import { toast } from "react-toastify";
++import { Link, useNavigate, useParams } from "react-router-dom";
+ import Editprofilemodal from "./Editprofilemodal";
+ import { useSession } from "@supabase/auth-helpers-react";
+ import Loader from "../loader/Loader";
+-import SettingsIcon from '@mui/icons-material/Settings';
+-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
++import SettingsIcon from "@mui/icons-material/Settings";
++import EditCalendarIcon from "@mui/icons-material/EditCalendar";
+ 
+ const Userprofile = () => {
+-  const { user, setUser, activebutton, setActivebutton, fetchUserProfile } =
+-    useContext(LoginContext);
++  const { user, setUser, setActivebutton, fetchUserProfile } = useContext(LoginContext);
+   const [showModal, setShowModal] = useState(false);
+   const navigate = useNavigate();
+   const { profileId } = useParams();
+   const [userProfile, setUserProfile] = useState(null);
+-  const [profileAchievementsCount, setProfileAchievementsCount] = useState("");
+-  const [isfollowing, setIsfollowing] = useState(null);
+-  const [profileFeedCount, setProfileFeedCount] = useState(0);
++  const [achievementsCount, setAchievementsCount] = useState(0);
++  const [feedCount, setFeedCount] = useState(0);
++  const [isfollowing, setIsfollowing] = useState(false);
+   const Session = useSession();
+ 
+-  const fetchDynamicUserProfile = async (profileId) => {
+-    const { data, error } = await supabase
+-      .from("profiles")
+-      .select()
+-      .eq("id", profileId)
+-      .single();
+-    if (error) {
+-      toast.error("Error fetching user profile");
+-      return;
+-    }
++  const fetchDynamicUserProfile = async (id) => {
++    const { data, error } = await supabase.from("profiles").select().eq("id", id).single();
++    if (error) { toast.error("Error fetching profile"); return; }
+     setUserProfile(data);
+   };
+ 
+-  // follow and unfollow functionality
+-  const checkIsFollowing = async (profileId) => {
+-    setIsfollowing(false);
+-    {
+-      user?.following?.forEach((element) => {
+-        if (element === profileId) {
+-          setIsfollowing(true);
+-          return;
+-        }
+-      });
+-    }
+-  };
+-
+-  const followUser = async (profileId) => {
+-    let newFollowingList = [];
+-    if (user?.following === null || user?.following === []) {
+-      newFollowingList = [profileId];
+-    } else {
+-      newFollowingList = [...user?.following, profileId];
+-    }
+-
+-    const { data, error } = await supabase
+-      .from("profiles")
+-      .update({
+-        following: newFollowingList,
+-      })
+-      .eq("id", user?.id);
+-
+-    if (error) {
+-      // console.log(error);
+-      return;
+-    } else {
+-      let newFollowersList = [];
+-      if (userProfile?.followers === null || userProfile?.followers === []) {
+-        newFollowersList = [user?.id];
+-      } else {
+-        newFollowersList = [...userProfile?.followers, user?.id];
+-      }
+-
+-      const { data, error } = await supabase
+-        .from("profiles")
+-        .update({
+-          followers: newFollowersList,
+-        })
+-        .eq("id", profileId);
+-
+-      if (error) {
+-        // console.log(error);
+-        return;
+-      } else {
+-        setIsfollowing(true);
+-        fetchDynamicUserProfile(profileId);
+-        fetchUserProfile(Session);
+-      }
+-    }
++  const checkIsFollowing = (id) => {
++    const following = Array.isArray(user?.following) ? user.following : [];
++    setIsfollowing(following.includes(id));
+   };
+ 
+-  const unfollowUser = async (profileId) => {
+-    const newList = user?.following?.filter((item) => item !== userProfile?.id);
+-    const { data, error } = await supabase
+-      .from("profiles")
+-      .update({
+-        following: newList,
+-      })
+-      .eq("id", user?.id);
+-
+-    if (error) {
+-      // console.log(error);
+-      return;
+-    } else {
+-      const newList = userProfile?.followers?.filter(
+-        (item) => item !== user?.id
+-      );
+-      const { data, error } = await supabase
+-        .from("profiles")
+-        .update({
+-          followers: newList,
+-        })
+-        .eq("id", profileId);
+-
+-      if (error) {
+-        // console.log(error);
+-        return;
+-      } else {
+-        setIsfollowing(false);
+-
+-        fetchDynamicUserProfile(profileId);
+-        fetchUserProfile(Session);
+-      }
+-    }
++  const followUser = async (id) => {
++    const following = Array.isArray(user?.following) ? user.following : [];
++    const newFollowing = [...following, id];
++    await supabase.from("profiles").update({ following: newFollowing }).eq("id", user?.id);
++    const followers = Array.isArray(userProfile?.followers) ? userProfile.followers : [];
++    await supabase.from("profiles").update({ followers: [...followers, user?.id] }).eq("id", id);
++    setIsfollowing(true);
++    fetchDynamicUserProfile(id);
++    fetchUserProfile(Session);
+   };
+ 
+-  const handleFollows = async (profileId) => {
+-    if (isfollowing === true) {
+-      unfollowUser(profileId);
+-    } else {
+-      followUser(profileId);
+-    }
+-  };
+-
+-  const profileAchievementsCountFunction = async (profileId) => {
+-    const { data, error } = await supabase
+-      .from("achievements")
+-      .select()
+-      .eq("author", profileId);
+-    if (!error) {
+-      setProfileAchievementsCount(data.length);
+-    }
+-  };
+-
+-  const profileFeedCountFunction = async (profileId) => {
+-    const { data, error } = await supabase
+-      .from("posts")
+-      .select()
+-      .eq("author", profileId);
+-    if (!error) {
+-      setProfileFeedCount(data.length);
+-    }
++  const unfollowUser = async (id) => {
++    const following = Array.isArray(user?.following) ? user.following : [];
++    await supabase.from("profiles").update({ following: following.filter(i => i !== id) }).eq("id", user?.id);
++    const followers = Array.isArray(userProfile?.followers) ? userProfile.followers : [];
++    await supabase.from("profiles").update({ followers: followers.filter(i => i !== user?.id) }).eq("id", id);
++    setIsfollowing(false);
++    fetchDynamicUserProfile(id);
++    fetchUserProfile(Session);
+   };
+ 
+   useEffect(() => {
+-    if (profileId === user?.id) {
+-      setActivebutton("profile");
+-    } else {
+-      setActivebutton("");
+-      checkIsFollowing(profileId);
+-    }
++    if (profileId === user?.id) setActivebutton("profile");
++    else { setActivebutton(""); checkIsFollowing(profileId); }
+     fetchDynamicUserProfile(profileId);
+-    profileAchievementsCountFunction(profileId);
+-    profileFeedCountFunction(profileId);
++    supabase.from("achievements").select().eq("author", profileId).then(({ data }) => data && setAchievementsCount(data.length));
++    supabase.from("posts").select().eq("author", profileId).then(({ data }) => data && setFeedCount(data.length));
+   }, [profileId]);
+ 
+-  if (!userProfile) {
+-    return <Loader />;
+-  }
++  if (!userProfile) return <Loader />;
++
++  const avatar = userProfile?.avatar || userProfile?.image;
++  const followers = Array.isArray(userProfile?.followers) ? userProfile.followers.length : 0;
++  const following = Array.isArray(userProfile?.following) ? userProfile.following.length : 0;
+ 
+   return (
+     <>
+       <div className="profile-container">
+-        <div className="profile-header">
++        <div className="profile-header animate-fade">
+           <div className="image-section">
+             <div className="profile-image">
+-              <img src={userProfile?.avatar} alt="" />
++              {avatar
++                ? <img src={avatar} alt={userProfile?.name} />
++                : <div style={{width:'100%',height:'100%',background:'var(--black)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:36,fontWeight:800,color:'var(--cream)',fontFamily:'var(--font-display)'}}>{userProfile?.name?.[0]?.toUpperCase()}</div>
++              }
+             </div>
+           </div>
+           <div className="profile-details">
+-            <div className="description">
++            <div>
+               <div className="user-name">{userProfile?.name}</div>
+-              <div className="user-description">{userProfile?.description}</div>
++              <div className="user-description">{userProfile?.description || "developer"}</div>
+             </div>
+             <div className="profile-connections">
+-              <Link
+-                to={"/feed/" + profileId}
+-                style={{ textDecoration: "none", color: "black" }}
+-              >
++              <Link to={"/feed/" + profileId} style={{ textDecoration: "none" }}>
+                 <div className="post-count">
+-                  Feed <br /> {profileFeedCount}
++                  <strong>{feedCount}</strong>
++                  <span>posts</span>
+                 </div>
+               </Link>
+-              <Link
+-                to={"followers"}
+-                style={{
+-                  textDecoration: "none",
+-                  color: "black",
+-                  cursor: "pointer",
+-                }}
+-              >
++              <Link to="followers" style={{ textDecoration: "none" }}>
+                 <div className="followers">
+-                  followers <br />{" "}
+-                  {userProfile?.followers !== null
+-                    ? userProfile?.followers?.length
+-                    : 0}
++                  <strong>{followers}</strong>
++                  <span>followers</span>
+                 </div>
+               </Link>
+-
+-              <Link
+-                to={"following"}
+-                style={{
+-                  textDecoration: "none",
+-                  color: "black",
+-                  cursor: "pointer",
+-                }}
+-              >
++              <Link to="following" style={{ textDecoration: "none" }}>
+                 <div className="following">
+-                  following <br />{" "}
+-                  {userProfile?.following !== null
+-                    ? userProfile?.following?.length
+-                    : 0}
++                  <strong>{following}</strong>
++                  <span>following</span>
+                 </div>
+               </Link>
+             </div>
+@@ -232,124 +109,59 @@ const Userprofile = () => {
+         </div>
+ 
+         {user?.id === profileId ? (
+-          <div className='edit-settings-container'>
++          <div className="edit-settings-container animate-fade stagger-2">
+             <div className="edit-profile-section">
+-            <button
+-              className="edit-profile-button"
+-              onClick={() => setShowModal(true)}
+-            >
+-              <div
+-              style={{
+-                paddingTop:"5px",
+-                paddingRight:"10px",
+-              }}
+-            ><EditCalendarIcon /></div>
+-            <div>
+-              Edit Profile
+-            </div>
+-            </button>
++              <button className="edit-profile-button" onClick={() => setShowModal(true)}>
++                <EditCalendarIcon fontSize="small" /> Edit Profile
++              </button>
+             </div>
+             <div className="profile-settings-section">
+-            <button
+-              className="edit-profile-button"
+-              onClick = {
+-                () => navigate(`/settings/${profileId}`)
+-              }
+-            ><div
+-              style={{
+-                paddingTop:"5px",
+-                paddingRight:"10px",
+-              }}
+-            ><SettingsIcon /></div>
+-            <div>
+-              Settings
+-            </div>
+-            </button>
++              <button className="edit-profile-button" onClick={() => navigate(`/settings/${profileId}`)}>
++                <SettingsIcon fontSize="small" /> Settings
++              </button>
+             </div>
+           </div>
+         ) : (
+-          <div className="mobile-follow-section">
+-            <div
+-              className={`profile-follow-section-${
+-                isfollowing ? "following" : "notfollowing"
+-              }`}
+-            >
+-              <button
+-                className="profile-follow-button"
+-                onClick={() => handleFollows(profileId)}
+-                style={{
+-                  backgroundColor: isfollowing ? "gray" : "#1a73e8",
+-                  boxShadow: isfollowing ? "0px 0px 5px 0px black" : "",
+-                  border: isfollowing ? "1px solid gray" : "1px solid #1a73e8",
+-                }}
+-              >
+-                {isfollowing === true ? <p>Following</p> : <p>Follow</p>}
++          <div className="mobile-follow-section animate-fade stagger-2">
++            <button className="profile-follow-button" onClick={() => isfollowing ? unfollowUser(profileId) : followUser(profileId)}
++              style={{ background: isfollowing ? "var(--text-muted)" : "var(--black)" }}>
++              {isfollowing ? "Following" : "Follow"}
++            </button>
++            {isfollowing && (
++              <button className="profile-message-button" onClick={() => navigate(`/messagechannel/${profileId}`)}>
++                Message
+               </button>
+-              {isfollowing === true && (
+-                <button
+-                  className="profile-message-button"
+-                  onClick={() => {
+-                    navigate(`/messagechannel/${profileId}`);
+-                  }}
+-                  style={{
+-                    backgroundColor: "#1a73e8",
+-                    boxShadow: "0px 0px 5px 0px black",
+-                    border: "1px solid #1a73e8",
+-                  }}
+-                >
+-                  Message
+-                </button>
+-              )}
+-            </div>
++            )}
+           </div>
+         )}
+ 
+-
+         <div className="profile-footer">
+-          <div className="skills">
+-            <div className="skills-header">Skills</div>
+-            <div className="skills-list">
+-              {userProfile?.skills ? userProfile?.skills : "No skills added"}
+-            </div>
+-          </div>
+-          <div className="achievements">
+-            <Link
+-              to={"/achievements/" + profileId}
+-              style={{ textDecoration: "none", color: "black" }}
+-            >
+-              <p className="achievements-header"> Achievements</p>
+-              <p className="achievements-count">
+-                {profileAchievementsCount}
+-                {profileAchievementsCount === 1
+-                  ? " certification "
+-                  : "  certifications "}
+-                achieved by {userProfile?.name}
+-              </p>
+-            </Link>
+-          </div>
+-          <div className="feed">
+-            <Link
+-              to={"/feed/" + profileId}
+-              style={{ textDecoration: "none", color: "black" }}
+-            >
+-              <p className="feed-header">Feed</p>
+-              <p className="feed-count">
+-                {profileFeedCount <= 1
+-                  ? profileFeedCount + " post "
+-                  : profileFeedCount + " posts "}
+-                from {userProfile?.name}
+-              </p>
+-            </Link>
++          <div className="skills animate-fade stagger-3">
++            <div className="skills-header">skills</div>
++            <div className="skills-list">{userProfile?.skills || "No skills listed yet"}</div>
+           </div>
++          <Link to={"/achievements/" + profileId} style={{ textDecoration: "none" }}>
++            <div className="achievements animate-fade stagger-4">
++              <div className="achievements-header">achievements</div>
++              <div className="achievements-count">{achievementsCount} certification{achievementsCount !== 1 ? "s" : ""} from {userProfile?.name}</div>
++            </div>
++          </Link>
++          <Link to={"/feed/" + profileId} style={{ textDecoration: "none" }}>
++            <div className="feed animate-fade stagger-5">
++              <div className="feed-header">posts</div>
++              <div className="feed-count">{feedCount} post{feedCount !== 1 ? "s" : ""} from {userProfile?.name}</div>
++            </div>
++          </Link>
+         </div>
+       </div>
+-      {showModal ? (
++
++      {showModal && (
+         <Editprofilemodal
+           setShowModal={setShowModal}
+           fetchDynamicUserProfile={fetchDynamicUserProfile}
+           userProfile={userProfile}
+         />
+-      ) : null}
++      )}
+     </>
+   );
+ };
+diff --git a/src/components/search/Users.css b/src/components/search/Users.css
+index 4cb2ed9..e784d53 100644
+--- a/src/components/search/Users.css
++++ b/src/components/search/Users.css
+@@ -1,259 +1,159 @@
+ .search-section {
+-  margin-top: 20px;
+-  margin-bottom: 0px;
+-  padding: 10px;
+-  border-radius: 5px;
+-  overflow-x: hidden;
+-  overflow-y: scroll;
+-  width: 100%;
+-  height: 95vh;
++  max-width: 680px;
++  margin: 0 auto;
++  padding: 24px 16px 80px;
++  animation: fadeIn 0.4s ease both;
+ }
+ 
++.search-section-header {
++  margin-bottom: 20px;
++}
+ 
+-
+-.search-section-header p {
+-  margin: 0;
+-  font-size: 25px;
+-  font-weight: 600;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
++.search-section-header > p {
++  font-family: var(--font-display);
++  font-size: 24px;
++  font-weight: 800;
++  color: var(--text-primary);
++  margin-bottom: 14px;
+ }
+ 
+ .form {
+-  margin-top: 20px;
+   display: flex;
+-  justify-content: flex-start;
+-  align-items: center;
+-  border: 1px solid #007fff;
+-  width: min-content;
+-  background-color: #fff;
+-  border-radius: 5px;
+-  padding: 2px 10px;
++  gap: 10px;
+ }
+ 
++.input-container { flex: 1; }
++
+ .search-input {
+-  font-size: 20px;
+-  width: 600px;
+-  background-color: transparent;
+-  border: none;
++  width: 100%;
++  padding: 11px 16px;
++  border: 1.5px solid var(--border-strong);
++  border-radius: var(--radius-md);
++  background: var(--surface);
++  font-family: var(--font-body);
++  font-size: 14px;
++  color: var(--text-primary);
+   outline: none;
++  transition: border-color var(--transition), box-shadow var(--transition);
+ }
+ 
+ .search-input:focus {
+-  border: 1px solid #ccc;
+-  border: none;
+-  outline: none;
++  border-color: var(--black);
++  box-shadow: 0 0 0 3px rgba(10,10,10,0.06);
+ }
+ 
+-.search-input:hover{
+-  border: none;
+-  outline: none;
+-}
+-
+-
+ .search-icon-container {
+-  background-color: transparent;
+-  padding: 5px;
+-  border: none;
+-  outline: none;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  width: 44px;
++  height: 44px;
++  background: var(--black);
++  border-radius: var(--radius-md);
+   cursor: pointer;
++  transition: all var(--transition-bounce);
++  flex-shrink: 0;
++  color: var(--cream);
+ }
+ 
+ .search-icon-container:hover {
+-  color:#007fff;
++  background: var(--magenta);
++  transform: scale(1.05);
+ }
+ 
+-input{
+-  background-color: transparent;
+-  border: none;
+-  outline: none;
++.search-section-label {
++  font-family: var(--font-mono);
++  font-size: 10px;
++  color: var(--magenta);
++  text-transform: uppercase;
++  letter-spacing: 0.1em;
++  margin: 20px 0 12px;
+ }
+ 
+-.user-card {
++.users-list {
+   display: flex;
+-  justify-content: flex-start;
+-  align-items: center;
+-  margin-top: 10px;
+-  padding: 10px;
+-  border-radius: 5px;
+-  background-color: #fff;
+-  box-shadow: 0 0 5px #000;
+-  cursor: pointer;
+-  width: 700px;
++  flex-direction: column;
++  gap: 10px;
+ }
+ 
+-.user-image {
+-  width: 100px;
+-  height: 100px;
+-  border-radius: 20%;
++.user-card {
++  display: flex;
++  align-items: center;
++  gap: 12px;
++  background: var(--surface);
++  border-radius: var(--radius-lg);
++  padding: 14px 16px;
++  border: 1px solid var(--border);
++  box-shadow: var(--shadow-sm);
++  transition: all var(--transition);
++  text-decoration: none;
++  color: inherit;
++  animation: slideUp 0.3s ease both;
++}
++
++.user-card:hover {
++  transform: translateX(4px);
++  border-color: var(--black);
++  box-shadow: var(--shadow-md);
++}
++
++.user-avatar {
++  width: 44px;
++  height: 44px;
++  border-radius: var(--radius-sm);
+   overflow: hidden;
+-  margin-right: 20px;
+-}
+-
+-.user-image > img {
+-  width: 100%;
+-  height: 100%;
+-  object-fit: cover;
+-  border-radius: 20%;
+-}
+-
+-.fetcheduser-name {
+-  font-size: 2rem;
+-  font-weight: 600;
+-  font-family: "Montserrat", sans-serif;
+-  font-weight: 600;
+-  color: #15202b;
++  background: var(--cream-darker);
++  flex-shrink: 0;
++  border: 2px solid var(--border);
+ }
+ 
+-.fetcheduser-description {
+-  font-size: 1.5rem;
+-  font-weight: 400;
+-  font-family: "Montserrat", sans-serif;
+-  font-weight: 400;
+-  color: #657786;
+-}
++.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+ 
+-.no-user-found {
+-  font-size: 2rem;
+-  font-weight: 600;
+-  font-family: "Montserrat", sans-serif;
+-  font-weight: 600;
+-  color: #15202b;
++.user-avatar-fallback {
+   width: 100%;
+-  height: 100vh;
+-  text-align: center;
+-  padding: auto;
+-  margin: auto;
+-  padding-top: 40px;
+-}
+-
+-.recommendations {
+-  margin-top: 20px;
+-  border-radius: 5px;
+-  overflow-x: hidden;
+-  overflow-y: scroll;
+-  width: 95%;
+-  height: 100vh;
+-}
+-
+-.recommendations-header p {
+-  margin: 0;
+-  font-size: 25px;
+-  font-weight: 600;
+-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+-}
+-
+-.recommendations-body {
++  height: 100%;
+   display: flex;
+-  justify-content: flex-start;
+   align-items: center;
+-  padding: 10px;
+-  border-radius: 5px;
+-  flex-wrap: wrap;
+-  width: 100%;
+-  overflow-x: hidden;
+-  overflow-y: scroll;
+-}
+-
+-.recomended-user-card{
+-    display: flex;
+-    flex-direction: column;
+-    margin: 10px;
+-    border-radius: 5px;
+-    background-color: #fff;
+-    box-shadow: 0 0 5px #000;
+-    cursor: pointer;
+-    width: 200px;
+-}
+-
+-.recomended-user-card:hover{
+-    box-shadow: 0 0 10px #000;
+-}
+-
+-recomended-user-image{
+-    border-radius: 5px;
+-    overflow: hidden;
+-}
+-
+-
+-.recomended-user-image > img {
+-    object-fit: cover;
+-    border-top-right-radius: 5px;
+-    border-top-left-radius: 5px;
+-    width: 200px;
+-    height: 200px;
++  justify-content: center;
++  font-family: var(--font-display);
++  font-size: 18px;
++  font-weight: 800;
++  color: var(--text-primary);
++  background: var(--cream-darker);
++}
++
++.user-info { flex: 1; min-width: 0; }
++
++.user-name-text {
++  font-family: var(--font-display);
++  font-size: 15px;
++  font-weight: 700;
++  color: var(--text-primary);
++  white-space: nowrap;
++  overflow: hidden;
++  text-overflow: ellipsis;
+ }
+ 
+-.recomended-user-details{
+-    padding: 10px;
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: center;
+-    align-items: center;
++.user-desc-text {
++  font-family: var(--font-mono);
++  font-size: 11px;
++  color: var(--magenta);
++  white-space: nowrap;
++  overflow: hidden;
++  text-overflow: ellipsis;
+ }
+ 
+-.recomended-user-name{
+-    font-size: 1.5rem;
+-    font-weight: 600;
+-    font-family: "Montserrat", sans-serif;
+-    font-weight: 600;
+-    color: #15202b;
+-}
++.user-desc-text::before { content: '// '; opacity: 0.5; }
+ 
+-.recomended-user-description{
+-    font-size: 1.2rem;
+-    font-weight: 400;
+-    font-family: "Montserrat", sans-serif;
+-    font-weight: 400;
+-    color: #657786;
++.user-arrow {
++  color: var(--text-muted);
++  font-family: var(--font-mono);
++  font-size: 14px;
++  transition: transform var(--transition);
+ }
+ 
+-/* mobile responsive */
+-@media screen and (max-width: 768px) {
+-  .search-section {
+-    width: 100%;
+-    height: 100vh;
+-    
+-  }
+-
+-  .user-card{
+-    width: 320px;
+-  }
+-
+-  .search-input {
+-    width: 250px;
+-  }
+-
+-  .recomended-user-card {
+-    width: 140px;
+-    overflow-x: hidden;
+-    overflow-y: hidden;
+-  }
+-
+-  .fetcheduser-name {
+-    font-size: 1.2rem;
+-  }
+-  .fetcheduser-description {
+-    font-size: 1.0rem;
+-  }
+-  .recomended-user-image img{
+-    width: 140px;
+-    height: 140px;
+-  }
+-
+-  .recomended-user-image {
+-    width: 140px;
+-    height: 140px;
+-  }
+-
+-  .recommendations-body {
+-    width: 100%;
+-    margin-bottom: 0px ;
+-    padding: 0px;
+-    
+-  }
+-  
+-    
++.user-card:hover .user-arrow { transform: translateX(3px); color: var(--text-primary); }
+ 
++@media (max-width: 768px) {
++  .search-section { padding: 14px 10px 80px; }
+ }
+diff --git a/src/components/search/Users.jsx b/src/components/search/Users.jsx
+index d559a18..ad62e0c 100644
+--- a/src/components/search/Users.jsx
++++ b/src/components/search/Users.jsx
+@@ -1,177 +1,117 @@
+-import React, { useState, useEffect } from "react";
++import React, { useState, useEffect, useContext } from "react";
+ import { supabase } from "../../backend/supabaseConfig.js";
+ import { Link } from "react-router-dom";
+ import { LoginContext } from "../../context/LoginContext.js";
+-import { useContext } from "react";
+ import "./Users.css";
+-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+ import Loader from "../loader/Loader.jsx";
+ 
++const UserCard = ({ u, delay = 0 }) => {
++  const avatar = u?.avatar || u?.image;
++  return (
++    <Link to={`/profile/${u.id}`} style={{ textDecoration: "none" }} className={`user-card stagger-${Math.min(delay + 1, 5)}`}>
++      <div className="user-avatar">
++        {avatar
++          ? <img src={avatar} alt={u.name} />
++          : <div className="user-avatar-fallback">{u?.name?.[0]?.toUpperCase()}</div>
++        }
++      </div>
++      <div className="user-info">
++        <div className="user-name-text">{u.name}</div>
++        <div className="user-desc-text">{u.description || "developer"}</div>
++      </div>
++      <span className="user-arrow">→</span>
++    </Link>
++  );
++};
++
+ const Users = () => {
+-  const { user, session, activebutton, setActivebutton } =
+-    useContext(LoginContext);
++  const { user, setActivebutton } = useContext(LoginContext);
+   const [users, setUsers] = useState(null);
+   const [loading, setLoading] = useState(false);
+   const [searchTerm, setSearchTerm] = useState("");
+-  const [isSearching, setIsSearching] = useState(false);
+-  const [previuosSearch, setPreviousSearch] = useState("");
+   const [recommendedUsers, setRecommendedUsers] = useState([]);
+ 
+-
+   const fetchRecommendedUsers = async () => {
+-    let userList = [];
+-    const { data, error } = await supabase
+-      .from("profiles")
+-      .select()
+-      .neq("id", user.id)
+-      .filter("skills", "ilike", `%${user.skills}%`)
+-      .filter("description", "ilike", `%${user.description}%`)
+-      .order("id", { ascending: true })
+-      .limit(5);
+-    if (data) {
+-      userList = [...userList, ...data];
+-    }
+-    if (recommendedUsers.length < 5) {
+-      const { data, error } = await supabase
+-        .from("profiles")
+-        .select("*")
+-        .neq("id", user.id)
+-        .order("id", { descending: true })
+-        .limit(5);
+-      if (data) {
+-        userList = [...userList, ...data];
+-      }
+-    }
+-    // remove recomended users that are already followed
+-    userList.map((Luser) => {
+-      if (user.following.includes(Luser.id)) {
+-        userList = userList.filter((user) => user.id !== Luser.id);
+-      }
+-    });
++    if (!user) return;
++    const following = Array.isArray(user?.following) ? user.following : [];
++    let list = [];
+ 
+-    setRecommendedUsers(userList);
++    const { data: skillMatch } = await supabase
++      .from("profiles").select().neq("id", user.id)
++      .filter("skills", "ilike", `%${user?.skills || ""}%`).limit(5);
++    if (skillMatch) list = [...list, ...skillMatch];
++
++    const { data: recent } = await supabase
++      .from("profiles").select("*").neq("id", user.id).order("id", { ascending: false }).limit(5);
++    if (recent) list = [...list, ...recent];
++
++    // Dedup + remove already followed
++    const seen = new Set();
++    const filtered = list.filter(u2 => {
++      if (seen.has(u2.id) || following.includes(u2.id)) return false;
++      seen.add(u2.id);
++      return true;
++    });
++    setRecommendedUsers(filtered.slice(0, 8));
+   };
+ 
+-  const handleSubmit = async (e) => {
+-    setPreviousSearch(searchTerm);
+-    e.preventDefault();
+-    setIsSearching(true);
++  const handleSearch = async (e) => {
++    e?.preventDefault();
++    if (!searchTerm.trim()) return;
+     setLoading(true);
+-    const { data, error } = await supabase
+-      .from("profiles")
+-      .select()
+-      .ilike("name", `%${searchTerm}%`)
+-      .neq("id", user.id);
+-    setUsers(data);
++    const { data } = await supabase.from("profiles").select().ilike("name", `%${searchTerm}%`).neq("id", user.id);
++    setUsers(data || []);
+     setLoading(false);
+-    setIsSearching(false);
+   };
+ 
++  const handleClear = () => { setSearchTerm(""); setUsers(null); };
++
+   useEffect(() => {
+     setActivebutton("search");
+-    // if (recommendedUsers.length === 0) {
+     fetchRecommendedUsers();
+-    // removeFollowingFromRecomendations();
+-    // }
+   }, []);
+ 
+   return (
+-    <>
+-      <div className="search-section">
+-        <div className="search-section-header">
+-          <p>Explore Developers</p>
+-          <form className="form" onSubmit={(e) => handleSubmit(e)}>
+-            <div className="input-container">
+-              <input
+-                type="text"
+-                placeholder="Search for users"
+-                value={searchTerm}
+-                onChange={(e) => setSearchTerm(e.target.value)}
+-                className="search-input"
+-              />
+-            </div>
+-            <div className="search-icon-container">
+-              <PersonSearchIcon
+-                className="search-icon"
+-                type="submit"
+-                onClick={(e) => {
+-                  handleSubmit(e);
+-                }}
+-              />
+-            </div>
+-          </form>
+-        </div>
+-
+-        <div className="search-section-body">
+-          {searchTerm.length > 0 &&
+-            isSearching === false &&
+-            searchTerm === previuosSearch &&
+-            users?.map((fetcheduser) => (
+-              <Link
+-                to={`/profile/${fetcheduser.id}`}
+-                style={{ textDecoration: "none", color: "black" }}
+-              >
+-                <div className="user-card">
+-                  <div className="user-image">
+-                    <img src={fetcheduser.avatar} alt="" />
+-                  </div>
+-                  <div className="user-details">
+-                    <div className="fetcheduser-name">{fetcheduser.name}</div>
+-                    <div className="fetcheduser-description">
+-                      {fetcheduser.description}
+-                    </div>
+-                  </div>
+-                </div>
+-              </Link>
+-            ))}
++    <div className="search-section">
++      <div className="search-section-header">
++        <p>Explore Devs</p>
++        <form className="form" onSubmit={handleSearch}>
++          <div className="input-container">
++            <input
++              type="text"
++              placeholder="Search developers..."
++              value={searchTerm}
++              onChange={e => { setSearchTerm(e.target.value); if (!e.target.value) setUsers(null); }}
++              className="search-input"
++            />
++          </div>
++          <div className="search-icon-container" onClick={handleSearch}>
++            <span style={{fontFamily:'var(--font-mono)',fontSize:18}}>⌕</span>
++          </div>
++        </form>
++      </div>
+ 
+-          {users?.length === 0 && user != null ? (
+-            <div className="no-user-found">No user found</div>
+-          ) : (
+-            <div className="Loading"></div>
+-          )}
++      {loading && <Loader />}
+ 
+-          {searchTerm.length === 0 && users === null && (
+-            <div className="recommendations">
+-              {recommendedUsers.length !== 0 && (
+-                <div className="recommendations-header">
+-                  <p>Recommended for you</p>
+-                </div>
+-              )}
++      {!loading && users !== null && (
++        <>
++          <div className="search-section-label">// results for "{searchTerm}"</div>
++          {users.length === 0
++            ? <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text-muted)',padding:'20px 0'}}>// no users found</div>
++            : <div className="users-list">{users.map((u, i) => <UserCard key={u.id} u={u} delay={i} />)}</div>
++          }
++        </>
++      )}
+ 
+-              <div className="recommendations-body">
+-                {recommendedUsers?.map((recommendedUser) => (
+-                  <Link
+-                    to={`/profile/${recommendedUser.id}`}
+-                    style={{ textDecoration: "none", color: "black" }}
+-                  >
+-                    <div className="recomended-user-card">
+-                      <div className="recomended-user-image">
+-                        <img src={recommendedUser.avatar} alt="" />
+-                      </div>
+-                      <div className="recomended-user-details">
+-                        <div className="recomended-user-name">
+-                          {/* {recommendedUser.name} */}
+-                          {recommendedUser?.name.length > 12 ? (
+-                            recommendedUser?.name.split(" ")[0]
+-                          ) : (
+-                            <>{recommendedUser.name}</>
+-                          )
+-                          }
+-                        </div>
+-                        <div className="recomended-user-description">
+-                          {recommendedUser?.description}
+-                        </div>
+-                      </div>
+-                    </div>
+-                  </Link>
+-                ))}
+-              </div>
+-            </div>
+-          )}
+-        </div>
+-      </div>
+-    </>
++      {users === null && !loading && (
++        <>
++          <div className="search-section-label">// recommended for you</div>
++          <div className="users-list">
++            {recommendedUsers.map((u, i) => <UserCard key={u.id} u={u} delay={i} />)}
++          </div>
++        </>
++      )}
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/sidebar/Sidebar.css b/src/components/sidebar/Sidebar.css
+index b1339a3..2041d0c 100644
+--- a/src/components/sidebar/Sidebar.css
++++ b/src/components/sidebar/Sidebar.css
+@@ -1,138 +1,221 @@
++/* ===== SIDEBAR ===== */
++.sidebar-container {
++  width: 100%;
++  height: 100%;
++  background: var(--black);
++  display: flex;
++  flex-direction: column;
++  padding: 0;
++  overflow: hidden;
++  position: relative;
++}
++
++/* Magenta accent line */
++.sidebar-container::before {
++  content: '';
++  position: absolute;
++  top: 0;
++  right: 0;
++  width: 2px;
++  height: 100%;
++  background: linear-gradient(to bottom, var(--magenta), transparent 60%);
++  opacity: 0.5;
++}
++
++/* ===== PROFILE ===== */
++.sidebar-profile-section {
++  padding: 24px 20px 20px;
++  border-bottom: 1px solid rgba(255,255,255,0.07);
++  display: flex;
++  align-items: center;
++  gap: 12px;
++  animation: fadeIn 0.4s ease both;
++}
++
++.sidebar-profile-section img {
++  width: 42px;
++  height: 42px;
++  border-radius: var(--radius-sm);
++  object-fit: cover;
++  border: 2px solid var(--magenta);
++  flex-shrink: 0;
++}
++
++.profile { flex: 1; min-width: 0; }
++
++.sidebar-user-name {
++  font-family: var(--font-display);
++  font-size: 13px;
++  font-weight: 700;
++  color: var(--cream);
++  white-space: nowrap;
++  overflow: hidden;
++  text-overflow: ellipsis;
++}
++
++.sidebar-user-desc {
++  font-family: var(--font-mono);
++  font-size: 10px;
++  color: var(--text-muted);
++  white-space: nowrap;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  margin-top: 2px;
++}
++
++/* ===== LABEL ===== */
++.sidebar-section-label {
++  font-family: var(--font-mono);
++  font-size: 9px;
++  color: var(--magenta);
++  letter-spacing: 0.12em;
++  text-transform: uppercase;
++  padding: 16px 20px 8px;
++  opacity: 0.8;
++}
++
++/* ===== OPTIONS ===== */
+ .sidebar-options-section {
++  flex: 1;
+   display: flex;
+   flex-direction: column;
+-  background-color: #fff;
+-  padding: 10px;
+-  margin: 10px;
+-  border-radius: 10px;
++  padding: 8px 12px;
++  gap: 2px;
++  overflow-y: auto;
+ }
+ 
+ .sidebar-options {
+   display: flex;
+   align-items: center;
+-  justify-content: flex-start;
+-  margin: 7px 0px;
+-  padding: 5px;
++  gap: 10px;
++  padding: 9px 12px;
++  border-radius: var(--radius-md);
+   cursor: pointer;
+-  transition: all 0.2s ease-in-out;
+-  text-transform: capitalize;
++  transition: all var(--transition);
++  color: rgba(255,255,255,0.55);
++  text-decoration: none;
++  position: relative;
++  overflow: hidden;
+ }
+ 
+-.option-icon {
+-  font-size: 1.7rem;
+-  padding-top: 5px;
++.sidebar-options::before {
++  content: '';
++  position: absolute;
++  left: 0;
++  top: 50%;
++  transform: translateY(-50%);
++  width: 3px;
++  height: 0;
++  background: var(--magenta);
++  border-radius: 99px;
++  transition: height var(--transition);
+ }
+ 
+-.option-name {
+-  font-size: 1.5rem;
+-  font-weight: 600;
+-  font-family: "Montserrat", sans-serif;
+-  margin-left: 10px;
++.sidebar-options:hover {
++  background: rgba(255,255,255,0.06);
++  color: var(--cream);
+ }
+ 
+-.sidebar-profile-section{
+-    display: flex;
+-    justify-content: flex-start;
+-    align-items: center;
+-    background-color: #fff;
+-    padding: 10px;
+-    margin: 10px;
+-    border-radius: 10px;
++.sidebar-options.active {
++  background: rgba(232,18,124,0.12);
++  color: var(--magenta-light);
+ }
+ 
+-.profile{
+-    margin-left: 7px;
++.sidebar-options.active::before {
++  height: 60%;
+ }
+ 
+-.sidebar-user-name{
+-    font-size: 1.5rem;
+-    font-weight: 600;
+-    font-family: "Montserrat", sans-serif;
+-    
++.option-icon {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  width: 20px;
++  flex-shrink: 0;
++  font-size: 18px !important;
+ }
+ 
+-.sidebar-user-desc{
+-    font-size: 1.2rem;
+-    font-weight: 500;
+-    font-family: "Montserrat", sans-serif;
+-    overflow: hidden;
+-    text-overflow: ellipsis;
+-    white-space: nowrap;
+-    width: 100%;
+-  overflow: hidden;
++.option-icon svg { font-size: 18px !important; }
++
++.option-name {
++  font-family: var(--font-body);
++  font-size: 13px;
++  font-weight: 500;
++  letter-spacing: 0.01em;
++  white-space: nowrap;
+ }
+ 
+-.logout-button{
+-    background-color: #007fff;
+-    color: #fff;
+-    border: none;
+-    outline: none;
+-    padding: 10px 20px;
+-    border-radius: 5px;
+-    font-size: 1.4rem;
+-    font-weight: 600;
+-    font-family: "Montserrat", sans-serif;
+-    cursor: pointer;
+-    margin-top: 10px;
+-    transition: all 0.2s ease-in-out;
+-    width: 80%;
++/* ===== LOGOUT ===== */
++.sidebar-logout-section {
++  padding: 12px 20px 20px;
++  border-top: 1px solid rgba(255,255,255,0.07);
+ }
+ 
+-.logout-button:hover{
+-    background-color: #006097;
++.logout-button {
++  width: 100%;
++  padding: 9px;
++  background: transparent;
++  border: 1px solid rgba(255,255,255,0.12);
++  border-radius: var(--radius-md);
++  color: rgba(255,255,255,0.5);
++  font-family: var(--font-mono);
++  font-size: 11px;
++  cursor: pointer;
++  transition: all var(--transition);
++  letter-spacing: 0.05em;
+ }
+ 
+-.sidebar-logout-section{
+-    width: 100%;
+-    display: flex;
+-    justify-content: center;
+-    align-items: center;
++.logout-button:hover {
++  background: rgba(232,18,124,0.12);
++  border-color: var(--magenta);
++  color: var(--magenta-light);
+ }
+ 
+-/* mobile responsive */
+-@media screen and (max-width: 1000px) {
+-  .option-name {
+-    display: none;
++/* ===== MOBILE NAV BAR ===== */
++@media (max-width: 1000px) {
++  .sidebar-container {
++    flex-direction: row;
++    align-items: center;
++    padding: 0;
++    border-top: 1px solid rgba(255,255,255,0.08);
++  }
++
++  .sidebar-container::before { display: none; }
++
++  .sidebar-profile-section,
++  .sidebar-section-label,
++  .sidebar-logout-section { display: none; }
++
++  .sidebar-options-section {
++    flex-direction: row;
++    flex: 1;
++    padding: 0;
++    gap: 0;
++    overflow: visible;
++    align-items: stretch;
+   }
+ 
+   .sidebar-options {
+-    margin: 7px 0px;
+-    padding: 5px;
+-    border-radius: 0px;
+-    cursor: pointer;
+-    transition: all 0.2s ease-in-out;
+-    text-transform: capitalize;
++    flex: 1;
++    flex-direction: column;
+     justify-content: center;
+-    padding-bottom: 0px;
++    align-items: center;
++    gap: 3px;
++    padding: 8px 4px 6px;
++    border-radius: 0;
++    height: 60px;
+   }
+ 
+-  .sidebar-profile-section{
+-    display:none;
+-  }
++  .sidebar-options::before { display: none; }
+ 
+-  .sidebar-logout-section{
+-    display:none;
++  .sidebar-options.active {
++    background: rgba(232,18,124,0.10);
++    border-top: 2px solid var(--magenta);
+   }
+ 
+-  .sidebar-options-section {
+-    flex-direction: row;
+-    justify-content: space-evenly;
+-    align-items: center;
+-    width: 100%;
+-    margin: 0px;
+-    padding: 0px;
+-    bottom:0;
+-    position: fixed;
+-    z-index: 100;
+-    box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
+-  } 
+-
+-  .sidebar-options {
+-    border:none;
+-    border-radius: 0px;   
+-    padding-bottom: 0px;
++  .option-name {
++    font-size: 9px;
++    font-family: var(--font-mono);
+   }
+-  
+-  
+ 
++  .option-icon { width: auto; }
+ }
+diff --git a/src/components/sidebar/Sidebar.jsx b/src/components/sidebar/Sidebar.jsx
+index 41eecb3..60f3ec7 100644
+--- a/src/components/sidebar/Sidebar.jsx
++++ b/src/components/sidebar/Sidebar.jsx
+@@ -1,135 +1,67 @@
+-import React, { useEffect, useState ,useContext} from "react";
+-import { Link ,useNavigate} from "react-router-dom";
++import React, { useContext } from "react";
++import { Link, useNavigate } from "react-router-dom";
+ import "./Sidebar.css";
+ import { LoginContext } from "../../context/LoginContext";
+ import AssistantRoundedIcon from "@mui/icons-material/AssistantRounded";
+ import FeedRoundedIcon from "@mui/icons-material/FeedRounded";
+ import ChatBubbleRoundedIcon from "@mui/icons-material/ChatBubbleRounded";
+ import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
+-import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookmarkRounded";
+ import PostAddIcon from "@mui/icons-material/PostAdd";
+-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
++import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+ import { supabase } from "../../backend/supabaseConfig";
+-import { ToastContainer, toast } from "react-toastify";
++import { toast, ToastContainer } from "react-toastify";
+ 
+ const Sidebar = () => {
+-
+-  const { user,setUser ,activebutton, setActivebutton} = useContext(LoginContext);
+-  
++  const { user, setUser, activebutton, setActivebutton } = useContext(LoginContext);
+   const navigate = useNavigate();
+ 
+-
+   const handleLogout = async () => {
+     const { error } = await supabase.auth.signOut();
+     if (!error) {
+-      toast.success("Logged out  successfully !",{
+-        closeOnClick:   true,
+-        closeButton: false, 
+-      });
++      toast.success("Logged out successfully!", { closeOnClick: true, closeButton: false });
+       setUser(null);
+       navigate("/");
+     }
+   };
+-    
+-
+-  // profile image of user
+-  const image = (
+-    <img
+-      src={user?.avatar}
+-      alt=""
+-      border="0"
+-      style={{ width: "30px", height: "30px", borderRadius: "50px" }}
+-    ></img>
+-  );
+ 
+   const sidebarOptions = [
+-    {
+-      name: "feed",
+-      icon: <AssistantRoundedIcon />,
+-      url: "/feed",
+-    },
+-    {
+-      name: "add post",
+-      icon: <PostAddIcon />,
+-      url: "/add-post",
+-    },
+-    {
+-      name: "profile",
+-      icon: image,
+-      url: `/profile/${user?.id}`,
+-    },
+-    {
+-      name:'search',
+-      icon:<PersonSearchIcon />,
+-      url:'/search'
+-    },
+- 
+-    {
+-      name: "chat",
+-      icon: <ChatBubbleRoundedIcon />,
+-      url: `/chats/${user?.id}`  
+-    },
+-    {
+-      name: "create resume",
+-      icon: <FeedRoundedIcon />,
+-      url: "/resume",
+-    },
+-    {
+-      name: "tests",
+-      icon: <QuizRoundedIcon />,
+-      url: "/tests",
+-    },
+-    // {
+-    //   name: "bookmarks",
+-    //   icon: <CollectionsBookmarkRoundedIcon />,
+-    //   url: "/bookmarks",
+-    // },
++    { name: "feed", icon: <AssistantRoundedIcon />, url: "/feed" },
++    { name: "add post", icon: <PostAddIcon />, url: "/add-post" },
++    { name: "profile", icon: user?.avatar
++        ? <img src={user.avatar} alt="" style={{width:20,height:20,borderRadius:'50%',objectFit:'cover'}} />
++        : <span style={{width:20,height:20,borderRadius:'50%',background:'var(--magenta)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,color:'#fff',fontWeight:700}}>{user?.name?.[0]?.toUpperCase()}</span>,
++      url: `/profile/${user?.id}` },
++    { name: "search", icon: <PersonSearchIcon />, url: "/search" },
++    { name: "chat", icon: <ChatBubbleRoundedIcon />, url: `/chats/${user?.id}` },
++    { name: "create resume", icon: <FeedRoundedIcon />, url: "/resume" },
++    { name: "tests", icon: <QuizRoundedIcon />, url: "/tests" },
+   ];
+ 
+   return (
+     <>
+-      <div className="sidebar-container" >
+-        {/* profile section */}
++      <div className="sidebar-container">
+         <div className="sidebar-profile-section">
+-          <div classname="profile-image">
+-          <img
+-            src={user?.avatar}
+-            alt=""
+-            border="0"
+-            style={{ width: "60px", height: "60px", borderRadius: "10px" }}
+-          ></img>
+-          </div>
++          {user?.avatar
++            ? <img src={user.avatar} alt="avatar" />
++            : <div style={{width:42,height:42,borderRadius:6,background:'var(--magenta)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,color:'#fff',fontWeight:700,flexShrink:0}}>{user?.name?.[0]?.toUpperCase()}</div>
++          }
+           <div className="profile">
+-          <p className="sidebar-user-name"> 
+-              {user?.name.substring(0, 13)}
+-          </p>
+-          <p className="sidebar-user-desc">{user?.description}</p>
++            <p className="sidebar-user-name">{user?.name?.substring(0, 16)}</p>
++            <p className="sidebar-user-desc">// {user?.description?.substring(0,22) || 'developer'}</p>
+           </div>
+-         
+         </div>
+ 
+-        {/* sidebar options */}
++        <div className="sidebar-section-label">// navigation</div>
++
+         <div className="sidebar-options-section">
+           {sidebarOptions.map((option) => (
+             <Link
++              key={option.name}
+               to={option.url}
+-              style={{ textDecoration: "none", color: "black" }}
++              style={{ textDecoration: "none" }}
+               onClick={() => setActivebutton(option.name)}
+             >
+-              <div
+-                className="sidebar-options"
+-                style={{
+-                  backgroundColor:
+-                    activebutton === option.name ? "#e9e9e9" : "white",
+-                  color: activebutton === option.name ? "#007fff" : "#000",
+-                  borderBottom:
+-                    activebutton === option.name ? "2px solid #007fff" : "none",
+-                    transition: "all 0.2s ease-in-out",
+-                  paddingBottom : "0px",
+-                  transition: "all 0.2s ease-in-out",
+-                  boxShadow: activebutton === option.name ? "0px 0px 5px 0px #007fff" : "none",
+-                }}
+-              >
++              <div className={`sidebar-options${activebutton === option.name ? " active" : ""}`}>
+                 <div className="option-icon">{option.icon}</div>
+                 <div className="option-name">{option.name}</div>
+               </div>
+@@ -137,11 +69,10 @@ const Sidebar = () => {
+           ))}
+         </div>
+ 
+-        {/* logout buttton */}
+         <div className="sidebar-logout-section">
+-          <button className="logout-button"
+-           onClick={handleLogout}
+-          >Logout</button>
++          <button className="logout-button" onClick={handleLogout}>
++            $ logout
++          </button>
+         </div>
+       </div>
+       <ToastContainer />
+diff --git a/src/components/test/Question.css b/src/components/test/Question.css
+index b90ae61..15f9aab 100644
+--- a/src/components/test/Question.css
++++ b/src/components/test/Question.css
+@@ -1,148 +1,149 @@
+-.question-container{
+-    width: 100%;
+-    height: 100%;
+-}
+-.question-number{
+-    font-size: 1.5rem;
+-    font-weight: 600;
+-    margin-bottom: 1rem;
+-}
+-
+-.question-score{
+-    font-size: 1.2rem;
+-    font-weight: 500;
+-    margin-bottom: 1rem;
+-}
+-
+-.question-text > p{
+-    font-size: 1.5rem;
+-    font-weight: 500;
+-    margin-bottom: 1rem;
+-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-    overflow-wrap: break-word;
+-}
+-
+-.question-options{
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: flex-start;
+-   margin:10px 0px;
+-}
+-
+-.question-option{
+-    cursor: pointer;
+-    font-size: 1.2rem;
+-    font-weight: 500;
+-    margin-bottom: 1rem;
+-    padding: 0.5rem 1rem;
+-    border-radius: 0.5rem;
+-    background-color: #f2f0e4;
+-    width:max-content;
+-    box-shadow: 0px 0px 2px 0px #000;
+-    max-width: 90%;
+-    overflow-wrap: break-word;
+-
+-}
+-
+-.question-next-button{
+-    margin-top: 1rem;
+-    padding: 0.5rem 1rem;
+-    border-radius: 0.5rem;
+-    background-color: limegreen;
+-    width:max-content;
+-    box-shadow: 0px 0px 2px 0px gray;
+-    cursor: pointer;
+-    font-size: 1.2rem;
+-    text-align: center;
+-    text-transform: capitalize;
+-    font-weight: 500;
+-    color: white;
+-}
+-
+-.quit-test-button{
+-    margin-top: 1rem;
+-    padding: 0.5rem 1rem;
+-    border-radius: 0.5rem;
+-    background-color: #d11a2a;
+-    width:max-content;
+-    box-shadow: 0px 0px 2px 0px gray;
+-    cursor: pointer;
+-    font-size: 1.2rem;
+-    text-align: center;
+-    text-transform: capitalize;
+-    font-weight: 500;
+-    color: white;
+-    margin-right: 2rem;
+-}
+-
+-/* mobile responsiveness */
+-@media screen and (max-width: 768px) {
+-    .question-container{
+-        width: 100%;
+-        height: 100vh;
+-        overflow-y: wrap;
+-        padding-top: 20px;
+-    }
+-    .question-number{
+-        font-size: 1.2rem;
+-        font-weight: 600;
+-        margin-bottom: 1rem;
+-    }
+-    
+- 
+-    
+-    .question-text > p{
+-        font-size: 1.2rem;
+-        font-weight: 500;
+-        margin-bottom: 1rem;
+-        font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-        overflow-wrap: break-word;
+-    }
+-    
+-    .question-options{
+-        display: flex;
+-        flex-direction: column;
+-        justify-content: flex-start;
+-       margin:10px 0px;
+-    }
+-    
+-    .question-option{
+-        cursor: pointer;
+-        font-size: 1rem;
+-        font-weight: 500;
+-        margin-bottom: 1rem;
+-        padding: 0.5rem 1rem;
+-        border-radius: 0.5rem;
+-        background-color: #f2f0e4;
+-        width:max-content;
+-        box-shadow: 0px 0px 2px 0px #000;
+-        max-width: 90%;
+-        overflow-wrap: break-word;
+-    
+-    }
+-    
+-    .question-next-button{
+-        margin-top: 1rem;
+-        padding: 0.5rem 1rem;
+-        border-radius: 0.5rem;
+-        background-color: limegreen;
+-        width:max-content;
+-        box-shadow: 0px 0px 2px 0px gray;
+-        cursor: pointer;
+-        font-size: 1rem;
+-        text-align: center;
+-        text-transform: capitalize;
+-        font-weight: 500;
+-        color: white;
+-    }
+-    
+-    .quit-test-button{
+-        margin-top: 1rem;
+-        padding: 0.5rem 1rem;
+-        border-radius: 0.5rem;
+-        background-color: #d11a2a;
+-        width:max-content;
+-        box-shadow: 0px 0px 2px 0px gray;
+-        cursor: pointer;
+-        font-size: 1rem;
+-    }}
+\ No newline at end of file
++.question-container {
++  display: flex;
++  flex-direction: column;
++  gap: 16px;
++  animation: slideUp 0.3s ease both;
++}
++
++.question-progress {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 12px;
++}
++
++.question-number {
++  font-family: var(--font-mono);
++  font-size: 11px;
++  color: var(--magenta);
++  text-transform: uppercase;
++  letter-spacing: 0.08em;
++}
++
++.progress-bar-track {
++  flex: 1;
++  height: 3px;
++  background: var(--cream-darker);
++  border-radius: 99px;
++  overflow: hidden;
++}
++
++.progress-bar-fill {
++  height: 100%;
++  background: var(--magenta);
++  border-radius: 99px;
++  transition: width 0.4s ease;
++}
++
++.question-text {
++  background: var(--cream);
++  border-radius: var(--radius-md);
++  padding: 16px 18px;
++  border-left: 3px solid var(--black);
++}
++
++.question-text > p {
++  font-family: var(--font-body);
++  font-size: 15px;
++  color: var(--text-primary);
++  line-height: 1.6;
++  overflow-wrap: break-word;
++}
++
++.question-options {
++  display: flex;
++  flex-direction: column;
++  gap: 8px;
++}
++
++.question-option {
++  padding: 12px 16px;
++  border-radius: var(--radius-md);
++  background: var(--surface);
++  border: 1.5px solid var(--border);
++  font-family: var(--font-body);
++  font-size: 14px;
++  color: var(--text-primary);
++  cursor: pointer;
++  transition: all var(--transition);
++  overflow-wrap: break-word;
++  word-break: break-word;
++  position: relative;
++}
++
++.question-option:hover:not(.option-selected):not(.option-correct):not(.option-wrong) {
++  border-color: var(--black);
++  background: var(--cream);
++  transform: translateX(3px);
++}
++
++.option-correct {
++  background: rgba(34,197,94,0.1) !important;
++  border-color: var(--green-code) !important;
++  color: var(--green-code) !important;
++}
++
++.option-wrong {
++  background: rgba(232,18,124,0.08) !important;
++  border-color: var(--magenta) !important;
++  color: var(--magenta) !important;
++}
++
++.option-selected {
++  background: rgba(10,10,10,0.06) !important;
++  border-color: var(--black) !important;
++}
++
++.question-next {
++  display: flex;
++  gap: 10px;
++  justify-content: flex-end;
++  padding-top: 4px;
++}
++
++.question-next-button {
++  padding: 10px 24px;
++  background: var(--black);
++  color: var(--cream);
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 12px;
++  font-weight: 700;
++  cursor: pointer;
++  border: none;
++  transition: all var(--transition-bounce);
++}
++
++.question-next-button:hover {
++  background: var(--magenta);
++  transform: translateY(-2px);
++  box-shadow: var(--shadow-magenta);
++}
++
++.question-next-button:disabled {
++  opacity: 0.35;
++  cursor: not-allowed;
++  transform: none;
++}
++
++.quit-test-button {
++  padding: 10px 18px;
++  background: transparent;
++  color: var(--text-muted);
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 12px;
++  cursor: pointer;
++  border: 1.5px solid var(--border-strong);
++  transition: all var(--transition);
++}
++
++.quit-test-button:hover {
++  border-color: var(--text-primary);
++  color: var(--text-primary);
++}
++
++@media (max-width: 768px) {
++  .question-text > p { font-size: 14px; }
++  .question-option { font-size: 13px; }
++}
+diff --git a/src/components/test/Question.jsx b/src/components/test/Question.jsx
+index f1a992a..3703300 100644
+--- a/src/components/test/Question.jsx
++++ b/src/components/test/Question.jsx
+@@ -1,100 +1,71 @@
+ import React, { useState } from "react";
+ import "./Question.css";
+ 
+-const Question = ({
+-  currentQuestion,
+-  setCurrentQuestion,
+-  question,
+-  setScore,
+-  score,
+-  questions,
+-}) => {
++const Question = ({ currentQuestion, setCurrentQuestion, question, setScore, score }) => {
+   const [optionSelected, setOptionSelected] = useState(null);
+-  const questionStatement = question.question;
+-  const options = question.answers;
+-  const optionEntries = Object.entries(options)
+-    .filter((item) => item[1] !== null)
+-    .slice(0, 4);
++  const [correctAnswerText, setCorrectAnswerText] = useState(null);
+ 
+-  const correctAnswerKey = Object.keys(question?.correct_answers).find(
+-    (key) => question?.correct_answers[key] === "true"
+-  );
+-  const correctAnswer = correctAnswerKey?.replace("_correct", "");
+-
+-  const correctAnswerText = options[correctAnswer];
++  const options = question?.answers || {};
++  const optionEntries = Object.entries(options).filter(([, v]) => v !== null).slice(0, 4);
+ 
+-  const handleAnswer = (answer) => {
+-    if (currentQuestion < 10) {
+-      if (optionSelected) return;
+-      else {
+-        if (answer === correctAnswerText) {
+-          setScore(score + 1);
+-        }
+-        setOptionSelected(answer);
+-      }
+-    }
++  const getCorrectAnswerText = () => {
++    const correctKey = Object.keys(question?.correct_answers || {}).find(k => question.correct_answers[k] === "true");
++    return options[correctKey?.replace("_correct", "")];
+   };
+ 
+-  return (
+-    <>
+-      <div className="question-container">
+-        <div className="question-number">
+-          <p>Question {currentQuestion + 1}</p>
+-        </div>
+-
+-        <div className="question-text">
+-          <p>{questionStatement}</p>
+-        </div>
+-        <div className="question-options">
+-          {optionEntries.map((option) => {
+-            const [key, value] = option;
+-            return (
+-              <div
+-                className="question-option"
+-                onClick={() => handleAnswer(value)}
+-                style={{
+-                  backgroundColor:
+-                    optionSelected === value && optionSelected !== null
+-                      ? "#0077b5"
+-                      : "",
+-                  color:
+-                    optionSelected === value && optionSelected !== null
+-                      ? "white"
+-                      : "",
+-                }}
+-              >
+-                {value}
+-              </div>
+-            );
+-          })}
+-        </div>
+-        <div className="question-next">
++  const handleAnswer = (value) => {
++    if (optionSelected) return;
++    const correct = getCorrectAnswerText();
++    setCorrectAnswerText(correct);
++    if (value === correct) setScore(score + 1);
++    setOptionSelected(value);
++  };
+ 
++  const getOptionClass = (value) => {
++    if (!optionSelected) return "question-option";
++    const correct = correctAnswerText || getCorrectAnswerText();
++    if (value === correct) return "question-option option-correct";
++    if (value === optionSelected && value !== correct) return "question-option option-wrong";
++    return "question-option option-selected";
++  };
+ 
+-          <button className="quit-test-button" onClick={() => {
+-            setCurrentQuestion(10);
+-            setOptionSelected(null);
+-            }}>
+-            Quit Test
+-            </button>
++  const progress = ((currentQuestion) / 10) * 100;
+ 
++  return (
++    <div className="question-container">
++      <div className="question-progress">
++        <span className="question-number">Q{currentQuestion + 1} / 10</span>
++        <div className="progress-bar-track">
++          <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
++        </div>
++        <span className="question-number" style={{color:'var(--text-muted)'}}>score: {score}</span>
++      </div>
+ 
+-          <button
+-            className="question-next-button"
+-            onClick={() => {
+-              setOptionSelected(null);
++      <div className="question-text">
++        <p>{question?.question}</p>
++      </div>
+ 
+-            if (currentQuestion < 10) {
+-              setCurrentQuestion(currentQuestion + 1);
+-                }
+-            }}
+-          >
+-            {currentQuestion > 8 ? "Submit" : "Next Question"}
+-          </button>
++      <div className="question-options">
++        {optionEntries.map(([key, value]) => (
++          <div key={key} className={getOptionClass(value)} onClick={() => handleAnswer(value)}>
++            {value}
++          </div>
++        ))}
++      </div>
+ 
+-        </div>
++      <div className="question-next">
++        <button className="quit-test-button" onClick={() => setCurrentQuestion(10)}>
++          quit
++        </button>
++        <button
++          className="question-next-button"
++          disabled={!optionSelected}
++          onClick={() => { setOptionSelected(null); setCorrectAnswerText(null); setCurrentQuestion(currentQuestion + 1); }}
++        >
++          {currentQuestion >= 9 ? "submit →" : "next →"}
++        </button>
+       </div>
+-    </>
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/test/Test.css b/src/components/test/Test.css
+index 510d8a4..2b886d8 100644
+--- a/src/components/test/Test.css
++++ b/src/components/test/Test.css
+@@ -1,94 +1,86 @@
+-.test-container{
+-    display: flex;
+-    flex-direction: column;
+-    align-items: center;
+-    justify-content: center;
+-    background-color: transparent;
+-    width: 100%;
+-    height: 100vh;
++.test-container {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  justify-content: center;
++  min-height: 100vh;
++  padding: 24px;
++  animation: fadeIn 0.4s ease both;
+ }
+ 
+-.test-header{
+-    font-size: 2rem;
+-    font-weight: bold;
+-    margin-bottom: 1rem;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-    text-transform: capitalize;
+-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+-    border-radius: 10px;
+-    padding: 1rem;
+-    background-color: #fff;
++.test-header {
++  font-family: var(--font-display);
++  font-size: 13px;
++  font-weight: 700;
++  letter-spacing: 0.12em;
++  text-transform: uppercase;
++  color: var(--magenta);
++  font-family: var(--font-mono);
++  margin-bottom: 32px;
++  background: var(--magenta-muted);
++  padding: 6px 16px;
++  border-radius: 99px;
++  border: 1px solid rgba(232,18,124,0.2);
+ }
+ 
+-.test-body{
+-    display: flex;
+-    flex-direction: column;
+-    align-items: center;
+-    justify-content: center;
+-    width: 50%;
+-    height: 50%;
+-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+-    border-radius: 10px;
+-    padding: 1rem;
+-    background-color: #fff;
+-}
+-
+-.test-body > p{
+-    font-size: 1.5rem;
+-    font-weight: bold;
+-    margin-bottom: 1rem;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-    text-transform: capitalize;
++.test-header p::before { content: '$ '; opacity: 0.5; }
+ 
++.test-body {
++  background: var(--surface);
++  border-radius: var(--radius-xl);
++  padding: 40px;
++  box-shadow: var(--shadow-md);
++  border: 1px solid var(--border);
++  width: 100%;
++  max-width: 480px;
++  text-align: center;
+ }
+ 
+-.test-body-catagory-item{
+-    font-size: 1.5rem;
+-    font-weight: bold;
+-    padding: 10px;
+-    margin: 10px;
+-    box-shadow: 0 0 5px 0 black;
+-    border-radius: 10px;
+-    text-align: center;
+-    cursor: pointer;
+-    text-transform: capitalize;
+-    background-color: #007fff;
+-    color: #fff;
+-    text-transform: capitalize;
+-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
++.test-body > p {
++  font-family: var(--font-display);
++  font-size: 20px;
++  font-weight: 800;
++  color: var(--text-primary);
++  margin-bottom: 28px;
+ }
+ 
+-.test-body-catagory-item:hover{
+-    transform: scale(1.1);
+-    transition: all 0.5s ease-in-out;    
++.test-body-catagory {
++  display: flex;
++  flex-direction: column;
++  gap: 12px;
+ }
+ 
++.test-body-catagory-item {
++  font-family: var(--font-mono);
++  font-size: 14px;
++  font-weight: 700;
++  padding: 14px 24px;
++  border-radius: var(--radius-md);
++  background: var(--cream);
++  border: 1.5px solid var(--border-strong);
++  color: var(--text-primary);
++  cursor: pointer;
++  transition: all var(--transition-bounce);
++  text-transform: capitalize;
++  position: relative;
++  overflow: hidden;
++}
+ 
+-/* mobile responsiveness */
+-
+-@media screen and (max-width: 768px)
+-{
+-
+-    .test-container{
+-        width: 100%;
+-        height: 80vh;
+-    }
+-
+-    .test-header{
+-        width: 80%;
+-        text-align: center;
+-        font-size: 1.3rem;
+-        padding: 20px 10px;
+-
+-    }
+-
++.test-body-catagory-item::before {
++  content: '';
++  position: absolute;
++  inset: 0;
++  background: var(--magenta);
++  transform: scaleX(0);
++  transform-origin: left;
++  transition: transform 0.25s ease;
++  z-index: 0;
++}
+ 
++.test-body-catagory-item:hover::before { transform: scaleX(1); }
++.test-body-catagory-item:hover { color: #fff; border-color: var(--magenta); transform: translateX(4px); }
++.test-body-catagory-item span { position: relative; z-index: 1; }
+ 
+-    .test-body{
+-        margin:0px;
+-        padding: 10px;
+-        width: 80%;
+-        height: 50vh;
+-        text-align: center;
+-    }
++@media (max-width: 768px) {
++  .test-body { padding: 24px 20px; }
+ }
+diff --git a/src/components/test/Test.jsx b/src/components/test/Test.jsx
+index 66e23a8..bd75a18 100644
+--- a/src/components/test/Test.jsx
++++ b/src/components/test/Test.jsx
+@@ -1,43 +1,34 @@
+-// R9Oh5HpQNXaiy9wIG30Ki3wmOFXKunL4VMBPlNpE ==> API KEY QUIZAPI.IO
+-import React, { useState, useEffect, useContext } from "react";
++import React, { useContext, useEffect } from "react";
+ import { LoginContext } from "../../context/LoginContext";
+-import axios from "axios";
+ import { Link } from "react-router-dom";
+-import './Test.css'
+-
+-const Test = () => {
+-  const { activebutton, user, setActivebutton } = useContext(LoginContext);
+-  
+-  useEffect(() => {
+-    setActivebutton("tests");
+-  }, []);
++import './Test.css';
+ 
++const difficulties = [
++  { level: "easy", label: "Beginner", desc: "Fundamentals & basics", color: "var(--green-code)" },
++  { level: "medium", label: "Intermediate", desc: "Core concepts & patterns", color: "var(--yellow)" },
++  { level: "hard", label: "Expert", desc: "Advanced & tricky", color: "var(--magenta)" },
++];
+ 
++const Test = () => {
++  const { setActivebutton } = useContext(LoginContext);
++  useEffect(() => { setActivebutton("tests"); }, []);
+ 
+   return (
+-    <>
+-      <div className="test-container">
+-        <div className="test-header">
+-          <p>Check your Technical skills</p>
+-        </div>
+-        <div className="test-body">
+-          <p>Select Difficulty level</p>
+-          <div className="test-body-catagory">
+-            <Link to="easy" style={{textDecoration:"none",color:"black"}}>
+-              <div className="test-body-catagory-item">Beginner</div>
+-            </Link>
+-
+-            <Link to="medium" style={{textDecoration:"none",color:"black"}}>
+-              <div className="test-body-catagory-item">intermediate</div>
+-            </Link>
+-
+-            <Link to="hard" style={{textDecoration:"none",color:"black"}}>
+-              <div className="test-body-catagory-item">Expert</div>
++    <div className="test-container">
++      <div className="test-header"><p>run quiz.exe</p></div>
++      <div className="test-body">
++        <p>Select difficulty level</p>
++        <div className="test-body-catagory">
++          {difficulties.map(({ level, label, desc }) => (
++            <Link key={level} to={level} style={{ textDecoration: "none" }}>
++              <div className="test-body-catagory-item">
++                <span>{label} — <span style={{opacity:0.6,fontSize:12}}>{desc}</span></span>
++              </div>
+             </Link>
+-          </div>
++          ))}
+         </div>
+       </div>
+-    </>
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/test/Testmodal.css b/src/components/test/Testmodal.css
+index 89bcb85..b11a075 100644
+--- a/src/components/test/Testmodal.css
++++ b/src/components/test/Testmodal.css
+@@ -1,112 +1,103 @@
+-.testmodal-container{
+-    width: 100%;
+-    height: 100vh;
+-    position: fixed;
+-    top: 0;
+-    left: 0;
+-    right: 0;
+-    bottom: 0;
+-    background-color: rgba(0,0,0,0.5);
+-    display: flex;
+-    justify-content: center;
+-    align-items: center;
++.testmodal-container {
++  position: fixed;
++  inset: 0;
++  background: rgba(10,10,10,0.7);
++  backdrop-filter: blur(6px);
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  z-index: 1000;
++  padding: 16px;
++  animation: fadeIn 0.25s ease both;
+ }
+ 
+-.testmodal-body{
+-    width: 70%;
+-    height: 70%;
+-    background-color: white;
+-    border-radius: 10px;
+-    padding: 20px;
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: space-between;
+-    box-shadow: 0px 0px 10px 0px black;
++.testmodal-body {
++  background: var(--surface);
++  border-radius: var(--radius-xl);
++  padding: 32px;
++  width: 100%;
++  max-width: 600px;
++  max-height: 90vh;
++  overflow-y: auto;
++  box-shadow: var(--shadow-lg);
++  border: 1px solid var(--border);
++  animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
++  display: flex;
++  flex-direction: column;
++  gap: 20px;
+ }
+ 
+-.testmodal-result{
+-    width: 100%;
+-    height: 100%;
+-    display: flex;
+-    justify-content: center;
+-    align-items: center;
++.testmodal-result {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  justify-content: center;
++  text-align: center;
++  padding: 20px;
++  gap: 12px;
++  animation: fadeIn 0.4s ease both;
+ }
+ 
+-.testmodal-result h1{
+-    font-size: 2rem;
+-    font-weight: 600;
+-    text-align: center;
+-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+-    text-transform: capitalize;
+-    color: limegreen;
+-
++.testmodal-result h1 {
++  font-family: var(--font-display);
++  font-size: 32px;
++  font-weight: 800;
++  color: var(--text-primary);
+ }
+ 
+-.completed-statement{
+-    font-size: 1.5rem;
+-    font-weight: 500;
+-    text-align: center;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-    text-transform: capitalize;
+-    color: limegreen;
+-    margin: 10px;
++.completed-statement {
++  font-family: var(--font-mono);
++  font-size: 12px;
++  color: var(--text-muted);
++  text-transform: uppercase;
++  letter-spacing: 0.08em;
+ }
+ 
+-.testmodal-result p{
+-    font-size: 1.5rem;
+-    font-weight: 500;
+-    text-align: center;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-    text-transform: capitalize;
++.testmodal-result p {
++  font-family: var(--font-body);
++  font-size: 15px;
++  color: var(--text-secondary);
+ }
+ 
+-.btn-container{
+-    width: 100%;
+-    display: flex;
+-    justify-content: center;
+-    align-items: center;
+-    margin: 20px;
++.score-display {
++  font-family: var(--font-display);
++  font-size: 48px;
++  font-weight: 800;
++  color: var(--magenta);
++  line-height: 1;
+ }
+ 
+-
+-
+-.testmodal-result-button{
+-    font-size: 1.5rem;
+-    font-weight: 500;
+-    text-align: center;
+-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-    text-transform: capitalize;
+-    padding: 10px;
+-    border-radius: 5px;
+-    border: none;
+-    background-color: #1e90ff;
+-    color: white;
+-    cursor: pointer;
+-    transition: all 0.3s ease-in-out;
+-    width: 80px;
+-    justify-self: center;
+-    box-shadow: 0px 0px 5px 0px black;
++.score-label {
++  font-family: var(--font-mono);
++  font-size: 11px;
++  color: var(--text-muted);
+ }
+ 
+-.testmodal-result-button:hover{
+-   transform: scale(1.03);
+-   transition: all 0.3s ease-in-out;
++.btn-container {
++  display: flex;
++  justify-content: center;
++  margin-top: 8px;
+ }
+ 
++.testmodal-result-button {
++  padding: 12px 32px;
++  background: var(--black);
++  color: var(--cream);
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 13px;
++  font-weight: 700;
++  cursor: pointer;
++  border: none;
++  transition: all var(--transition-bounce);
++}
+ 
++.testmodal-result-button:hover {
++  background: var(--magenta);
++  transform: translateY(-2px);
++  box-shadow: var(--shadow-magenta);
++}
+ 
+-/* mobile responsiveness */
+-@media screen and (max-width: 768px) {
+-    .testmodal-body{
+-        width: 100%;
+-        height: 100vh;
+-        overflow-y: scroll;
+-    }
+-
+-    .testmodal-result{
+-        width: 95%;
+-        height: 90vh;
+-        
+-    }
+-
+-}
+\ No newline at end of file
++@media (max-width: 768px) {
++  .testmodal-body { padding: 20px 16px; border-radius: var(--radius-lg); }
++}
+diff --git a/src/components/test/Testmodal.jsx b/src/components/test/Testmodal.jsx
+index 4f70658..db080ed 100644
+--- a/src/components/test/Testmodal.jsx
++++ b/src/components/test/Testmodal.jsx
+@@ -1,60 +1,47 @@
+-import React,{useState,useEffect} from "react";
++import React, { useState } from "react";
+ import "./Testmodal.css";
+ import Question from "./Question";
+ 
++const getScoreMsg = (score) => {
++  if (score >= 9) return { msg: "Perfect score! You're elite 🔥", color: "var(--magenta)" };
++  if (score >= 7) return { msg: "Solid performance! Keep it up 💪", color: "var(--green-code)" };
++  if (score >= 5) return { msg: "Not bad. Room to grow 📈", color: "var(--yellow)" };
++  return { msg: "Keep grinding. You'll get there 🛠️", color: "var(--text-muted)" };
++};
++
+ const Testmodal = ({ setTestmodal, questions }) => {
+-    const [currentQuestion,setCurrentQuestion] = useState(0)
+-    const [score,setScore] = useState(0)
+-  return (
+-    <>
+-      <div className="testmodal-container">
+-        <div className="testmodal-body">
+-            {
+-                questions.length > 0  && currentQuestion < 10
+-                 ? (
+-                    <Question
+-                    question={questions[currentQuestion]}
+-                    setCurrentQuestion={setCurrentQuestion}
+-                    currentQuestion={currentQuestion}
+-                    setScore={setScore}
+-                    score={score}
+-                    />
+-                )
+-                :
+-                (
+-                    <div className="testmodal-result">
+-                        <div>
+-                        <h1>Congratulations!!</h1>
+-                        <p className='completed-statement'>
+-                            You have successfully completed the test
+-                        </p>
+-                        <p>You scored {score} out of 10</p>
+-                        <p
+-                        style={{
+-                            color:"#0077b5"
+-                        }}
+-                        >{score >= 8 && "You Rocked it !"}</p>
+-                        <p
+-                         style={{
+-                            color:"#15202b"
+-                        }}
+-                        >{score < 8 && score >= 5 && "Fantastic! ,You can do better !"}</p>
+-                        <p
+-                         style={{
+-                            color:"#ad0c0c"
+-                        }}
+-                        >{score < 5 && "You need to work hard on your skills !"}</p>
+-                        <div className='btn-container'>
+-                        <div className="testmodal-result-button" onClick={()=>(setTestmodal(false))}>Return</div>
+-                        </div>
+-                    </div>
+-                    </div>
++  const [currentQuestion, setCurrentQuestion] = useState(0);
++  const [score, setScore] = useState(0);
++  const done = currentQuestion >= 10 || currentQuestion >= questions.length;
++  const { msg, color } = getScoreMsg(score);
+ 
+-                )
+-            }
+-        </div>
++  return (
++    <div className="testmodal-container">
++      <div className="testmodal-body">
++        {!done ? (
++          <Question
++            question={questions[currentQuestion]}
++            setCurrentQuestion={setCurrentQuestion}
++            currentQuestion={currentQuestion}
++            setScore={setScore}
++            score={score}
++          />
++        ) : (
++          <div className="testmodal-result">
++            <h1>Done!</h1>
++            <p className="completed-statement">// test completed</p>
++            <div className="score-display">{score}/10</div>
++            <p className="score-label">correct answers</p>
++            <p style={{ color }}>{msg}</p>
++            <div className="btn-container">
++              <button className="testmodal-result-button" onClick={() => setTestmodal(false)}>
++                ← back to tests
++              </button>
++            </div>
++          </div>
++        )}
+       </div>
+-    </>
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/test/Testpage.css b/src/components/test/Testpage.css
+index 362bf65..28f67ef 100644
+--- a/src/components/test/Testpage.css
++++ b/src/components/test/Testpage.css
+@@ -1,115 +1,123 @@
+-.testpage-container{
+-    display: flex;
+-    flex-direction: column;
+-    align-items: center;
+-    justify-content: center;
+-    background-color: transparent;
+-    width: 100%;
+-    height: 100vh;
++.testpage-container {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  min-height: 100vh;
++  padding: 24px;
++  animation: fadeIn 0.4s ease both;
+ }
+ 
+-.testpage-body{
+-    background-color: #fff;
+-    box-shadow: 0px 0px 10px black;
+-    border-radius: 10px;
+-    padding: 20px;
++.testpage-body {
++  background: var(--surface);
++  border-radius: var(--radius-xl);
++  padding: 40px;
++  box-shadow: var(--shadow-md);
++  border: 1px solid var(--border);
++  width: 100%;
++  max-width: 560px;
++}
++
++.testpage-title {
++  font-family: var(--font-display);
++  font-size: 26px;
++  font-weight: 800;
++  color: var(--text-primary);
++  margin-bottom: 24px;
++  text-transform: capitalize;
++}
+ 
++.testpage-title::before {
++  content: '// ';
++  font-family: var(--font-mono);
++  color: var(--magenta);
++  font-size: 14px;
+ }
+ 
+-.testpage-title{
+-    font-size: 30px;
+-    font-weight: bold;
+-    margin-bottom: 20px;
+-    text-align: center;
+-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+-    text-align: center;
+-    text-transform: capitalize;
++.test-rules {
++  background: var(--cream);
++  border-radius: var(--radius-md);
++  padding: 16px 20px;
++  margin-bottom: 28px;
++  border-left: 3px solid var(--magenta);
+ }
+ 
+-.test-rules{
+-    padding: 10px;
++.test-rules > p {
++  font-family: var(--font-mono);
++  font-size: 11px;
++  color: var(--magenta);
++  text-transform: uppercase;
++  letter-spacing: 0.1em;
++  margin-bottom: 10px;
+ }
+ 
+-.test-rules > p{
+-    font-size: 20px;
+-    font-weight: bold;
+-    margin-bottom: 10px;
+-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-    text-transform: capitalize;
++.test-rules > ul {
++  list-style: none;
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
+ }
+ 
+-.test-rules > ul{
+-    font-size: 18px;
+-    font-weight: bold;
+-    margin-bottom: 10px;
+-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+-    text-transform: capitalize;
++.test-rules > ul > li {
++  font-family: var(--font-body);
++  font-size: 13px;
++  color: var(--text-secondary);
++  padding-left: 16px;
++  position: relative;
+ }
+ 
+-.test-rules > ul > li{
+-    margin-left: 20px;
++.test-rules > ul > li::before {
++  content: '→';
++  position: absolute;
++  left: 0;
++  color: var(--magenta);
++  font-size: 12px;
+ }
+ 
+-.testpage-button-start{
+-    font-size: 20px;
+-    padding: 10px;
+-    border-radius: 10px;
+-    border: 1px solid #000;
+-    cursor: pointer;
+-    background-color: limegreen;
+-    color: #fff;
+-    width:150px;
+-    margin:10px;
+-    text-align: center;
+-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+-    text-transform: capitalize;
++.testpage-buttons {
++  display: flex;
++  gap: 12px;
++}
+ 
++.testpage-button-start {
++  flex: 1;
++  padding: 12px;
++  background: var(--black);
++  color: var(--cream);
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 13px;
++  font-weight: 700;
++  cursor: pointer;
++  border: none;
++  transition: all var(--transition-bounce);
++  text-align: center;
+ }
+ 
+-.testpage-button-change{
+-    font-size: 20px;
+-    padding: 10px;
+-    border-radius: 10px;
+-    border: 1px solid #000;
+-    cursor: pointer;
+-    background-color: #d11a2a;
+-    color: #fff;
+-     width:180px;
+-    margin:10px;
+-    text-align: center;
+-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+-    text-transform: capitalize;
+-    }
++.testpage-button-start:hover {
++  background: var(--magenta);
++  transform: translateY(-2px);
++  box-shadow: var(--shadow-magenta);
++}
+ 
+-.testpage-button-start:hover{
+-    transform: scale(1.02);
+-    transition: 0.3s all ease-in-out;
++.testpage-button-change {
++  padding: 12px 20px;
++  background: transparent;
++  color: var(--text-secondary);
++  border-radius: var(--radius-md);
++  font-family: var(--font-mono);
++  font-size: 13px;
++  cursor: pointer;
++  border: 1.5px solid var(--border-strong);
++  transition: all var(--transition);
++  text-align: center;
+ }
+ 
+-.testpage-button-change:hover{
+-    transform: scale(1.02);
+-    transition: 0.3s all ease-in-out;
++.testpage-button-change:hover {
++  border-color: var(--black);
++  color: var(--text-primary);
+ }
+ 
+-/* mobile resposiveness */
+-@media screen and (max-width: 768px){
+-  
+-    .testpage-container{
+-        width: 90%;
+-        height: 80vh;
+-        margin-left: 20px;
+-    }
+-    .testpage-title{
+-        font-size: 20px;
+-    }
+- 
+-    .test-rules > p{
+-        font-size: 15px;
+-    }
+-    .test-rules > ul{
+-        font-size: 15px;
+-    }
+-    .test-rules > ul > li{
+-        margin-left: 10px;
+-    }
+-}
+\ No newline at end of file
++@media (max-width: 768px) {
++  .testpage-body { padding: 24px 20px; }
++  .testpage-buttons { flex-direction: column; }
++}
+diff --git a/src/homepage.css b/src/homepage.css
+index b7aee3e..5478bdb 100644
+--- a/src/homepage.css
++++ b/src/homepage.css
+@@ -1,52 +1,57 @@
+-.main{
+-    width: 100%;
+-    height: 100vh;
+-    background-color: #f2f2f2;
+-    display: flex;
+-    overflow-x: hidden;
+-    padding:0px;
+-    margin:0px;
+-    overflow-y: hidden;
++/* ===== LAYOUT ===== */
++.main {
++  width: 100%;
++  height: 100vh;
++  background: var(--cream);
++  display: flex;
++  overflow: hidden;
+ }
+ 
+-.sidebar{
+-    width: 20%;
+-    height: 100%;
+-    background-color: #f2f0e4;
++.sidebar {
++  width: 260px;
++  flex-shrink: 0;
++  height: 100%;
++  background: var(--black);
++  position: relative;
++  z-index: 10;
+ }
+ 
+ .content {
+-    width: 80%;
+-    height: 100%;
+-    background-color: #f2f0e4;
++  flex: 1;
++  height: 100%;
++  overflow-y: auto;
++  background: var(--cream);
++  position: relative;
++}
+ 
++/* Code grid background subtle */
++.content::before {
++  content: '';
++  position: fixed;
++  inset: 0;
++  background-image:
++    linear-gradient(rgba(10,10,10,0.025) 1px, transparent 1px),
++    linear-gradient(90deg, rgba(10,10,10,0.025) 1px, transparent 1px);
++  background-size: 40px 40px;
++  pointer-events: none;
++  z-index: 0;
+ }
+ 
+-/* mobile responsiveness */
+-@media only screen and (max-width: 1000px) {
+-    .main{
+-        flex-direction: column-reverse;
+-        width: 100%;
+-        height: 90vh;
+-        overflow-y: hidden;
+-        padding:0px;
+-        margin:0px;        
+-    }
+-    .sidebar{
+-        width: 100%;
+-        height:7vh;
+-        padding:0px;
+-        margin:0px;
+-        
+-    }
+-    .content{
+-        width: 100%;
+-        padding:0px;
+-        margin:0px;
+-        overflow-y: scroll;  
+-    }
++.content > * { position: relative; z-index: 1; }
+ 
+-    ::-webkit-scrollbar {
+-        width: 0px;  /* Remove scrollbar space */
+-    }
++@media (max-width: 1000px) {
++  .main {
++    flex-direction: column-reverse;
++    height: 100dvh;
++  }
++  .sidebar {
++    width: 100%;
++    height: 60px;
++    flex-shrink: 0;
++  }
++  .content {
++    flex: 1;
++    overflow-y: auto;
++    min-height: 0;
++  }
+ }
+diff --git a/src/index.css b/src/index.css
+index 04eb39a..3aa9883 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -1,8 +1,63 @@
+-* {
+-  margin: 0;
+-  padding: 0;
++@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+ 
+-  ::-webkit-scrollbar {
+-    width: 0px;
+-  }
++:root {
++  --cream: #F5F0E8;
++  --cream-dark: #EDE7D9;
++  --cream-darker: #E0D8C8;
++  --black: #0A0A0A;
++  --black-soft: #1A1A1A;
++  --magenta: #E8127C;
++  --magenta-light: #FF4FA0;
++  --magenta-muted: rgba(232,18,124,0.10);
++  --cyan: #00C8C8;
++  --yellow: #F5C400;
++  --green-code: #22C55E;
++  --surface: #FFFFFF;
++  --surface-raised: #FAFAF8;
++  --border: rgba(10,10,10,0.09);
++  --border-strong: rgba(10,10,10,0.20);
++  --text-primary: #0A0A0A;
++  --text-secondary: #4A4A4A;
++  --text-muted: #888888;
++  --text-inverse: #F5F0E8;
++  --font-display: 'Syne', sans-serif;
++  --font-mono: 'Space Mono', monospace;
++  --font-body: 'DM Sans', sans-serif;
++  --radius-sm: 6px;
++  --radius-md: 12px;
++  --radius-lg: 18px;
++  --radius-xl: 24px;
++  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
++  --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
++  --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
++  --shadow-magenta: 0 4px 24px rgba(232,18,124,0.18);
++  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
++  --transition-slow: 0.4s cubic-bezier(0.4,0,0.2,1);
++  --transition-bounce: 0.3s cubic-bezier(0.34,1.56,0.64,1);
+ }
++
++*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
++html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
++body { font-family:var(--font-body); background:var(--cream); color:var(--text-primary); font-size:15px; line-height:1.6; }
++
++::-webkit-scrollbar { width:4px; height:4px; }
++::-webkit-scrollbar-track { background:transparent; }
++::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:99px; }
++::-webkit-scrollbar-thumb:hover { background:var(--magenta); }
++
++*:focus-visible { outline:2px solid var(--magenta); outline-offset:2px; }
++::selection { background:var(--magenta); color:#fff; }
++
++@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
++@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
++@keyframes popIn { 0%{opacity:0;transform:scale(0.85)} 80%{transform:scale(1.04)} 100%{opacity:1;transform:scale(1)} }
++@keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
++@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
++@keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(232,18,124,0.5)} 70%{box-shadow:0 0 0 8px rgba(232,18,124,0)} 100%{box-shadow:0 0 0 0 rgba(232,18,124,0)} }
++
++.animate-fade { animation:fadeIn 0.35s ease both; }
++.animate-slide { animation:slideUp 0.4s ease both; }
++.animate-pop { animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
++.stagger-1{animation-delay:0.05s}.stagger-2{animation-delay:0.10s}.stagger-3{animation-delay:0.15s}.stagger-4{animation-delay:0.20s}.stagger-5{animation-delay:0.25s}
++
++.skeleton { background:linear-gradient(90deg,var(--cream-dark) 25%,var(--cream) 50%,var(--cream-dark) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:var(--radius-sm); }
+-- 
+2.43.0
+
