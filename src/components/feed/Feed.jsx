@@ -7,19 +7,14 @@ import "./feed.css";
 
 const Feed = () => {
   const { setActivebutton, user } = useContext(LoginContext);
-
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     setActivebutton("feed");
-
-    if (user) {
-      getFeed();
-    } else {
-      setLoading(false); // important: stop loader if no user
-    }
+    if (user) getFeed();
+    else setLoading(false);
   }, [user]);
 
   const getFeed = async () => {
@@ -34,58 +29,40 @@ const Feed = () => {
 
       if (error) throw error;
 
-      const following = user?.following || [];
+      // Safe null check on following
+      const following = Array.isArray(user?.following) ? user.following : [];
 
-      const filtered =
-        data?.filter(
-          (post) =>
-            following.includes(post.author) || post.author === user?.id
-        ) || [];
+      // Algorithm: show own posts + following posts, sorted by recency
+      const filtered = (data || []).filter(
+        post => following.includes(post.author) || post.author === user?.id
+      );
 
       setFeed(filtered);
     } catch (err) {
       console.error("Feed error:", err);
-      setError("Something went wrong while loading feed.");
+      setError("Something went wrong loading feed.");
       setFeed([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // 🧠 UI STATES (clean and controlled)
-
-  if (loading) {
-    return <Loader />;
-  }
-
-  if (!user) {
-    return (
-      <div className="noFeed">
-        Please login to see your feed 🔐
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="noFeed">
-        {error}
-      </div>
-    );
-  }
-
-  if (!feed.length) {
-    return (
-      <div className="noFeed">
-        No posts yet. Start following people 🚀
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
+  if (!user) return <div className="noFeed"><p>Please login to see your feed 🔐</p></div>;
+  if (error) return <div className="noFeed"><p>{error}</p></div>;
+  if (!feed.length) return (
+    <div className="noFeed">
+      <p>No posts yet.</p>
+      <p style={{fontSize:11,marginTop:4}}>Start following devs to fill your feed 🚀</p>
+    </div>
+  );
 
   return (
     <div className="feed-container">
-      {feed.map((post) => (
-        <Feedcard key={post.id} feed={post} getFeed={getFeed} />
+      {feed.map((post, i) => (
+        <div key={post.id} className={`animate-slide stagger-${Math.min(i + 1, 5)}`}>
+          <Feedcard feed={post} getFeed={getFeed} />
+        </div>
       ))}
     </div>
   );

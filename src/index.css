@@ -1,8 +1,63 @@
-* {
-  margin: 0;
-  padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
-  ::-webkit-scrollbar {
-    width: 0px;
-  }
+:root {
+  --cream: #F5F0E8;
+  --cream-dark: #EDE7D9;
+  --cream-darker: #E0D8C8;
+  --black: #0A0A0A;
+  --black-soft: #1A1A1A;
+  --magenta: #E8127C;
+  --magenta-light: #FF4FA0;
+  --magenta-muted: rgba(232,18,124,0.10);
+  --cyan: #00C8C8;
+  --yellow: #F5C400;
+  --green-code: #22C55E;
+  --surface: #FFFFFF;
+  --surface-raised: #FAFAF8;
+  --border: rgba(10,10,10,0.09);
+  --border-strong: rgba(10,10,10,0.20);
+  --text-primary: #0A0A0A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #888888;
+  --text-inverse: #F5F0E8;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+  --shadow-magenta: 0 4px 24px rgba(232,18,124,0.18);
+  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+  --transition-slow: 0.4s cubic-bezier(0.4,0,0.2,1);
+  --transition-bounce: 0.3s cubic-bezier(0.34,1.56,0.64,1);
 }
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
+body { font-family:var(--font-body); background:var(--cream); color:var(--text-primary); font-size:15px; line-height:1.6; }
+
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:99px; }
+::-webkit-scrollbar-thumb:hover { background:var(--magenta); }
+
+*:focus-visible { outline:2px solid var(--magenta); outline-offset:2px; }
+::selection { background:var(--magenta); color:#fff; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes popIn { 0%{opacity:0;transform:scale(0.85)} 80%{transform:scale(1.04)} 100%{opacity:1;transform:scale(1)} }
+@keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(232,18,124,0.5)} 70%{box-shadow:0 0 0 8px rgba(232,18,124,0)} 100%{box-shadow:0 0 0 0 rgba(232,18,124,0)} }
+
+.animate-fade { animation:fadeIn 0.35s ease both; }
+.animate-slide { animation:slideUp 0.4s ease both; }
+.animate-pop { animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+.stagger-1{animation-delay:0.05s}.stagger-2{animation-delay:0.10s}.stagger-3{animation-delay:0.15s}.stagger-4{animation-delay:0.20s}.stagger-5{animation-delay:0.25s}
+
+.skeleton { background:linear-gradient(90deg,var(--cream-dark) 25%,var(--cream) 50%,var(--cream-dark) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:var(--radius-sm); }

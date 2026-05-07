@@ -1,60 +1,47 @@
-import React,{useState,useEffect} from "react";
+import React, { useState } from "react";
 import "./Testmodal.css";
 import Question from "./Question";
 
-const Testmodal = ({ setTestmodal, questions }) => {
-    const [currentQuestion,setCurrentQuestion] = useState(0)
-    const [score,setScore] = useState(0)
-  return (
-    <>
-      <div className="testmodal-container">
-        <div className="testmodal-body">
-            {
-                questions.length > 0  && currentQuestion < 10
-                 ? (
-                    <Question
-                    question={questions[currentQuestion]}
-                    setCurrentQuestion={setCurrentQuestion}
-                    currentQuestion={currentQuestion}
-                    setScore={setScore}
-                    score={score}
-                    />
-                )
-                :
-                (
-                    <div className="testmodal-result">
-                        <div>
-                        <h1>Congratulations!!</h1>
-                        <p className='completed-statement'>
-                            You have successfully completed the test
-                        </p>
-                        <p>You scored {score} out of 10</p>
-                        <p
-                        style={{
-                            color:"#0077b5"
-                        }}
-                        >{score >= 8 && "You Rocked it !"}</p>
-                        <p
-                         style={{
-                            color:"#15202b"
-                        }}
-                        >{score < 8 && score >= 5 && "Fantastic! ,You can do better !"}</p>
-                        <p
-                         style={{
-                            color:"#ad0c0c"
-                        }}
-                        >{score < 5 && "You need to work hard on your skills !"}</p>
-                        <div className='btn-container'>
-                        <div className="testmodal-result-button" onClick={()=>(setTestmodal(false))}>Return</div>
-                        </div>
-                    </div>
-                    </div>
+const getScoreMsg = (score) => {
+  if (score >= 9) return { msg: "Perfect score! You're elite 🔥", color: "var(--magenta)" };
+  if (score >= 7) return { msg: "Solid performance! Keep it up 💪", color: "var(--green-code)" };
+  if (score >= 5) return { msg: "Not bad. Room to grow 📈", color: "var(--yellow)" };
+  return { msg: "Keep grinding. You'll get there 🛠️", color: "var(--text-muted)" };
+};
 
-                )
-            }
-        </div>
+const Testmodal = ({ setTestmodal, questions }) => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const done = currentQuestion >= 10 || currentQuestion >= questions.length;
+  const { msg, color } = getScoreMsg(score);
+
+  return (
+    <div className="testmodal-container">
+      <div className="testmodal-body">
+        {!done ? (
+          <Question
+            question={questions[currentQuestion]}
+            setCurrentQuestion={setCurrentQuestion}
+            currentQuestion={currentQuestion}
+            setScore={setScore}
+            score={score}
+          />
+        ) : (
+          <div className="testmodal-result">
+            <h1>Done!</h1>
+            <p className="completed-statement">// test completed</p>
+            <div className="score-display">{score}/10</div>
+            <p className="score-label">correct answers</p>
+            <p style={{ color }}>{msg}</p>
+            <div className="btn-container">
+              <button className="testmodal-result-button" onClick={() => setTestmodal(false)}>
+                ← back to tests
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

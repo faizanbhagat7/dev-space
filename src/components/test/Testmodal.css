@@ -1,112 +1,103 @@
-.testmodal-container{
-    width: 100%;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.testmodal-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,10,0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.25s ease both;
 }
 
-.testmodal-body{
-    width: 70%;
-    height: 70%;
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0px 0px 10px 0px black;
+.testmodal-body {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.testmodal-result{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.testmodal-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  gap: 12px;
+  animation: fadeIn 0.4s ease both;
 }
 
-.testmodal-result h1{
-    font-size: 2rem;
-    font-weight: 600;
-    text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-transform: capitalize;
-    color: limegreen;
-
+.testmodal-result h1 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
 }
 
-.completed-statement{
-    font-size: 1.5rem;
-    font-weight: 500;
-    text-align: center;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-transform: capitalize;
-    color: limegreen;
-    margin: 10px;
+.completed-statement {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.testmodal-result p{
-    font-size: 1.5rem;
-    font-weight: 500;
-    text-align: center;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-transform: capitalize;
+.testmodal-result p {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
 }
 
-.btn-container{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px;
+.score-display {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--magenta);
+  line-height: 1;
 }
 
-
-
-.testmodal-result-button{
-    font-size: 1.5rem;
-    font-weight: 500;
-    text-align: center;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-transform: capitalize;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    background-color: #1e90ff;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    width: 80px;
-    justify-self: center;
-    box-shadow: 0px 0px 5px 0px black;
+.score-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
-.testmodal-result-button:hover{
-   transform: scale(1.03);
-   transition: all 0.3s ease-in-out;
+.btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
 }
 
+.testmodal-result-button {
+  padding: 12px 32px;
+  background: var(--black);
+  color: var(--cream);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-bounce);
+}
 
+.testmodal-result-button:hover {
+  background: var(--magenta);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-magenta);
+}
 
-/* mobile responsiveness */
-@media screen and (max-width: 768px) {
-    .testmodal-body{
-        width: 100%;
-        height: 100vh;
-        overflow-y: scroll;
-    }
-
-    .testmodal-result{
-        width: 95%;
-        height: 90vh;
-        
-    }
-
+@media (max-width: 768px) {
+  .testmodal-body { padding: 20px 16px; border-radius: var(--radius-lg); }
 }

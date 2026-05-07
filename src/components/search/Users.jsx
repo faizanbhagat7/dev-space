@@ -1,177 +1,117 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { supabase } from "../../backend/supabaseConfig.js";
 import { Link } from "react-router-dom";
 import { LoginContext } from "../../context/LoginContext.js";
-import { useContext } from "react";
 import "./Users.css";
-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import Loader from "../loader/Loader.jsx";
 
+const UserCard = ({ u, delay = 0 }) => {
+  const avatar = u?.avatar || u?.image;
+  return (
+    <Link to={`/profile/${u.id}`} style={{ textDecoration: "none" }} className={`user-card stagger-${Math.min(delay + 1, 5)}`}>
+      <div className="user-avatar">
+        {avatar
+          ? <img src={avatar} alt={u.name} />
+          : <div className="user-avatar-fallback">{u?.name?.[0]?.toUpperCase()}</div>
+        }
+      </div>
+      <div className="user-info">
+        <div className="user-name-text">{u.name}</div>
+        <div className="user-desc-text">{u.description || "developer"}</div>
+      </div>
+      <span className="user-arrow">→</span>
+    </Link>
+  );
+};
+
 const Users = () => {
-  const { user, session, activebutton, setActivebutton } =
-    useContext(LoginContext);
+  const { user, setActivebutton } = useContext(LoginContext);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [previuosSearch, setPreviousSearch] = useState("");
   const [recommendedUsers, setRecommendedUsers] = useState([]);
 
-
   const fetchRecommendedUsers = async () => {
-    let userList = [];
-    const { data, error } = await supabase
-      .from("profiles")
-      .select()
-      .neq("id", user.id)
-      .filter("skills", "ilike", `%${user.skills}%`)
-      .filter("description", "ilike", `%${user.description}%`)
-      .order("id", { ascending: true })
-      .limit(5);
-    if (data) {
-      userList = [...userList, ...data];
-    }
-    if (recommendedUsers.length < 5) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .neq("id", user.id)
-        .order("id", { descending: true })
-        .limit(5);
-      if (data) {
-        userList = [...userList, ...data];
-      }
-    }
-    // remove recomended users that are already followed
-    userList.map((Luser) => {
-      if (user.following.includes(Luser.id)) {
-        userList = userList.filter((user) => user.id !== Luser.id);
-      }
+    if (!user) return;
+    const following = Array.isArray(user?.following) ? user.following : [];
+    let list = [];
+
+    const { data: skillMatch } = await supabase
+      .from("profiles").select().neq("id", user.id)
+      .filter("skills", "ilike", `%${user?.skills || ""}%`).limit(5);
+    if (skillMatch) list = [...list, ...skillMatch];
+
+    const { data: recent } = await supabase
+      .from("profiles").select("*").neq("id", user.id).order("id", { ascending: false }).limit(5);
+    if (recent) list = [...list, ...recent];
+
+    // Dedup + remove already followed
+    const seen = new Set();
+    const filtered = list.filter(u2 => {
+      if (seen.has(u2.id) || following.includes(u2.id)) return false;
+      seen.add(u2.id);
+      return true;
     });
-
-    setRecommendedUsers(userList);
+    setRecommendedUsers(filtered.slice(0, 8));
   };
 
-  const handleSubmit = async (e) => {
-    setPreviousSearch(searchTerm);
-    e.preventDefault();
-    setIsSearching(true);
+  const handleSearch = async (e) => {
+    e?.preventDefault();
+    if (!searchTerm.trim()) return;
     setLoading(true);
-    const { data, error } = await supabase
-      .from("profiles")
-      .select()
-      .ilike("name", `%${searchTerm}%`)
-      .neq("id", user.id);
-    setUsers(data);
+    const { data } = await supabase.from("profiles").select().ilike("name", `%${searchTerm}%`).neq("id", user.id);
+    setUsers(data || []);
     setLoading(false);
-    setIsSearching(false);
   };
+
+  const handleClear = () => { setSearchTerm(""); setUsers(null); };
 
   useEffect(() => {
     setActivebutton("search");
-    // if (recommendedUsers.length === 0) {
     fetchRecommendedUsers();
-    // removeFollowingFromRecomendations();
-    // }
   }, []);
 
   return (
-    <>
-      <div className="search-section">
-        <div className="search-section-header">
-          <p>Explore Developers</p>
-          <form className="form" onSubmit={(e) => handleSubmit(e)}>
-            <div className="input-container">
-              <input
-                type="text"
-                placeholder="Search for users"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-            </div>
-            <div className="search-icon-container">
-              <PersonSearchIcon
-                className="search-icon"
-                type="submit"
-                onClick={(e) => {
-                  handleSubmit(e);
-                }}
-              />
-            </div>
-          </form>
-        </div>
-
-        <div className="search-section-body">
-          {searchTerm.length > 0 &&
-            isSearching === false &&
-            searchTerm === previuosSearch &&
-            users?.map((fetcheduser) => (
-              <Link
-                to={`/profile/${fetcheduser.id}`}
-                style={{ textDecoration: "none", color: "black" }}
-              >
-                <div className="user-card">
-                  <div className="user-image">
-                    <img src={fetcheduser.avatar} alt="" />
-                  </div>
-                  <div className="user-details">
-                    <div className="fetcheduser-name">{fetcheduser.name}</div>
-                    <div className="fetcheduser-description">
-                      {fetcheduser.description}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-
-          {users?.length === 0 && user != null ? (
-            <div className="no-user-found">No user found</div>
-          ) : (
-            <div className="Loading"></div>
-          )}
-
-          {searchTerm.length === 0 && users === null && (
-            <div className="recommendations">
-              {recommendedUsers.length !== 0 && (
-                <div className="recommendations-header">
-                  <p>Recommended for you</p>
-                </div>
-              )}
-
-              <div className="recommendations-body">
-                {recommendedUsers?.map((recommendedUser) => (
-                  <Link
-                    to={`/profile/${recommendedUser.id}`}
-                    style={{ textDecoration: "none", color: "black" }}
-                  >
-                    <div className="recomended-user-card">
-                      <div className="recomended-user-image">
-                        <img src={recommendedUser.avatar} alt="" />
-                      </div>
-                      <div className="recomended-user-details">
-                        <div className="recomended-user-name">
-                          {/* {recommendedUser.name} */}
-                          {recommendedUser?.name.length > 12 ? (
-                            recommendedUser?.name.split(" ")[0]
-                          ) : (
-                            <>{recommendedUser.name}</>
-                          )
-                          }
-                        </div>
-                        <div className="recomended-user-description">
-                          {recommendedUser?.description}
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+    <div className="search-section">
+      <div className="search-section-header">
+        <p>Explore Devs</p>
+        <form className="form" onSubmit={handleSearch}>
+          <div className="input-container">
+            <input
+              type="text"
+              placeholder="Search developers..."
+              value={searchTerm}
+              onChange={e => { setSearchTerm(e.target.value); if (!e.target.value) setUsers(null); }}
+              className="search-input"
+            />
+          </div>
+          <div className="search-icon-container" onClick={handleSearch}>
+            <span style={{fontFamily:'var(--font-mono)',fontSize:18}}>⌕</span>
+          </div>
+        </form>
       </div>
-    </>
+
+      {loading && <Loader />}
+
+      {!loading && users !== null && (
+        <>
+          <div className="search-section-label">// results for "{searchTerm}"</div>
+          {users.length === 0
+            ? <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text-muted)',padding:'20px 0'}}>// no users found</div>
+            : <div className="users-list">{users.map((u, i) => <UserCard key={u.id} u={u} delay={i} />)}</div>
+          }
+        </>
+      )}
+
+      {users === null && !loading && (
+        <>
+          <div className="search-section-label">// recommended for you</div>
+          <div className="users-list">
+            {recommendedUsers.map((u, i) => <UserCard key={u.id} u={u} delay={i} />)}
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

@@ -3,228 +3,105 @@ import "./Userprofile.css";
 import { supabase } from "../../backend/supabaseConfig";
 import { useState, useEffect, useContext } from "react";
 import { LoginContext } from "../../context/LoginContext";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Link, Routes, Route, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Editprofilemodal from "./Editprofilemodal";
 import { useSession } from "@supabase/auth-helpers-react";
 import Loader from "../loader/Loader";
-import SettingsIcon from '@mui/icons-material/Settings';
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import SettingsIcon from "@mui/icons-material/Settings";
+import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 
 const Userprofile = () => {
-  const { user, setUser, activebutton, setActivebutton, fetchUserProfile } =
-    useContext(LoginContext);
+  const { user, setUser, setActivebutton, fetchUserProfile } = useContext(LoginContext);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const { profileId } = useParams();
   const [userProfile, setUserProfile] = useState(null);
-  const [profileAchievementsCount, setProfileAchievementsCount] = useState("");
-  const [isfollowing, setIsfollowing] = useState(null);
-  const [profileFeedCount, setProfileFeedCount] = useState(0);
+  const [achievementsCount, setAchievementsCount] = useState(0);
+  const [feedCount, setFeedCount] = useState(0);
+  const [isfollowing, setIsfollowing] = useState(false);
   const Session = useSession();
 
-  const fetchDynamicUserProfile = async (profileId) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select()
-      .eq("id", profileId)
-      .single();
-    if (error) {
-      toast.error("Error fetching user profile");
-      return;
-    }
+  const fetchDynamicUserProfile = async (id) => {
+    const { data, error } = await supabase.from("profiles").select().eq("id", id).single();
+    if (error) { toast.error("Error fetching profile"); return; }
     setUserProfile(data);
   };
 
-  // follow and unfollow functionality
-  const checkIsFollowing = async (profileId) => {
+  const checkIsFollowing = (id) => {
+    const following = Array.isArray(user?.following) ? user.following : [];
+    setIsfollowing(following.includes(id));
+  };
+
+  const followUser = async (id) => {
+    const following = Array.isArray(user?.following) ? user.following : [];
+    const newFollowing = [...following, id];
+    await supabase.from("profiles").update({ following: newFollowing }).eq("id", user?.id);
+    const followers = Array.isArray(userProfile?.followers) ? userProfile.followers : [];
+    await supabase.from("profiles").update({ followers: [...followers, user?.id] }).eq("id", id);
+    setIsfollowing(true);
+    fetchDynamicUserProfile(id);
+    fetchUserProfile(Session);
+  };
+
+  const unfollowUser = async (id) => {
+    const following = Array.isArray(user?.following) ? user.following : [];
+    await supabase.from("profiles").update({ following: following.filter(i => i !== id) }).eq("id", user?.id);
+    const followers = Array.isArray(userProfile?.followers) ? userProfile.followers : [];
+    await supabase.from("profiles").update({ followers: followers.filter(i => i !== user?.id) }).eq("id", id);
     setIsfollowing(false);
-    {
-      user?.following?.forEach((element) => {
-        if (element === profileId) {
-          setIsfollowing(true);
-          return;
-        }
-      });
-    }
-  };
-
-  const followUser = async (profileId) => {
-    let newFollowingList = [];
-    if (user?.following === null || user?.following === []) {
-      newFollowingList = [profileId];
-    } else {
-      newFollowingList = [...user?.following, profileId];
-    }
-
-    const { data, error } = await supabase
-      .from("profiles")
-      .update({
-        following: newFollowingList,
-      })
-      .eq("id", user?.id);
-
-    if (error) {
-      // console.log(error);
-      return;
-    } else {
-      let newFollowersList = [];
-      if (userProfile?.followers === null || userProfile?.followers === []) {
-        newFollowersList = [user?.id];
-      } else {
-        newFollowersList = [...userProfile?.followers, user?.id];
-      }
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .update({
-          followers: newFollowersList,
-        })
-        .eq("id", profileId);
-
-      if (error) {
-        // console.log(error);
-        return;
-      } else {
-        setIsfollowing(true);
-        fetchDynamicUserProfile(profileId);
-        fetchUserProfile(Session);
-      }
-    }
-  };
-
-  const unfollowUser = async (profileId) => {
-    const newList = user?.following?.filter((item) => item !== userProfile?.id);
-    const { data, error } = await supabase
-      .from("profiles")
-      .update({
-        following: newList,
-      })
-      .eq("id", user?.id);
-
-    if (error) {
-      // console.log(error);
-      return;
-    } else {
-      const newList = userProfile?.followers?.filter(
-        (item) => item !== user?.id
-      );
-      const { data, error } = await supabase
-        .from("profiles")
-        .update({
-          followers: newList,
-        })
-        .eq("id", profileId);
-
-      if (error) {
-        // console.log(error);
-        return;
-      } else {
-        setIsfollowing(false);
-
-        fetchDynamicUserProfile(profileId);
-        fetchUserProfile(Session);
-      }
-    }
-  };
-
-  const handleFollows = async (profileId) => {
-    if (isfollowing === true) {
-      unfollowUser(profileId);
-    } else {
-      followUser(profileId);
-    }
-  };
-
-  const profileAchievementsCountFunction = async (profileId) => {
-    const { data, error } = await supabase
-      .from("achievements")
-      .select()
-      .eq("author", profileId);
-    if (!error) {
-      setProfileAchievementsCount(data.length);
-    }
-  };
-
-  const profileFeedCountFunction = async (profileId) => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select()
-      .eq("author", profileId);
-    if (!error) {
-      setProfileFeedCount(data.length);
-    }
+    fetchDynamicUserProfile(id);
+    fetchUserProfile(Session);
   };
 
   useEffect(() => {
-    if (profileId === user?.id) {
-      setActivebutton("profile");
-    } else {
-      setActivebutton("");
-      checkIsFollowing(profileId);
-    }
+    if (profileId === user?.id) setActivebutton("profile");
+    else { setActivebutton(""); checkIsFollowing(profileId); }
     fetchDynamicUserProfile(profileId);
-    profileAchievementsCountFunction(profileId);
-    profileFeedCountFunction(profileId);
+    supabase.from("achievements").select().eq("author", profileId).then(({ data }) => data && setAchievementsCount(data.length));
+    supabase.from("posts").select().eq("author", profileId).then(({ data }) => data && setFeedCount(data.length));
   }, [profileId]);
 
-  if (!userProfile) {
-    return <Loader />;
-  }
+  if (!userProfile) return <Loader />;
+
+  const avatar = userProfile?.avatar || userProfile?.image;
+  const followers = Array.isArray(userProfile?.followers) ? userProfile.followers.length : 0;
+  const following = Array.isArray(userProfile?.following) ? userProfile.following.length : 0;
 
   return (
     <>
       <div className="profile-container">
-        <div className="profile-header">
+        <div className="profile-header animate-fade">
           <div className="image-section">
             <div className="profile-image">
-              <img src={userProfile?.avatar} alt="" />
+              {avatar
+                ? <img src={avatar} alt={userProfile?.name} />
+                : <div style={{width:'100%',height:'100%',background:'var(--black)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:36,fontWeight:800,color:'var(--cream)',fontFamily:'var(--font-display)'}}>{userProfile?.name?.[0]?.toUpperCase()}</div>
+              }
             </div>
           </div>
           <div className="profile-details">
-            <div className="description">
+            <div>
               <div className="user-name">{userProfile?.name}</div>
-              <div className="user-description">{userProfile?.description}</div>
+              <div className="user-description">{userProfile?.description || "developer"}</div>
             </div>
             <div className="profile-connections">
-              <Link
-                to={"/feed/" + profileId}
-                style={{ textDecoration: "none", color: "black" }}
-              >
+              <Link to={"/feed/" + profileId} style={{ textDecoration: "none" }}>
                 <div className="post-count">
-                  Feed <br /> {profileFeedCount}
+                  <strong>{feedCount}</strong>
+                  <span>posts</span>
                 </div>
               </Link>
-              <Link
-                to={"followers"}
-                style={{
-                  textDecoration: "none",
-                  color: "black",
-                  cursor: "pointer",
-                }}
-              >
+              <Link to="followers" style={{ textDecoration: "none" }}>
                 <div className="followers">
-                  followers <br />{" "}
-                  {userProfile?.followers !== null
-                    ? userProfile?.followers?.length
-                    : 0}
+                  <strong>{followers}</strong>
+                  <span>followers</span>
                 </div>
               </Link>
-
-              <Link
-                to={"following"}
-                style={{
-                  textDecoration: "none",
-                  color: "black",
-                  cursor: "pointer",
-                }}
-              >
+              <Link to="following" style={{ textDecoration: "none" }}>
                 <div className="following">
-                  following <br />{" "}
-                  {userProfile?.following !== null
-                    ? userProfile?.following?.length
-                    : 0}
+                  <strong>{following}</strong>
+                  <span>following</span>
                 </div>
               </Link>
             </div>
@@ -232,124 +109,59 @@ const Userprofile = () => {
         </div>
 
         {user?.id === profileId ? (
-          <div className='edit-settings-container'>
+          <div className="edit-settings-container animate-fade stagger-2">
             <div className="edit-profile-section">
-            <button
-              className="edit-profile-button"
-              onClick={() => setShowModal(true)}
-            >
-              <div
-              style={{
-                paddingTop:"5px",
-                paddingRight:"10px",
-              }}
-            ><EditCalendarIcon /></div>
-            <div>
-              Edit Profile
-            </div>
-            </button>
+              <button className="edit-profile-button" onClick={() => setShowModal(true)}>
+                <EditCalendarIcon fontSize="small" /> Edit Profile
+              </button>
             </div>
             <div className="profile-settings-section">
-            <button
-              className="edit-profile-button"
-              onClick = {
-                () => navigate(`/settings/${profileId}`)
-              }
-            ><div
-              style={{
-                paddingTop:"5px",
-                paddingRight:"10px",
-              }}
-            ><SettingsIcon /></div>
-            <div>
-              Settings
-            </div>
-            </button>
+              <button className="edit-profile-button" onClick={() => navigate(`/settings/${profileId}`)}>
+                <SettingsIcon fontSize="small" /> Settings
+              </button>
             </div>
           </div>
         ) : (
-          <div className="mobile-follow-section">
-            <div
-              className={`profile-follow-section-${
-                isfollowing ? "following" : "notfollowing"
-              }`}
-            >
-              <button
-                className="profile-follow-button"
-                onClick={() => handleFollows(profileId)}
-                style={{
-                  backgroundColor: isfollowing ? "gray" : "#1a73e8",
-                  boxShadow: isfollowing ? "0px 0px 5px 0px black" : "",
-                  border: isfollowing ? "1px solid gray" : "1px solid #1a73e8",
-                }}
-              >
-                {isfollowing === true ? <p>Following</p> : <p>Follow</p>}
+          <div className="mobile-follow-section animate-fade stagger-2">
+            <button className="profile-follow-button" onClick={() => isfollowing ? unfollowUser(profileId) : followUser(profileId)}
+              style={{ background: isfollowing ? "var(--text-muted)" : "var(--black)" }}>
+              {isfollowing ? "Following" : "Follow"}
+            </button>
+            {isfollowing && (
+              <button className="profile-message-button" onClick={() => navigate(`/messagechannel/${profileId}`)}>
+                Message
               </button>
-              {isfollowing === true && (
-                <button
-                  className="profile-message-button"
-                  onClick={() => {
-                    navigate(`/messagechannel/${profileId}`);
-                  }}
-                  style={{
-                    backgroundColor: "#1a73e8",
-                    boxShadow: "0px 0px 5px 0px black",
-                    border: "1px solid #1a73e8",
-                  }}
-                >
-                  Message
-                </button>
-              )}
-            </div>
+            )}
           </div>
         )}
 
-
         <div className="profile-footer">
-          <div className="skills">
-            <div className="skills-header">Skills</div>
-            <div className="skills-list">
-              {userProfile?.skills ? userProfile?.skills : "No skills added"}
+          <div className="skills animate-fade stagger-3">
+            <div className="skills-header">skills</div>
+            <div className="skills-list">{userProfile?.skills || "No skills listed yet"}</div>
+          </div>
+          <Link to={"/achievements/" + profileId} style={{ textDecoration: "none" }}>
+            <div className="achievements animate-fade stagger-4">
+              <div className="achievements-header">achievements</div>
+              <div className="achievements-count">{achievementsCount} certification{achievementsCount !== 1 ? "s" : ""} from {userProfile?.name}</div>
             </div>
-          </div>
-          <div className="achievements">
-            <Link
-              to={"/achievements/" + profileId}
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              <p className="achievements-header"> Achievements</p>
-              <p className="achievements-count">
-                {profileAchievementsCount}
-                {profileAchievementsCount === 1
-                  ? " certification "
-                  : "  certifications "}
-                achieved by {userProfile?.name}
-              </p>
-            </Link>
-          </div>
-          <div className="feed">
-            <Link
-              to={"/feed/" + profileId}
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              <p className="feed-header">Feed</p>
-              <p className="feed-count">
-                {profileFeedCount <= 1
-                  ? profileFeedCount + " post "
-                  : profileFeedCount + " posts "}
-                from {userProfile?.name}
-              </p>
-            </Link>
-          </div>
+          </Link>
+          <Link to={"/feed/" + profileId} style={{ textDecoration: "none" }}>
+            <div className="feed animate-fade stagger-5">
+              <div className="feed-header">posts</div>
+              <div className="feed-count">{feedCount} post{feedCount !== 1 ? "s" : ""} from {userProfile?.name}</div>
+            </div>
+          </Link>
         </div>
       </div>
-      {showModal ? (
+
+      {showModal && (
         <Editprofilemodal
           setShowModal={setShowModal}
           fetchDynamicUserProfile={fetchDynamicUserProfile}
           userProfile={userProfile}
         />
-      ) : null}
+      )}
     </>
   );
 };

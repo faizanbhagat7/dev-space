@@ -1,43 +1,34 @@
-// R9Oh5HpQNXaiy9wIG30Ki3wmOFXKunL4VMBPlNpE ==> API KEY QUIZAPI.IO
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { LoginContext } from "../../context/LoginContext";
-import axios from "axios";
 import { Link } from "react-router-dom";
-import './Test.css'
+import './Test.css';
+
+const difficulties = [
+  { level: "easy", label: "Beginner", desc: "Fundamentals & basics", color: "var(--green-code)" },
+  { level: "medium", label: "Intermediate", desc: "Core concepts & patterns", color: "var(--yellow)" },
+  { level: "hard", label: "Expert", desc: "Advanced & tricky", color: "var(--magenta)" },
+];
 
 const Test = () => {
-  const { activebutton, user, setActivebutton } = useContext(LoginContext);
-  
-  useEffect(() => {
-    setActivebutton("tests");
-  }, []);
-
-
+  const { setActivebutton } = useContext(LoginContext);
+  useEffect(() => { setActivebutton("tests"); }, []);
 
   return (
-    <>
-      <div className="test-container">
-        <div className="test-header">
-          <p>Check your Technical skills</p>
-        </div>
-        <div className="test-body">
-          <p>Select Difficulty level</p>
-          <div className="test-body-catagory">
-            <Link to="easy" style={{textDecoration:"none",color:"black"}}>
-              <div className="test-body-catagory-item">Beginner</div>
+    <div className="test-container">
+      <div className="test-header"><p>run quiz.exe</p></div>
+      <div className="test-body">
+        <p>Select difficulty level</p>
+        <div className="test-body-catagory">
+          {difficulties.map(({ level, label, desc }) => (
+            <Link key={level} to={level} style={{ textDecoration: "none" }}>
+              <div className="test-body-catagory-item">
+                <span>{label} — <span style={{opacity:0.6,fontSize:12}}>{desc}</span></span>
+              </div>
             </Link>
-
-            <Link to="medium" style={{textDecoration:"none",color:"black"}}>
-              <div className="test-body-catagory-item">intermediate</div>
-            </Link>
-
-            <Link to="hard" style={{textDecoration:"none",color:"black"}}>
-              <div className="test-body-catagory-item">Expert</div>
-            </Link>
-          </div>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

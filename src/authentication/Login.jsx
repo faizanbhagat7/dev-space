@@ -1,4 +1,4 @@
-import React, { useState, useffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../backend/supabaseConfig";
 import "./form.css";
@@ -8,50 +8,27 @@ import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
     if (!email || !password) {
-      toast.error("All Fields Must Be Filled !", {
-        position: "top-center",
-        autoClose: 1500,
-        borderRadius: 20,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-      });
+      toast.error("All fields required", { position: "top-center", autoClose: 1500, hideProgressBar: true, closeOnClick: true, closeButton: false });
       return;
-    } else if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long !", {
-        position: "top-center",
-        autoClose: 1500,
-        borderRadius: 20,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-      });
+    }
+    if (password.length < 6) {
+      toast.error("Password must be 6+ characters", { position: "top-center", autoClose: 1500, hideProgressBar: true, closeOnClick: true, closeButton: false });
       return;
+    }
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message, { position: "top-center", autoClose: 2000, hideProgressBar: true, closeOnClick: true, closeButton: false });
     } else {
-      let { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-      if (error) {
-        toast.error(error.message, {
-          position: "top-center",
-          autoClose: 1500,
-          borderRadius: 20,
-          hideProgressBar: true,
-          closeOnClick: true,
-          closeButton: false,
-        });
-      } else {
-        navigate("/");
-        setEmail("");
-        setPassword("");
-      }
+      navigate("/");
+      setEmail(""); setPassword("");
     }
   };
 
@@ -60,31 +37,28 @@ const Login = () => {
       <div className="main-body">
         <div className="container">
           <div className="banner-section">
-            <p className="tagline">Empowering the developer community 🚀</p>
+            <div className="banner-logo">dev<span>_</span>space</div>
+            <p className="tagline">// where developers<br />// connect + grow<br />// together</p>
+            <div className="banner-tags">
+              <span className="banner-tag">#open_source</span>
+              <span className="banner-tag">#devs</span>
+              <span className="banner-tag">#community</span>
+              <span className="banner-tag">#code</span>
+            </div>
           </div>
           <div className="form-section">
-            <p className="form-title">Login to Your Account</p>
+            <p className="form-title">Welcome back</p>
             <form onSubmit={handleLogin}>
-              <p className="input-label">Email</p>
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                className="input-field"
-              />
-              <p className="input-label">Password</p>
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                className="input-field"
-              />
-              <button type="submit" className="submit-button">
-                Login
+              <label className="input-label">email</label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="input-field" placeholder="you@example.com" />
+              <label className="input-label">password</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="input-field" placeholder="••••••••" />
+              <button type="submit" className="submit-button" disabled={loading}>
+                <span>{loading ? "logging in..." : "Login →"}</span>
               </button>
             </form>
             <p className="login-link">
-              Don't have an Account ? &nbsp;
+              No account?&nbsp;
               <Link to="/register" style={{ textDecoration: "none" }}>
                 <span className="login-link-text">Register</span>
               </Link>

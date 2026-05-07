@@ -1,28 +1,29 @@
-import React from 'react'
-import LoaderImage from './loader.gif'
+import React from "react";
 
-const Loader = () => {
-  return (
+const Loader = () => (
+  <div style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "60vh",
+    gap: 12,
+    fontFamily: "var(--font-mono)",
+    fontSize: 11,
+    color: "var(--text-muted)",
+    letterSpacing: "0.08em",
+  }}>
+    <div style={{
+      width: 36,
+      height: 36,
+      border: "2.5px solid var(--cream-darker)",
+      borderTopColor: "var(--magenta)",
+      borderRadius: "50%",
+      animation: "spin 0.8s linear infinite",
+    }} />
+    <span>// loading...</span>
+    <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+  </div>
+);
 
-
-    <div className="loader" 
-        style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-            width: "100vw",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            zIndex: 9999,
-            
-        }}
-    >
-        <img src={LoaderImage} alt="Loading..." width='400px'/>  
-    </div>
-    
-  )
-}
-
-export default Loader
+export default Loader;

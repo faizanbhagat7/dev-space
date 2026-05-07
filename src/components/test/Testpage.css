@@ -1,115 +1,123 @@
-.testpage-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    width: 100%;
-    height: 100vh;
+.testpage-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  animation: fadeIn 0.4s ease both;
 }
 
-.testpage-body{
-    background-color: #fff;
-    box-shadow: 0px 0px 10px black;
-    border-radius: 10px;
-    padding: 20px;
-
+.testpage-body {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 560px;
 }
 
-.testpage-title{
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    text-align: center;
-    text-transform: capitalize;
+.testpage-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  text-transform: capitalize;
 }
 
-.test-rules{
-    padding: 10px;
+.testpage-title::before {
+  content: '// ';
+  font-family: var(--font-mono);
+  color: var(--magenta);
+  font-size: 14px;
 }
 
-.test-rules > p{
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-transform: capitalize;
+.test-rules {
+  background: var(--cream);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  border-left: 3px solid var(--magenta);
 }
 
-.test-rules > ul{
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    text-transform: capitalize;
+.test-rules > p {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--magenta);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
 }
 
-.test-rules > ul > li{
-    margin-left: 20px;
+.test-rules > ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.testpage-button-start{
-    font-size: 20px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #000;
-    cursor: pointer;
-    background-color: limegreen;
-    color: #fff;
-    width:150px;
-    margin:10px;
-    text-align: center;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    text-transform: capitalize;
-
+.test-rules > ul > li {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding-left: 16px;
+  position: relative;
 }
 
-.testpage-button-change{
-    font-size: 20px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #000;
-    cursor: pointer;
-    background-color: #d11a2a;
-    color: #fff;
-     width:180px;
-    margin:10px;
-    text-align: center;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    text-transform: capitalize;
-    }
-
-.testpage-button-start:hover{
-    transform: scale(1.02);
-    transition: 0.3s all ease-in-out;
+.test-rules > ul > li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--magenta);
+  font-size: 12px;
 }
 
-.testpage-button-change:hover{
-    transform: scale(1.02);
-    transition: 0.3s all ease-in-out;
+.testpage-buttons {
+  display: flex;
+  gap: 12px;
 }
 
-/* mobile resposiveness */
-@media screen and (max-width: 768px){
-  
-    .testpage-container{
-        width: 90%;
-        height: 80vh;
-        margin-left: 20px;
-    }
-    .testpage-title{
-        font-size: 20px;
-    }
- 
-    .test-rules > p{
-        font-size: 15px;
-    }
-    .test-rules > ul{
-        font-size: 15px;
-    }
-    .test-rules > ul > li{
-        margin-left: 10px;
-    }
+.testpage-button-start {
+  flex: 1;
+  padding: 12px;
+  background: var(--black);
+  color: var(--cream);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-bounce);
+  text-align: center;
+}
+
+.testpage-button-start:hover {
+  background: var(--magenta);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-magenta);
+}
+
+.testpage-button-change {
+  padding: 12px 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  cursor: pointer;
+  border: 1.5px solid var(--border-strong);
+  transition: all var(--transition);
+  text-align: center;
+}
+
+.testpage-button-change:hover {
+  border-color: var(--black);
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .testpage-body { padding: 24px 20px; }
+  .testpage-buttons { flex-direction: column; }
 }

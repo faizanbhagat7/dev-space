@@ -1,94 +1,86 @@
-.test-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    width: 100%;
-    height: 100vh;
+.test-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  animation: fadeIn 0.4s ease both;
 }
 
-.test-header{
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-transform: capitalize;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-    border-radius: 10px;
-    padding: 1rem;
-    background-color: #fff;
+.test-header {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  font-family: var(--font-mono);
+  margin-bottom: 32px;
+  background: var(--magenta-muted);
+  padding: 6px 16px;
+  border-radius: 99px;
+  border: 1px solid rgba(232,18,124,0.2);
 }
 
-.test-body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 50%;
-    height: 50%;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-    border-radius: 10px;
-    padding: 1rem;
-    background-color: #fff;
+.test-header p::before { content: '$ '; opacity: 0.5; }
+
+.test-body {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
 }
 
-.test-body > p{
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    text-transform: capitalize;
-
+.test-body > p {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 28px;
 }
 
-.test-body-catagory-item{
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 10px;
-    margin: 10px;
-    box-shadow: 0 0 5px 0 black;
-    border-radius: 10px;
-    text-align: center;
-    cursor: pointer;
-    text-transform: capitalize;
-    background-color: #007fff;
-    color: #fff;
-    text-transform: capitalize;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+.test-body-catagory {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.test-body-catagory-item:hover{
-    transform: scale(1.1);
-    transition: all 0.5s ease-in-out;    
+.test-body-catagory-item {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  background: var(--cream);
+  border: 1.5px solid var(--border-strong);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-bounce);
+  text-transform: capitalize;
+  position: relative;
+  overflow: hidden;
 }
 
+.test-body-catagory-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--magenta);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+  z-index: 0;
+}
 
-/* mobile responsiveness */
+.test-body-catagory-item:hover::before { transform: scaleX(1); }
+.test-body-catagory-item:hover { color: #fff; border-color: var(--magenta); transform: translateX(4px); }
+.test-body-catagory-item span { position: relative; z-index: 1; }
 
-@media screen and (max-width: 768px)
-{
-
-    .test-container{
-        width: 100%;
-        height: 80vh;
-    }
-
-    .test-header{
-        width: 80%;
-        text-align: center;
-        font-size: 1.3rem;
-        padding: 20px 10px;
-
-    }
-
-
-
-    .test-body{
-        margin:0px;
-        padding: 10px;
-        width: 80%;
-        height: 50vh;
-        text-align: center;
-    }
+@media (max-width: 768px) {
+  .test-body { padding: 24px 20px; }
 }
